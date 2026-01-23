@@ -7,8 +7,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.qualcomm.ftccommon.FtcEventLoop;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
+import dev.frozenmilk.sinister.SinisterUtil;
 import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop;
 import dev.frozenmilk.sinister.sdk.opmodes.SinisterRegisteredOpModes;
+import dev.frozenmilk.sinister.targeting.SearchTarget;
+import dev.frozenmilk.sinister.targeting.TeamCodeSearch;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
 import org.jetbrains.annotations.NotNull;
 
@@ -21,6 +24,7 @@ public class Parser implements OnCreateEventLoop {
     public static final Parser INSTANCE = new Parser();
     public static OpModeManagerImpl opModeManager;
     public static Context context;
+    private static final SearchTarget searchTarget = new TeamCodeSearch();
 
     private Parser() {
     }
@@ -46,6 +50,15 @@ public class Parser implements OnCreateEventLoop {
             String assetPath = "autos/" + asset;
             try (InputStream is = assets.open(assetPath)) {
                 ParsingConfig config = mapper.readValue(is, ParsingConfig.class);
+
+             //   SinisterUtil.staticInstancesOf(clazz, JavaEventReceiver.class)
+                // look for @Auto.Template classes matching config.templateName
+                // get auto steps and reflection match them to the strings in config.getCommands() and set them up to be config.get()
+                // then get the variants, make a supplier, and register all of the opmodes
+
+
+
+
 
 //                OpModeMeta meta = new OpModeMeta.Builder()
 //                        .setName("name")

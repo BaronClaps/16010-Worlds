@@ -1,14 +1,17 @@
-package org.firstinspires.ftc.teamcode.configurable;
+package org.firstinspires.ftc.teamcode.configurable.templates;
 
 import com.pedropathing.ivy.Command;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.Robot;
+import org.firstinspires.ftc.teamcode.configurable.Auto;
+import org.firstinspires.ftc.teamcode.configurable.ParsingConfig;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.CommandOpMode;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Auto.Template
 public class Template extends CommandOpMode {
     Alliance a;
     ParsingConfig parsingConfig;
@@ -24,20 +27,17 @@ public class Template extends CommandOpMode {
         schedule(parsingConfig.get());
     }
 
+    @Auto.Step
     public Command intake1Close() {
         return Command.NOOP;
     }
 
-    public List<OpMode> getVariants() {
-        return new ArrayList<OpMode>();
-    }
-
-    @Auto.Variant
+    @Auto.Variant("Red")
     public OpMode getRed(ParsingConfig parsingConfig) {
         return new Template(Alliance.RED, parsingConfig);
     }
 
-    @Auto.Variant
+    @Auto.Variant("Blue")
     public OpMode getBlue(ParsingConfig parsingConfig) {
         return new Template(Alliance.BLUE, parsingConfig);
     }

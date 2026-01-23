@@ -35,7 +35,8 @@ dependencies {
     implementation 'com.pedropathing:ivy:0.0.1-LOCAL'
     implementation 'com.bylazar:fullpanels:1.0.9'
 
-    implementation 'dev.frozenmilk.sinister:Sloth:0.2.4'
+    implementation "dev.frozenmilk.sinister:Sloth:0.2.4"
+    implementation "dev.frozenmilk:Sinister:2.2.0"
     implementation 'com.acmerobotics.slothboard:dashboard:0.2.4+0.4.17'
 
     implementation('com.github.haifengl:smile-interpolation:2.6.0') {

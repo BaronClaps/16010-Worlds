@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.configurable;
 
 import com.pedropathing.ivy.Command;
+import com.pedropathing.ivy.groups.Groups;
 
 import java.util.List;
 
@@ -10,10 +11,11 @@ public class ParsingConfig {
     private String name;
     private int priority = 0;
     private List<String> commands;
+    private List<Command> cmds;
 
     public Command get() {
         // this would just be turned the actual scanned mapped commands!
-        return Command.NOOP; //sequential(commands.toArray(new Command[0]));
+        return sequential(cmds.toArray(new Command[0]));
     }
 
     public List<String> getCommands() {
@@ -34,5 +36,9 @@ public class ParsingConfig {
 
     public void setPriority(int priority) {
         this.priority = priority;
+    }
+
+    public void addCommand(Command command) {
+        this.cmds.add(command);
     }
 }

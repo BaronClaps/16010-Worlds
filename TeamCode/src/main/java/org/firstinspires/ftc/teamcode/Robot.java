@@ -10,6 +10,4 @@ public class Robot {
         this.hardwareMap = h;
         this.alliance = a;
     }
-
-
 }

@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.configurable;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -91,6 +92,8 @@ public class Parser implements OnCreateEventLoop {
                             .setSource(OpModeMeta.Source.EXTERNAL_LIBRARY)
                             .build();
 
+                    Log.d("REGISTERED", "BRO");
+
                     SinisterRegisteredOpModes.INSTANCE.register(meta, (OpMode) m.invoke(null));
                 }
             } catch (JsonProcessingException ignored) {} catch (InvocationTargetException | IllegalAccessException e) {
@@ -106,7 +109,7 @@ public class Parser implements OnCreateEventLoop {
 
     private static final class TemplateScanner implements Scanner {
         public static final TemplateScanner INSTANCE = new TemplateScanner();
-        private static final SearchTarget FILTER_SEARCH_TARGET = new EmptySearch().include("org.firstinspires.ftc.teamcode.configurable.templates");
+        private static final SearchTarget FILTER_SEARCH_TARGET = new EmptySearch().include("org.firstinspires.ftc.teamcode.configurable");
 
         private TemplateScanner() {}
 
@@ -199,6 +202,7 @@ public class Parser implements OnCreateEventLoop {
         try {
             registerAllOpModes();
         } catch (IOException e) {
+            Log.d("TS COOKED", "BRO");
             throw new RuntimeException(e);
         }
     }

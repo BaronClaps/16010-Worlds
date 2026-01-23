@@ -1,0 +1,8 @@
+name: Tested
+priority: 1
+commands:
+  - shoot
+  - intake1Close
+  - shoot
+  - intake2Close
+  - shootClose

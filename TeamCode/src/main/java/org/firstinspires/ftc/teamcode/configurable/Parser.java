@@ -9,18 +9,22 @@ import com.pedropathing.ivy.Command;
 import com.qualcomm.ftccommon.FtcEventLoop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
+import dev.frozenmilk.sinister.Scanner;
 import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop;
 import dev.frozenmilk.sinister.sdk.opmodes.SinisterRegisteredOpModes;
 import dev.frozenmilk.sinister.targeting.EmptySearch;
 import dev.frozenmilk.sinister.targeting.SearchTarget;
+import dev.frozenmilk.util.graph.Graph;
+import dev.frozenmilk.util.graph.rule.AdjacencyRule;
+import dev.frozenmilk.util.graph.rule.AdjacencyRules;
 import org.firstinspires.ftc.robotcore.internal.opmode.OpModeMeta;
-import dev.frozenmilk.sinister.filtering.SinisterFilter;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -53,6 +57,10 @@ public class Parser implements OnCreateEventLoop {
             try (InputStream is = assets.open(assetPath)) {
                 ParsingConfig config = mapper.readValue(is, ParsingConfig.class);
 
+                if (templateData == null) {
+                    continue;
+                }
+
                 for (String command : config.getCommands()) {
                     Method method = templateData.steps.get(command);
                     if (method != null && method.getName().equalsIgnoreCase(command)) {
@@ -73,8 +81,7 @@ public class Parser implements OnCreateEventLoop {
                             Method annValue = ann.annotationType().getMethod("value");
                             Object val = annValue.invoke(ann);
                             variantLabel = String.valueOf(val);
-                        } catch (Exception ignored) {
-                        }
+                        } catch (Exception ignored) {}
                     }
 
                     OpModeMeta meta = new OpModeMeta.Builder()
@@ -84,12 +91,8 @@ public class Parser implements OnCreateEventLoop {
                             .setSource(OpModeMeta.Source.EXTERNAL_LIBRARY)
                             .build();
 
-                    SinisterRegisteredOpModes.INSTANCE.register(meta, (OpMode) m.invoke(config));
+                    SinisterRegisteredOpModes.INSTANCE.register(meta, (OpMode) m.invoke(null));
                 }
-
-//                for (Class<?> template : TEMPLATE_DATA.keySet()) {
-//                    if (template.getClass().equals(Template.class)) {
-
             } catch (JsonProcessingException ignored) {} catch (InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
@@ -101,43 +104,92 @@ public class Parser implements OnCreateEventLoop {
         public final List<Method> variants = new ArrayList<>();
     }
 
-    private static final class TemplateFilter implements SinisterFilter {
-        public static final TemplateFilter INSTANCE = new TemplateFilter();
+    private static final class TemplateScanner implements Scanner {
+        public static final TemplateScanner INSTANCE = new TemplateScanner();
         private static final SearchTarget FILTER_SEARCH_TARGET = new EmptySearch().include("org.firstinspires.ftc.teamcode.configurable.templates");
 
-        private TemplateFilter() {}
+        private TemplateScanner() {}
 
+        @NotNull
         @Override
         public SearchTarget getTargets() {
             return FILTER_SEARCH_TARGET;
         }
 
         @Override
-        public void filter(@NotNull Class<?> clazz) {
-            if (clazz.isAnnotationPresent(Auto.Template.class)) {
-                TemplateData info = new TemplateData();
-                for (Method m : clazz.getDeclaredMethods()) {
-                    if (m.isAnnotationPresent(Auto.Step.class)) {
-                        info.steps.put(m.getName(), m);
+        public void scan(@NotNull ClassLoader loader, @NotNull Class<?> cls) {
+            if (!cls.isAnnotationPresent(Auto.Template.class)) return;
+
+            TemplateData info = new TemplateData();
+
+            for (Method m : cls.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(Auto.Step.class)) {
+                    boolean isStatic = Modifier.isStatic(m.getModifiers());
+
+                    if (!isStatic) {
+                        throw new IllegalArgumentException("Method " + cls.getCanonicalName() + "." + m.getName() +
+                                " annotated with @Auto.Step must be static");
                     }
-                    if (m.isAnnotationPresent(Auto.Variant.class)) {
-                        info.variants.add(m);
+
+                    if (m.getParameterCount() != 0) {
+                        throw new IllegalArgumentException("Method " + cls.getCanonicalName() + "." + m.getName() +
+                                " annotated with @Auto.Step must have 0 parameters");
                     }
+
+                    if (!Command.class.isAssignableFrom(m.getReturnType())) {
+                        throw new IllegalArgumentException("Method " + cls.getCanonicalName() + "." + m.getName() +
+                                " annotated with @Auto.Step must return com.pedropathing.ivy.Command");
+                    }
+
+                    m.setAccessible(true);
+                    info.steps.put(m.getName(), m);
+                }
+
+                if (m.isAnnotationPresent(Auto.Variant.class)) {
+                    boolean isStatic = Modifier.isStatic(m.getModifiers());
+
+                    if (!isStatic) {
+                        throw new IllegalArgumentException("Method " + cls.getCanonicalName() + "." + m.getName() +
+                                " annotated with @Auto.Variant must be static");
+                    }
+
+                    if (m.getParameterCount() != 0) {
+                        throw new IllegalArgumentException("Method " + cls.getCanonicalName() + "." + m.getName() +
+                                " annotated with @Auto.Variant must have 0 parameters");
+                    }
+
+                    if (!OpMode.class.isAssignableFrom(m.getReturnType())) {
+                        throw new IllegalArgumentException("Method " + cls.getCanonicalName() + "." + m.getName() +
+                                " annotated with @Auto.Variant must return an OpMode instance");
+                    }
+
+                    m.setAccessible(true);
+                    info.variants.add(m);
                 }
             }
-        }
-    }
 
-    private static String signatureOf(Method m) {
-        StringBuilder sb = new StringBuilder();
-        sb.append(m.getReturnType().getTypeName()).append(' ').append(m.getName()).append('(');
-        Class<?>[] params = m.getParameterTypes();
-        for (int i = 0; i < params.length; i++) {
-            if (i > 0) sb.append(',');
-            sb.append(params[i].getTypeName());
+            if (Parser.templateData != null) {
+                System.out.println("Multiple templates found; keeping first discovered, ignoring: " + cls.getName());
+            } else {
+                Parser.templateData = info;
+                System.out.println("TemplateScanner discovered template: " + cls.getName() + " -> steps=" + info.steps.size() + " variants=" + info.variants.size());
+            }
         }
-        sb.append(')');
-        return sb.toString();
+
+        @Override
+        public void unload(@NotNull ClassLoader loader, @NotNull Class<?> cls) {
+            // no-op
+        }
+
+        @Override
+        public @NotNull AdjacencyRule<Scanner, Graph<Scanner>> getLoadAdjacencyRule() {
+            return AdjacencyRules.independent();
+        }
+
+        @Override
+        public @NotNull AdjacencyRule<Scanner, Graph<Scanner>> getUnloadAdjacencyRule() {
+            return AdjacencyRules.independent();
+        }
     }
 
     @Override

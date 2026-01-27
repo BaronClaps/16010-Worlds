@@ -11,6 +11,7 @@ import com.qualcomm.ftccommon.FtcEventLoop;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManagerImpl;
 import dev.frozenmilk.sinister.Scanner;
+import dev.frozenmilk.sinister.loading.Preload;
 import dev.frozenmilk.sinister.sdk.apphooks.OnCreateEventLoop;
 import dev.frozenmilk.sinister.sdk.opmodes.SinisterRegisteredOpModes;
 import dev.frozenmilk.sinister.targeting.EmptySearch;
@@ -26,137 +27,114 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
 
 public class Parser implements OnCreateEventLoop {
+    private final static Parser INSTANCE = new Parser();
     public static OpModeManagerImpl opModeManager;
     public static Context context;
-    //public static final Map<Class<?>, TemplateData> TEMPLATE_DATA = new LinkedHashMap<>();
     public static TemplateData templateData;
 
     private Parser() {
     }
 
-    public static void registerAllOpModes() throws IOException {
+    public static void registerAllOpModes() {
         //get the yaml in the folder of /autos
         //match each yaml auto's template name to a class discovered by Sinister
 
-        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-        AssetManager assets = context.getAssets();
+        OpModeMeta meta12 = new OpModeMeta.Builder()
+                .setName("e")
+                .setFlavor(OpModeMeta.Flavor.AUTONOMOUS)
+                .setSource(OpModeMeta.Source.EXTERNAL_LIBRARY)
+                .build();
 
-        String[] assetList = assets.list("autos");
-        if (assetList == null) return;
+        SinisterRegisteredOpModes.INSTANCE.register(meta12, Template.getBlue(new ParsingConfig()));
 
-        for (String asset : assetList) {
-            if (!asset.endsWith(".yaml")) continue;
+        try {
+            ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+            AssetManager assets = context.getAssets();
 
-            String assetPath = "autos/" + asset;
+            String[] assetList = assets.list("autos");
+            if (assetList == null) return;
 
-            try (InputStream is = assets.open(assetPath)) {
-                ParsingConfig config = mapper.readValue(is, ParsingConfig.class);
+            Log.d("Parser", "Assets Found: " + String.join(", ", assetList));
 
-                if (templateData == null) {
-                    continue;
-                }
+            for (String asset : assetList) {
+                if (!asset.endsWith(".yaml")) continue;
 
-                for (String command : config.getCommands()) {
-                    Method method = templateData.steps.get(command);
-                    if (method != null && method.getName().equalsIgnoreCase(command)) {
-                        try {
-                            Command cmd = (Command) method.invoke(null);
-                            config.addCommand(cmd);
-                        } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
-                            throw new RuntimeException(e);
+                Log.d("Parser", "Found YAML: " + asset);
+
+                String assetPath = "autos/" + asset;
+
+                try (InputStream is = assets.open(assetPath)) {
+                    ParsingConfig config = mapper.readValue(is, ParsingConfig.class);
+
+                    if (templateData == null) {
+                        Log.e("Parser", "No template data found, skipping...");
+                        continue;
+                    }
+
+                    Log.d("Parser", "Processing Config: " + config.getName());
+
+                    for (String command : config.getCommands()) {
+                        Method method = templateData.steps.get(command);
+                        if (method != null && method.getName().equalsIgnoreCase(command)) {
+                            try {
+                                Command cmd = (Command) method.invoke(null);
+                                config.addCommand(cmd);
+                            } catch (IllegalAccessException | java.lang.reflect.InvocationTargetException e) {
+                                throw new RuntimeException(e);
+                            }
                         }
                     }
-                }
 
-                for (Method m: templateData.variants) {
-                    String variantLabel = m.getName();
-                    Auto.Variant ann = m.getAnnotation(Auto.Variant.class);
-                    if (ann != null) {
-                        try {
-                            Method annValue = ann.annotationType().getMethod("value");
-                            Object val = annValue.invoke(ann);
-                            variantLabel = String.valueOf(val);
-                        } catch (Exception ignored) {}
+                    for (Method m : templateData.variants) {
+                        String variantLabel = m.getName();
+                        Auto.Variant ann = m.getAnnotation(Auto.Variant.class);
+                        if (ann != null) {
+                            try {
+                                Method annValue = ann.annotationType().getMethod("value");
+                                Object val = annValue.invoke(ann);
+                                variantLabel = String.valueOf(val);
+                            } catch (Exception ignored) {
+                            }
+                        }
+
+                        Log.d("Parser", "Registering Variant: " + variantLabel);
+
+                        OpModeMeta meta = new OpModeMeta.Builder()
+                                .setName(variantLabel + " " + config.getName())
+                                .setGroup(String.valueOf(config.getPriority()))
+                                .setFlavor(OpModeMeta.Flavor.AUTONOMOUS)
+                                .setSource(OpModeMeta.Source.EXTERNAL_LIBRARY)
+                                .build();
+
+                        SinisterRegisteredOpModes.INSTANCE.register(meta, (OpMode) m.invoke(null));
                     }
-
-                    OpModeMeta meta = new OpModeMeta.Builder()
-                            .setName(variantLabel + " " + config.getName())
-                            .setGroup(String.valueOf(config.getPriority()))
-                            .setFlavor(OpModeMeta.Flavor.AUTONOMOUS)
-                            .setSource(OpModeMeta.Source.EXTERNAL_LIBRARY)
-                            .build();
-
-                    Log.d("REGISTERED", "BRO");
-
-                    SinisterRegisteredOpModes.INSTANCE.register(meta, (OpMode) m.invoke(null));
-                }
-            } catch (JsonProcessingException ignored) {} catch (InvocationTargetException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
-        }
-    }
-
-    static final class Scan implements Scanner {
-        private static final SearchTarget FILTER_SEARCH_TARGET = new TeamCodeSearch();
-
-        @NotNull
-        @Override
-        public SearchTarget getTargets() {
-            return FILTER_SEARCH_TARGET;
-        }
-
-        @Override
-        public void scan(@NotNull ClassLoader loader, @NotNull Class<?> cls) {
-            if (!cls.isAnnotationPresent(Auto.Template.class)) return;
-
-            for (Method m : cls.getDeclaredMethods()) {
-                if (m.isAnnotationPresent(Auto.Step.class)) {
-                    Parser.templateData.steps.put(m.getName(), m);
-                }
-
-                if (m.isAnnotationPresent(Auto.Variant.class)) {
-                    Parser.templateData.variants.add(m);
+                } catch (JsonProcessingException ignored) {
+                } catch (InvocationTargetException | IllegalAccessException e) {
+                    Log.e("Parser", "Error processing config", e);
+                    throw new RuntimeException(e);
                 }
             }
+        } catch (RuntimeException | IOException e) {
+            throw new RuntimeException(e);
         }
 
-        @Override
-        public void unload(@NotNull ClassLoader loader, @NotNull Class<?> cls) {
-            // no-op
-        }
+        OpModeMeta meta1 = new OpModeMeta.Builder()
+                .setName("ee")
+                .setFlavor(OpModeMeta.Flavor.AUTONOMOUS)
+                .setSource(OpModeMeta.Source.EXTERNAL_LIBRARY)
+                .build();
 
-        @Override
-        public @NotNull AdjacencyRule<Scanner, Graph<Scanner>> getLoadAdjacencyRule() {
-            return AdjacencyRules.independent();
-        }
-
-        @Override
-        public @NotNull AdjacencyRule<Scanner, Graph<Scanner>> getUnloadAdjacencyRule() {
-            return AdjacencyRules.independent();
-        }
-    }
-
-    public static class TemplateData {
-        public final Map<String, Method> steps = new LinkedHashMap<>();
-        public final List<Method> variants = new ArrayList<>();
+        SinisterRegisteredOpModes.INSTANCE.register(meta1, Template.getBlue(new ParsingConfig()));
     }
 
     @Override
     public void onCreateEventLoop(@NotNull Context context, @NotNull FtcEventLoop ftcEventLoop) {
         opModeManager = ftcEventLoop.getOpModeManager();
         Parser.context = context;
-        try {
-            registerAllOpModes();
-        } catch (IOException e) {
-            Log.d("TS COOKED", "BRO");
-            throw new RuntimeException(e);
-        }
+        Log.println(Log.ASSERT, "onCreateEventLoop", "Created Parser");
+        registerAllOpModes();
     }
 }
+

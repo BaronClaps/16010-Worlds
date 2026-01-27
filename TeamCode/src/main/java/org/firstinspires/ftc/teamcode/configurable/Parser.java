@@ -52,7 +52,7 @@ public class Parser implements OnCreateEventLoop {
         if (assetList == null) return;
 
         for (String asset : assetList) {
-            if (!asset.endsWith(".yml") && !asset.endsWith(".yaml")) continue;
+            if (!asset.endsWith(".yaml")) continue;
 
             String assetPath = "autos/" + asset;
 
@@ -100,6 +100,46 @@ public class Parser implements OnCreateEventLoop {
             } catch (JsonProcessingException ignored) {} catch (InvocationTargetException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
+        }
+    }
+
+    static final class Scan implements Scanner {
+        private static final SearchTarget FILTER_SEARCH_TARGET = new TeamCodeSearch();
+
+        @NotNull
+        @Override
+        public SearchTarget getTargets() {
+            return FILTER_SEARCH_TARGET;
+        }
+
+        @Override
+        public void scan(@NotNull ClassLoader loader, @NotNull Class<?> cls) {
+            if (!cls.isAnnotationPresent(Auto.Template.class)) return;
+
+            for (Method m : cls.getDeclaredMethods()) {
+                if (m.isAnnotationPresent(Auto.Step.class)) {
+                    Parser.templateData.steps.put(m.getName(), m);
+                }
+
+                if (m.isAnnotationPresent(Auto.Variant.class)) {
+                    Parser.templateData.variants.add(m);
+                }
+            }
+        }
+
+        @Override
+        public void unload(@NotNull ClassLoader loader, @NotNull Class<?> cls) {
+            // no-op
+        }
+
+        @Override
+        public @NotNull AdjacencyRule<Scanner, Graph<Scanner>> getLoadAdjacencyRule() {
+            return AdjacencyRules.independent();
+        }
+
+        @Override
+        public @NotNull AdjacencyRule<Scanner, Graph<Scanner>> getUnloadAdjacencyRule() {
+            return AdjacencyRules.independent();
         }
     }
 

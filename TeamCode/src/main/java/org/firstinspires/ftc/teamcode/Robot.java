@@ -79,9 +79,9 @@ public class Robot {
 
 
     public void setShootTarget() {
-        if (a == Alliance.BLUE && shootTarget.getX() != 6)
-            shootTarget = new Pose(6, 144 - 6, 0);
-        else if (a == Alliance.RED && shootTarget.getX() != (144 - 6))
+        if (a == Alliance.BLUE && shootTarget.getX() != 2)
+            shootTarget = new Pose(2, 144 - 2, 0);
+        else if (a == Alliance.RED && shootTarget.getX() != (144 - 2))
             shootTarget = shootTarget.mirror();
     }
 
@@ -89,46 +89,71 @@ public class Robot {
         return shootTarget;
     }
 
-    public CommandBuilder shoot() {
+    public CommandBuilder shootSpindex() {
         return sequential(
-                g.down(),
                 i.in(),
                 Commands.waitUntil(s::atTarget),
                 i.in(),
-                Commands.wait(200.0),
-                g.down(),
-                Commands.wait(400.0),
-                g.up(),
-                Commands.wait(200.0),
-                g.down(),
-                //i.off(),
-                Commands.wait(300.0),
-                i.in(),
-                Commands.wait(300.0),
-                g.up(),
-                Commands.wait(200.0),
-                g.down(),
-                //i.off(),
-                Commands.wait(300.0),
-                i.in(),
-                Commands.wait(300.0),
-                g.up(),
-                Commands.wait(200.0),
-                g.down(),
-                i.out()
+                Commands.instant(() -> {
+                            p.openTopGate();
+                            p.engageKicker();
+                            p.all();
+                        }
+                ),
+                Commands.wait(350.0)
+
         );
     }
 
-    public CommandBuilder intake() {
+    public CommandBuilder shootPassthrough() {
         return sequential(
-                g.down(),
                 i.in(),
-                Commands.wait(500.0)
+                Commands.waitUntil(s::atTarget),
+                i.in(),
+                Commands.instant(p::openTopGate),
+                Commands.wait(350.0)
+
         );
     }
 
-    public String getCurrent() {
-        return i.getCurrent() + "/n" + s.getLeftCurrent() + "/n" + s.getRightCurrent() + "/n" + t.getCurrent();
+    public CommandBuilder intakeSorted() {
+        return sequential(
+                Commands.instant(() -> {
+                    p.enableSort();
+                    p.disengageKicker();
+                    p.openTopGate();
+                    p.closeBottomGate();
+                }),
+                i.in(),
+                Commands.wait(250.0)
+        );
+    }
+
+    public CommandBuilder intakeSpindexUnsorted() {
+        return sequential(
+                Commands.instant(() -> {
+                    p.disableSort();
+                    p.enableAutoRotate();
+                    p.disengageKicker();
+                    p.openTopGate();
+                    p.closeBottomGate();
+                }),
+                i.in(),
+                Commands.wait(250.0)
+        );
+    }
+
+    public CommandBuilder intakePassthrough() {
+        return sequential(
+                Commands.instant(() -> {
+                    p.enablePassthrough();
+                    p.engageKicker();
+                    p.closeTopGate();
+                    p.openBottomGate();
+                }),
+                i.in(),
+                Commands.wait(250.0)
+        );
     }
 
     public double getLoopTimeMs() {

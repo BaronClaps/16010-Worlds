@@ -12,7 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 @Config
 public class Intake {
     private final DcMotorEx i;
-    private final Servo k, b, t;
+
     public static double off = 0;
     public static double idle = 0.5;
     public static double in = 1;
@@ -21,9 +21,6 @@ public class Intake {
 
     public Intake(HardwareMap hardwareMap) {
         i = hardwareMap.get(DcMotorEx.class, "i");
-        k = hardwareMap.get(Servo.class, "k");
-        b = hardwareMap.get(Servo.class, "b");
-        t = hardwareMap.get(Servo.class, "t");
         set(0);
     }
 
@@ -61,23 +58,5 @@ public class Intake {
 
     public CommandBuilder idle() {
         return Commands.instant(this::spinIdle);
-    }
-
-    public CommandBuilder toggleIn() {
-        return Commands.instant(() -> {
-            if (i.getPower() != 0)
-                spinOff();
-            else
-                spinIn();
-        });
-    }
-
-    public CommandBuilder toggleOut() {
-        return Commands.instant(() -> {
-            if (i.getPower() != 0)
-                spinOff();
-            else
-                spinOut();
-        });
     }
 }

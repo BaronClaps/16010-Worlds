@@ -16,6 +16,10 @@ public class Spindexer {
     public static double timeToSpin = 0.3, distThres = 2.0;
     private Timer spinTimer = new Timer();
     private Servo left, right;
+    private final Servo k, b, t;
+    public static double engage = 0.3, disengage = 0.1;
+    public static double topGateOpen = 0.7, topGateClosed = 0.3;
+    public static double bottomGateOpen = 0.2, bottomGateClosed = 0.7;
     private int loops;
     private RevColorSensorV3 sensor;
 
@@ -69,6 +73,9 @@ public class Spindexer {
         left = h.get(Servo.class, "spl");
         right = h.get(Servo.class, "spr");
         sensor = h.get(RevColorSensorV3.class, "spcolor");
+        k = h.get(Servo.class, "k");
+        b = h.get(Servo.class, "b");
+        t = h.get(Servo.class, "t");
     }
 
     public void setPattern(Pattern pattern) {
@@ -341,6 +348,52 @@ public class Spindexer {
                 spin(direction);
             }
         }
+    }
+
+    public void engageKicker() {
+        k.setPosition(engage);
+    }
+
+    public void disengageKicker() {
+        k.setPosition(disengage);
+    }
+
+    public void openTopGate() {
+        t.setPosition(topGateOpen);
+    }
+
+    public void closeTopGate() {
+        t.setPosition(topGateClosed);
+    }
+
+    public void openBottomGate() {
+        b.setPosition(bottomGateOpen);
+    }
+
+    public void closeBottomGate() {
+        b.setPosition(bottomGateClosed);
+    }
+
+    public void enableSort() {
+        sort = true;
+        autoRotate = true;
+    }
+
+    public void disableSort() {
+        sort = false;
+    }
+
+    public void enableAutoRotate() {
+        autoRotate = true;
+    }
+
+    public void disableAutoRotate() {
+        autoRotate = false;
+    }
+
+    public void enablePassthrough() {
+        sort = false;
+        autoRotate = false;
     }
 
     public void periodic() {

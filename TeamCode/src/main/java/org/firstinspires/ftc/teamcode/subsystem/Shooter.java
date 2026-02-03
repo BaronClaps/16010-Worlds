@@ -2,8 +2,6 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
-import com.pedropathing.ivy.CommandBuilder;
-import com.pedropathing.ivy.commands.Commands;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -60,10 +58,6 @@ public class Shooter {
         activated = !activated;
         if (!activated)
             setPower(0);
-    }
-
-    public CommandBuilder toggle() {
-        return Commands.instant(this::shooterToggle);
     }
 
     public void setTarget(double velocity) {

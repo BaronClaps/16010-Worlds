@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.auto;
+package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
@@ -6,10 +6,9 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 
-public class SaseSapte {
+public class Paths {
     private final Follower f;
 
     public Pose start = new Pose(33.5, 135.125, Math.toRadians(270));
@@ -30,7 +29,7 @@ public class SaseSapte {
 
     public Pose park = new Pose(36, 72, Math.toRadians(180));
 
-    public SaseSapte(Robot r) {
+    public Paths(Robot r) {
         this.f = r.f;
 
         if (r.a.equals(Alliance.RED)) {

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.*;
 import org.firstinspires.ftc.teamcode.util.Alliance;
+import org.firstinspires.ftc.teamcode.util.Pattern;
 
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class Robot {
     public final Turret t;
     public final Follower f;
     public Alliance a;
+    public static Pattern currentPattern = Pattern.PGP;
 
     private final List<LynxModule> hubs;
     private final Timer loop = new Timer();

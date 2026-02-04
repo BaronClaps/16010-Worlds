@@ -74,6 +74,10 @@ public class Turret {
         manualPower = power;
     }
 
+    public void automatic() {
+        manual = false;
+    }
+
     public void on() {
         on = true;
     }

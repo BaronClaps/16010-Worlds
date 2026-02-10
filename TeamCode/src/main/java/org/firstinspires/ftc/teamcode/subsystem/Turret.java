@@ -11,13 +11,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 @Config
 public class Turret {
     private double error = 0, power = 0, manualPower = 0;
-    public static double rpt = 0.0029919;
+    public static double rpt = 0.00866048974;
 
     public final DcMotorEx m;
     private PIDFController p, s; // pidf controller for turret
     private double t = 0;
-    public static double pidfSwitch = 30; // target for turret
-    public static double kp = 0.003, kf = 0.0, kd = 0.000, sp = .005, sf = 0, sd = 0.0001;
+    public static double pidfSwitch = Math.toRadians(5); // target for turret
+    public static double kp = 0.003, kf = 0.0, kd = 0.000, sp = .0005, sf = 0, sd = 0.001;
 
     public static boolean on = true, manual = false;
 
@@ -54,14 +54,15 @@ public class Turret {
             p.setCoefficients(new PIDFCoefficients(kp, 0, kd, kf));
             s.setCoefficients(new PIDFCoefficients(sp, 0, sd, sf));
             error = getTurretTarget() - getTurret();
-            if (Math.abs(error) > pidfSwitch) {
+//            if (Math.abs(error) > pidfSwitch) {
                 p.updateError(error);
                 p.updateFeedForwardInput(Math.signum(error));
                 power = p.run();
-            } else {
-                s.updateError(error);
-                power = s.run();
-            }
+//            } else {
+//                s.updateError(error);
+//                s.updateFeedForwardInput(Math.signum(error));
+//                power = s.run();
+//            }
 
             m.setPower(power);
         } else {

@@ -9,21 +9,21 @@ import com.pedropathing.util.Timer;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.CommandOpMode;
 
+import java.util.Arrays;
+
 import static org.firstinspires.ftc.teamcode.Robot.defaultPose;
+import static org.firstinspires.ftc.teamcode.subsystem.Spindexer.timeToShoot;
 
 @Config
 public class Tele extends CommandOpMode {
 
-
-
-    MultipleTelemetry multipleTelemetry;
-
     Robot r;
     final Alliance a;
 
-    public boolean shoot = false, manual = false, field = true;
+    public boolean shoot = false, manual = false, field = true, wasFull = false, shooting = false, all = false;
     public double intakeOn = 0, speed = 1;
-    public static double shootTarget = 1200;
+    private final Timer shootTimer = new Timer();
+    public static double shootTarget = 1700, hoodTarget = 0.5;
 
     public Tele(Alliance alliance) {
         a = alliance;
@@ -36,7 +36,7 @@ public class Tele extends CommandOpMode {
         r.t.setPowerZero();
         r.p.setPattern(Robot.currentPattern);
 
-        multipleTelemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
+//        multipleTelemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
     }
 
     @Override
@@ -52,7 +52,11 @@ public class Tele extends CommandOpMode {
         r.t.setPowerZero();
         r.f.startTeleopDrive();
         r.p.closeTopGate();
-        r.p.openBottomGate();
+        r.p.closeBottomGate();
+        r.p.disengageKicker();
+        r.p.enableAutoRotate();
+        r.p.disableSort();
+        r.s.setHood(.5);
     }
 
     @Override
@@ -94,7 +98,9 @@ public class Tele extends CommandOpMode {
 //                dist = r.getShootTarget().distanceFrom(r.f.getPose());
                 boolean close = r.f.getPose().getY() > 48;
 //                r.s.forDistance(dist, close);
-                r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
+                //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
+                r.s.setTarget(shootTarget);
+                r.s.setHood(hoodTarget);
                 r.t.face(r.getShootTarget(), r.f.getPose());
                 r.t.automatic();
             }
@@ -103,8 +109,41 @@ public class Tele extends CommandOpMode {
             r.t.off();
         }
 
-        if (gamepad1.aWasPressed())
+        if (gamepad1.aWasPressed() && shoot) {
+            shootTimer.resetTimer();
+            r.i.spinIn();
+            intakeOn = 1;
+            r.p.engageKicker();
+            r.p.openBottomGate();
             r.p.all();
+            shooting = true;
+            all = true;
+        }
+
+        if (gamepad1.yWasPressed()) {
+            shootTimer.resetTimer();
+            r.i.spinIn();
+            intakeOn = 1;
+            r.p.engageKicker();
+            r.p.openBottomGate();
+            r.p.all();
+            shooting = true;
+            all = true;
+        }
+
+        if (shootTimer.getElapsedTimeSeconds() > 1 && shooting && all) {
+            r.p.all();
+            all = false;
+        }
+
+        if (shootTimer.getElapsedTimeSeconds() > timeToShoot && shooting) {
+            shooting = false;
+            intakeOn = 1;
+            r.i.spinIn();
+            r.p.disengageKicker();
+            r.p.closeBottomGate();
+        }
+
 
         if (gamepad1.bWasPressed())
             shoot = !shoot;
@@ -131,7 +170,17 @@ public class Tele extends CommandOpMode {
         else
             speed = 1.0;
 
-        multipleTelemetry.addData("LoopTime Hz", r.getLoopTimeHz());
+        if (r.p.full() && !wasFull && !shooting) {
+            r.p.optimal();
+            r.p.engageKicker();
+        }
+
+        wasFull = r.p.full();
+
+        telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
+        telemetry.addData("Slots", Arrays.toString(r.p.slots));
+        telemetry.addData("Shooter Velocity", r.s.getVelocity());
+        telemetry.addLine("yaya");
 //        multipleTelemetry.addData("Abs X", Math.abs(r.getShootTarget().getX()-r.f.getPose().getX()));
 //        multipleTelemetry.addData("Abs Y", Math.abs(r.getShootTarget().getY()-r.f.getPose().getY()));
 //        multipleTelemetry.addData("Shoot Target", shootTarget);
@@ -151,7 +200,7 @@ public class Tele extends CommandOpMode {
 //        multipleTelemetry.addData("Manual Shooter + Turret", manual);
 //        multipleTelemetry.addData("Field Centric", field);
 //        multipleTelemetry.addData("Hold Position", hold);
-        multipleTelemetry.update();
+        telemetry.update();
     }
 
 

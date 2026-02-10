@@ -14,7 +14,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(10)
+            .mass(11)
             .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.3, 0.1211,0.0017011))
             .forwardZeroPowerAcceleration(-42.072)
             .lateralZeroPowerAcceleration(-67.58)
@@ -29,11 +29,16 @@ public class Constants {
             .useBrakeModeInTeleOp(true)
             .xVelocity(76.82)
             .yVelocity(61.54)
+            .leftFrontMotorName("lf")
+            .rightFrontMotorName("rf")
+            .leftRearMotorName("lb")
+            .rightRearMotorName("rb")
             .leftFrontMotorDirection(DcMotorSimple.Direction.REVERSE)
             .leftRearMotorDirection(DcMotorSimple.Direction.REVERSE)
             .rightFrontMotorDirection(DcMotorSimple.Direction.FORWARD)
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
     public static PinpointConstants pinpointConstants = new PinpointConstants()
+            .hardwareMapName("p")
             .forwardPodY(-5)
             .strafePodX(3)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)

@@ -5,6 +5,7 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import smile.interpolation.BilinearInterpolation;
 import smile.interpolation.Interpolation2D;
 
@@ -12,9 +13,11 @@ import smile.interpolation.Interpolation2D;
 
 public class Shooter {
     private DcMotorEx l, r;
+    private Servo h;
 
     private double t = 0;
-    public static double kS = 0.08, kV = 0.00039, kP = 0.01;
+    public static double kS = 0.08, kV = 0.00039, kP = 0.01, useRaw = 250;
+    // .22 to .78
 
     private boolean activated = true;
 
@@ -27,6 +30,7 @@ public class Shooter {
     };
     public static final Interpolation2D closeInterpolation = new BilinearInterpolation(xs, ys, closeVelocities);
     public Shooter(HardwareMap hardwareMap) {
+        h = hardwareMap.get(Servo.class, "h");
         l = hardwareMap.get(DcMotorEx.class, "sl");
         r = hardwareMap.get(DcMotorEx.class, "sr");
         l.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -37,12 +41,12 @@ public class Shooter {
     }
 
     public double getVelocity() {
-        return r.getVelocity();
+        return -l.getVelocity();
     }
 
     public void setPower(double p) {
-        l.setPower(-p);
-        r.setPower(-p);
+        l.setPower(p);
+        r.setPower(p);
     }
 
     public void off() {
@@ -66,7 +70,10 @@ public class Shooter {
 
     public void periodic() {
         if (activated)
-            setPower((kV * getTarget()) + (kP * (getTarget() - getVelocity())) + kS);
+            if (Math.abs(getTarget() - getVelocity()) > useRaw)
+                setPower(Math.signum(getTarget() - getVelocity()));
+                else
+                setPower((kV * getTarget()) + (kP * (getTarget() - getVelocity())) + kS);
     }
 
     public boolean atTarget() {
@@ -78,14 +85,16 @@ public class Shooter {
         double yDistance = Math.abs(target.getY()-current.getY());
 
         if (close)
-            setTarget(closeInterpolation.interpolate(xDistance, yDistance));
+            setTarget(closeInterpolation.interpolate(xDistance, yDistance) + 500);
         else
-            setTarget(1550);
+            setTarget(2000);
     }
 
     public double timeInAir() {
         return 1.0;
     }
+
+    public void setHood(double p) { h.setPosition(p);}
 
 }
 

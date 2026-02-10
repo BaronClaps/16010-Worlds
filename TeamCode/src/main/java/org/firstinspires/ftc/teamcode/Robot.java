@@ -148,7 +148,8 @@ public class Robot {
     public CommandBuilder intakePassthrough() {
         return sequential(
                 Commands.instant(() -> {
-                    p.enablePassthrough();
+                    p.disableAutoRotate();
+                    p.disableSort();
                     p.engageKicker();
                     p.closeTopGate();
                     p.openBottomGate();

@@ -94,13 +94,14 @@ public class Tele extends CommandOpMode {
             if (manual) {
                 r.t.manual(-gamepad1.right_trigger + gamepad1.left_trigger);
                 r.s.setTarget(shootTarget);
-            } else {
-//                dist = r.getShootTarget().distanceFrom(r.f.getPose());
-                boolean close = r.f.getPose().getY() > 48;
-//                r.s.forDistance(dist, close);
-                //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
-                r.s.setTarget(shootTarget);
                 r.s.setHood(hoodTarget);
+            } else {
+                double dist = r.getShootTarget().distanceFrom(r.f.getPose());
+//                boolean close = r.f.getPose().getY() > 48;
+                r.s.forDistance(dist);
+                //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
+//                r.s.setTarget(shootTarget);
+//                r.s.setHood(hoodTarget);
                 r.t.face(r.getShootTarget(), r.f.getPose());
                 r.t.automatic();
             }
@@ -128,15 +129,9 @@ public class Tele extends CommandOpMode {
             r.p.openBottomGate();
             r.p.all();
             shooting = true;
-            all = true;
         }
 
-        if (shootTimer.getElapsedTimeSeconds() > 1 && shooting && all) {
-            r.p.all();
-            all = false;
-        }
-
-        if (shootTimer.getElapsedTimeSeconds() > timeToShoot && shooting) {
+        if (shootTimer.getElapsedTimeSeconds() > timeToShoot + 0.3 && shooting) {
             shooting = false;
             intakeOn = 1;
             r.i.spinIn();
@@ -172,15 +167,22 @@ public class Tele extends CommandOpMode {
 
         if (r.p.full() && !wasFull && !shooting) {
             r.p.optimal();
-            r.p.engageKicker();
+            r.p.openBottomGate();
+            r.p.disengageKicker();
         }
+
+        if (gamepad1.rightStickButtonWasPressed())
+            r.p.spin(1);
+
+        if (gamepad1.leftStickButtonWasPressed())
+            r.p.spin(-1);
 
         wasFull = r.p.full();
 
         telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
         telemetry.addData("Slots", Arrays.toString(r.p.slots));
         telemetry.addData("Shooter Velocity", r.s.getVelocity());
-        telemetry.addLine("yaya");
+        telemetry.addData("Turret Error", r.t.getError());
 //        multipleTelemetry.addData("Abs X", Math.abs(r.getShootTarget().getX()-r.f.getPose().getX()));
 //        multipleTelemetry.addData("Abs Y", Math.abs(r.getShootTarget().getY()-r.f.getPose().getY()));
 //        multipleTelemetry.addData("Shoot Target", shootTarget);

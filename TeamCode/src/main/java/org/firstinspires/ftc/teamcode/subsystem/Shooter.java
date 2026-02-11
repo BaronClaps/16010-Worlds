@@ -6,8 +6,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.util.InterpLUT;
 import smile.interpolation.BilinearInterpolation;
 import smile.interpolation.Interpolation2D;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 @Config
 
@@ -28,6 +34,18 @@ public class Shooter {
             {1275, 1275, 1350},
             {1325, 1360, 1400}
     };
+
+    private static final List<Double> distances =
+            List.of(35.0, 40.0, 45.0, 50.0, 55.0, 80.0);
+
+    private static final List<Double> velocities =
+            List.of(1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1800.0);
+
+    private static final List<Double> hoods =
+            List.of(.5, .55, .6, .65, .7, .55);
+
+    public InterpLUT shooterILUT = new InterpLUT(distances, velocities);
+    public InterpLUT hoodILUT = new InterpLUT(distances, hoods);
     public static final Interpolation2D closeInterpolation = new BilinearInterpolation(xs, ys, closeVelocities);
     public Shooter(HardwareMap hardwareMap) {
         h = hardwareMap.get(Servo.class, "h");
@@ -88,6 +106,11 @@ public class Shooter {
             setTarget(closeInterpolation.interpolate(xDistance, yDistance) + 500);
         else
             setTarget(2000);
+    }
+
+    public void forDistance(double distance) {
+        setHood(hoodILUT.get(distance));
+        setTarget(shooterILUT.get(distance));
     }
 
     public double timeInAir() {

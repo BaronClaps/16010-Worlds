@@ -16,11 +16,11 @@ public class Spindexer {
 
     public static boolean sort = false, autoRotate = false, shooting = false;
     public static int checkInterval = 2;
-    public static double timeToSpin = 0.3, timeToShoot = 1, upperDistThres = 1.85, lowerDistThres = 1.5;
+    public static double timeToSpin = 0.3, timeToShoot = 1, upperDistThres = 1.8, lowerDistThres = 1.5, needToShoot = 3;
 
     public static double kEngaged = .85, kDisengaged = 1, bgOpen = 0.36, bgClosed = .5;
-    private final Timer spinTimer = new Timer(), shootTimer = new Timer();
-    private Servo right, k, bg; // Left/Kicker commented out as per original
+    private final Timer spinTimer = new Timer(), shootTimer = new Timer(), allTimer = new Timer();
+    private Servo right, left, k, bg; // Left/Kicker commented out as per original
     public final RevColorSensorV3 sensor;
 
     public enum Index {
@@ -48,6 +48,7 @@ public class Spindexer {
 
     public Spindexer(HardwareMap h) {
         right = h.get(Servo.class, "spr");
+        left = h.get(Servo.class, "spl");
         sensor = h.get(RevColorSensorV3.class, "c");
         k = h.get(Servo.class, "k");
         bg = h.get(Servo.class, "bg");
@@ -116,7 +117,9 @@ public class Spindexer {
 
     public void moveTo(int targetIndex) {
         currentIndex = Math.max(0, Math.min(targetIndex, THEORETICAL_POSITIONS - 1));
-        right.setPosition(Index.fromInt(currentIndex).get());
+        double pos = Index.fromInt(currentIndex).get();
+        right.setPosition(pos);
+        left.setPosition(pos);
     }
 
     public void spin(int steps) {
@@ -133,10 +136,8 @@ public class Spindexer {
         engageKicker();
         shooting = true;
         shootTimer.resetTimer();
-        for (int i = 0; i < PHYSICAL_SLOTS; i++) {
-            remove();
-            if (i < 2) spin(shootDirection);
-        }
+        allTimer.resetTimer();
+        needToShoot = 3;
     }
 
     // --- SUBSYSTEM TOOLS ---
@@ -222,6 +223,13 @@ public class Spindexer {
 
         if (shootTimer.getElapsedTimeSeconds() > timeToShoot) {
             shooting = false;
+        } else {
+            if (needToShoot > 0 && allTimer.getElapsedTimeSeconds() > timeToShoot/3) {
+                remove();
+                spin(shootDirection);
+                allTimer.resetTimer();
+                needToShoot--;
+            }
         }
 
         if (loops % checkInterval == 0 && !full() && !shooting) {

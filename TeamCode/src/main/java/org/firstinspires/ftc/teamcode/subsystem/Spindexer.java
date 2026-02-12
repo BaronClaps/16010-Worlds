@@ -16,7 +16,7 @@ public class Spindexer {
 
     public static boolean sort = false, autoRotate = false, shooting = false;
     public static int checkInterval = 2;
-    public static double timeToSpin = 0.3, timeToShoot = 1, upperDistThres = 1.8, lowerDistThres = 1.5, needToShoot = 3;
+    public static double timeToSpin = 0.3, timeToShoot = 0.7, upperDistThres = 1.8, lowerDistThres = 1.5, needToShoot = 3;
 
     public static double kEngaged = .85, kDisengaged = 1, bgOpen = 0.36, bgClosed = .5;
     private final Timer spinTimer = new Timer(), shootTimer = new Timer(), allTimer = new Timer();
@@ -43,7 +43,7 @@ public class Spindexer {
     public Artifact[] slots = new Artifact[PHYSICAL_SLOTS];
     public int currentIndex = 0;
     private Pattern currentPattern = null;
-    private int shootDirection = 1;
+    public int shootDirection = 1;
     private int loops;
 
     public Spindexer(HardwareMap h) {
@@ -138,6 +138,16 @@ public class Spindexer {
         shootTimer.resetTimer();
         allTimer.resetTimer();
         needToShoot = 3;
+    }
+
+    public void all(double needToShoot) {
+        openTopGate();
+        openBottomGate();
+        engageKicker();
+        shooting = true;
+        shootTimer.resetTimer();
+        allTimer.resetTimer();
+        Spindexer.needToShoot = needToShoot;
     }
 
     // --- SUBSYSTEM TOOLS ---

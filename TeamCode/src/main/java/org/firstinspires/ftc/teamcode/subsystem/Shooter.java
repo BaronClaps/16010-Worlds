@@ -36,22 +36,26 @@ public class Shooter {
     };
 
     private static final List<Double> distances =
-            List.of(35.0, 40.0, 45.0, 50.0, 55.0, 80.0);
+            List.of(35.0, 40.0, 45.0, 50.0, 55.0, 80.0, 120.0);
 
     private static final List<Double> velocities =
-            List.of(1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1800.0);
+            List.of(1700.0, 1750.0, 1800.0, 1850.0, 1900.0, 1800.0, 2000.0);
 
     private static final List<Double> hoods =
-            List.of(.5, .55, .6, .65, .7, .55);
+            List.of(.5, .55, .6, .65, .7, .55, .65);
 
-    public InterpLUT shooterILUT = new InterpLUT(distances, velocities);
-    public InterpLUT hoodILUT = new InterpLUT(distances, hoods);
+    public InterpLUT shooterILUT;
+    public InterpLUT hoodILUT;
     public static final Interpolation2D closeInterpolation = new BilinearInterpolation(xs, ys, closeVelocities);
+
     public Shooter(HardwareMap hardwareMap) {
         h = hardwareMap.get(Servo.class, "h");
         l = hardwareMap.get(DcMotorEx.class, "sl");
         r = hardwareMap.get(DcMotorEx.class, "sr");
         l.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        shooterILUT = new InterpLUT(distances, velocities);
+        hoodILUT = new InterpLUT(distances, hoods);
     }
 
     public double getTarget() {
@@ -90,17 +94,17 @@ public class Shooter {
         if (activated)
             if (Math.abs(getTarget() - getVelocity()) > useRaw)
                 setPower(Math.signum(getTarget() - getVelocity()));
-                else
+            else
                 setPower((kV * getTarget()) + (kP * (getTarget() - getVelocity())) + kS);
     }
 
     public boolean atTarget() {
-        return Math.abs((getTarget()- getVelocity())) < 50;
+        return Math.abs((getTarget() - getVelocity())) < 50;
     }
 
     public void forPose(Pose current, Pose target, boolean close) {
-        double xDistance = Math.abs(target.getX()-current.getX());
-        double yDistance = Math.abs(target.getY()-current.getY());
+        double xDistance = Math.abs(target.getX() - current.getX());
+        double yDistance = Math.abs(target.getY() - current.getY());
 
         if (close)
             setTarget(closeInterpolation.interpolate(xDistance, yDistance) + 500);
@@ -108,16 +112,44 @@ public class Shooter {
             setTarget(2000);
     }
 
-    public void forDistance(double distance) {
-        setHood(hoodILUT.get(distance));
-        setTarget(shooterILUT.get(distance));
+    public void forDistance(double distance, boolean close) {
+        if (!close) {
+            setTarget(2000);
+            setHood(.6);
+        } else {
+//            if (distance < 120 && distance > 35) {
+//                setHood(hoodILUT.get(distance));
+//                setTarget(shooterILUT.get(distance));
+//            } else {
+            //setTarget(953.09995 * Math.pow(distance, 0.166662));
+            setTarget((0.00255451 * Math.pow(distance, 3)) - (0.557218 * Math.pow(distance, 2)) + (41.91515 * distance) + 805.00963);
+            double hood = (-0.000327755 * Math.pow(distance, 2)) + (0.0391562 * distance) - 0.482427;
+
+            if (hood >= .77)
+                hood = .77;
+
+            if (hood <= .22)
+                hood = .22;
+
+            setHood(hood);
+//            }
+
+        }
     }
 
     public double timeInAir() {
         return 1.0;
     }
 
-    public void setHood(double p) { h.setPosition(p);}
+    public void setHood(double p) {
+        h.setPosition(p);
+    }
+
+    public void close() {
+        setTarget(1750);
+        setHood(0.5);
+        on();
+    }
 
 }
 

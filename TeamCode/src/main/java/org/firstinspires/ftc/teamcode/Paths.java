@@ -21,11 +21,11 @@ public class Paths {
     public Pose spike1Control1 = new Pose(48, 79);
     public Pose spike1Control2 = spike1.withX(39.5);
     
-    public Pose spike2 = new Pose(8, 60, Math.toRadians(180));
+    public Pose spike2 = new Pose(10, 60, Math.toRadians(180));
     public Pose spike2Control1 = new Pose(45, 80);
     public Pose spike2Control2 = spike2.withX(65);
 
-    public Pose gateIntake = new Pose(11, 58.75, Math.toRadians(135));
+    public Pose gateIntake = new Pose(10, 58.75+1, Math.toRadians(110));
     public Pose gateControl1 = new Pose(48, 79);
     public Pose gateControl2 = new Pose(23.25, 47);
 
@@ -63,12 +63,7 @@ public class Paths {
                                 score
                         )
                 )
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0.0, 0.7, HeadingInterpolator.tangent),
-                                HeadingInterpolator.PiecewiseNode.linear(0.7, 1, start.getHeading(), score.getHeading())
-                        )
-                )
+                .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
                 .build();
         return PedroCommands.follow(this.f, path);
     }
@@ -82,6 +77,7 @@ public class Paths {
                                 spike1
                         )
                 ).setTangentHeadingInterpolation()
+                .setNoDeceleration()
                 .build();
         return PedroCommands.follow(this.f, path);
     }
@@ -94,7 +90,7 @@ public class Paths {
                                 spike1Control1,
                                 score
                         )
-                ).setTangentHeadingInterpolation()
+                ).setLinearHeadingInterpolation(spike1.getHeading(), score.getHeading())
                 .setReversed()
                 .build();
         return PedroCommands.follow(this.f, path);
@@ -109,6 +105,7 @@ public class Paths {
                                 spike2
                         )
                 ).setTangentHeadingInterpolation()
+                .setNoDeceleration()
                 .build();
         return PedroCommands.follow(this.f, path);
     }
@@ -121,7 +118,7 @@ public class Paths {
                                 spike2Control1,
                                 score
                         )
-                ).setTangentHeadingInterpolation()
+                ).setLinearHeadingInterpolation(spike2.getHeading(), score.getHeading())
                 .setReversed()
                 .build();
         return PedroCommands.follow(this.f, path);
@@ -135,7 +132,7 @@ public class Paths {
                                 gateControl2,
                                 gateIntake
                         )
-                ).setTangentHeadingInterpolation()
+                ).setLinearHeadingInterpolation(score.getHeading(), gateIntake.getHeading())
                 .build();
         return PedroCommands.follow(this.f, path);
     }
@@ -148,7 +145,7 @@ public class Paths {
                                 gateControl1,
                                 score
                         )
-                ).setTangentHeadingInterpolation()
+                ).setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading())
                 .setReversed()
                 .build();
         return PedroCommands.follow(this.f, path);

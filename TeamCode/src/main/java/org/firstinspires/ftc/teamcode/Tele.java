@@ -6,6 +6,7 @@ import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.geometry.BezierPoint;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
+import org.firstinspires.ftc.teamcode.subsystem.Spindexer;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.CommandOpMode;
 
@@ -96,9 +97,9 @@ public class Tele extends CommandOpMode {
                 r.s.setTarget(shootTarget);
                 r.s.setHood(hoodTarget);
             } else {
-                double dist = r.getShootTarget().distanceFrom(r.f.getPose());
-//                boolean close = r.f.getPose().getY() > 48;
-                r.s.forDistance(dist);
+                double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 10;
+                boolean close = r.f.getPose().getY() > 48;
+                r.s.forDistance(dist, close);
                 //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
 //                r.s.setTarget(shootTarget);
 //                r.s.setHood(hoodTarget);
@@ -117,6 +118,7 @@ public class Tele extends CommandOpMode {
             r.p.engageKicker();
             r.p.openBottomGate();
             r.p.all();
+            r.p.shootDirection = r.p.currentIndex > 2 ? -1: 1;
             shooting = true;
             all = true;
         }
@@ -128,6 +130,7 @@ public class Tele extends CommandOpMode {
             r.p.engageKicker();
             r.p.openBottomGate();
             r.p.all();
+            r.p.shootDirection = r.p.currentIndex > 2 ? -1: 1;
             shooting = true;
         }
 
@@ -167,6 +170,7 @@ public class Tele extends CommandOpMode {
 
         if (r.p.full() && !wasFull && !shooting) {
             r.p.optimal();
+           // r.p.moveTo(2);
             r.p.openBottomGate();
             r.p.disengageKicker();
         }
@@ -183,6 +187,8 @@ public class Tele extends CommandOpMode {
         telemetry.addData("Slots", Arrays.toString(r.p.slots));
         telemetry.addData("Shooter Velocity", r.s.getVelocity());
         telemetry.addData("Turret Error", r.t.getError());
+        telemetry.addData("Pose", r.f.getPose());
+        telemetry.addData("Target", r.getShootTarget());
 //        multipleTelemetry.addData("Abs X", Math.abs(r.getShootTarget().getX()-r.f.getPose().getX()));
 //        multipleTelemetry.addData("Abs Y", Math.abs(r.getShootTarget().getY()-r.f.getPose().getY()));
 //        multipleTelemetry.addData("Shoot Target", shootTarget);

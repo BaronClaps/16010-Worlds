@@ -24,6 +24,13 @@ public class TurretTest extends OpMode {
         t.automatic();
         t.on();
         t.setYaw(angle);
+        telemetry.addData("Turret Angle", t.getYaw());
+        telemetry.addData("Error", t.getError());
+        telemetry.addData("Turret Target", t.getTurretTarget());
+        telemetry.addData("Current Position Ticks", t.getTurret());
+        telemetry.addData("Power", t.power);
+        telemetry.addLine("wow");
+        telemetry.update();
         t.periodic();
 //        if (gamepad1.a) {
 //            t.setPower(1);

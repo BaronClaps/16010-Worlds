@@ -91,18 +91,21 @@ public class Robot {
         return shootTarget;
     }
 
-    public CommandBuilder shootSpindex() {
+    public CommandBuilder shootSpindexUnsorted() {
         return sequential(
                 i.in(),
+                Commands.instant(s::close),
                 Commands.waitUntil(s::atTarget),
                 i.in(),
                 Commands.instant(() -> {
+                            p.shootDirection = p.currentIndex > 3 ? -1: 1;
+                            p.openBottomGate();
                             p.openTopGate();
                             p.engageKicker();
-                            p.all();
+                            p.all(4);
                         }
                 ),
-                Commands.wait(350.0)
+                Commands.wait(1500.0)
 
         );
     }
@@ -140,8 +143,8 @@ public class Robot {
                     p.openTopGate();
                     p.closeBottomGate();
                 }),
-                i.in(),
-                Commands.wait(250.0)
+                i.in()//,
+//                Commands.wait(250.0)
         );
     }
 

@@ -14,12 +14,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
-            .mass(11)
-            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.3, 0.1211,0.0017011))
-            .forwardZeroPowerAcceleration(-42.072)
-            .lateralZeroPowerAcceleration(-67.58)
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(1, 0, .01, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(1, 0, 0.01, 0))
+            .mass(10.866)
+            .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.25, 0.10748,0.0021386))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.5, 0, .01, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.015, 0))
             .translationalPIDFCoefficients(new PIDFCoefficients(0.015,0,0.003,0))
             .useSecondaryDrivePIDF(true)
             .useSecondaryHeadingPIDF(true)
@@ -27,8 +25,8 @@ public class Constants {
 
     public static MecanumConstants mecanumConstants = new MecanumConstants()
             .useBrakeModeInTeleOp(true)
-            .xVelocity(76.82)
-            .yVelocity(61.54)
+            .xVelocity(84.321)
+            .yVelocity(60.995)
             .leftFrontMotorName("lf")
             .rightFrontMotorName("rf")
             .leftRearMotorName("lb")
@@ -39,10 +37,10 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
     public static PinpointConstants pinpointConstants = new PinpointConstants()
             .hardwareMapName("p")
-            .forwardPodY(-5)
-            .strafePodX(3)
-            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
-            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
+            .forwardPodY(-5.1449)
+            .strafePodX(3.4966)
+            .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED)
+            .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD);
 
     public static PathConstraints pathConstraints = new PathConstraints(0.95, 100, 1, 1);
 

@@ -43,7 +43,9 @@ public class Auto extends CommandOpMode {
         r.p.enableAutoRotate();
         r.p.disableSort();
         r.p.moveTo(2);
+    }
 
+        public void start() {
         schedule(
                Commands.infinite(() -> {
                    r.periodic();
@@ -55,6 +57,7 @@ public class Auto extends CommandOpMode {
 //                r.s.setHood(hoodTarget);
 
                  //  r.t.face(r.getShootTarget(), r.f.getPose());
+                   r.t.face(r.getShootTarget(), p.score);
                    r.t.automatic();
 
                    telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
@@ -66,9 +69,7 @@ public class Auto extends CommandOpMode {
                    telemetry.update();
                }),
                 Groups.sequential(
-                        Commands.instant(() -> r.t.face(r.getShootTarget(), p.score)),
                         p.preload(),
-                    //    Commands.instant(() -> r.t.face(r.getShootTarget(), r.f.getPose())),
                         r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike1()
@@ -84,7 +85,6 @@ public class Auto extends CommandOpMode {
                         r.i.in(),
                         p.scoreHitGate(),
                         r.shootSpindexUnsorted(),
-                //        Commands.instant(() -> r.t.face(r.getShootTarget(), r.f.getPose())),
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike2()
                                 .raceWith(Commands.wait(3000.0)),
@@ -95,17 +95,14 @@ public class Auto extends CommandOpMode {
                                 .raceWith(Commands.wait(3000.0)),
                         p.scoreSpike3(),
                         r.shootSpindexUnsorted(),
-               //         Commands.instant(() -> r.t.face(r.getShootTarget(), r.f.getPose())),
                         r.intakeSpindexUnsorted(),
-                        p.intakeSpike2()
+                        p.intakeCorner()
                                 .raceWith(Commands.wait(6000.0)),
-                        p.scoreSpike2(),
+                        p.scoreCorner(),
                         r.shootSpindexUnsorted(),
                         p.park(),
                         Commands.instant(r.s::off),
                         r.i.off()
-                ).with(
-
                 )
         );
     }

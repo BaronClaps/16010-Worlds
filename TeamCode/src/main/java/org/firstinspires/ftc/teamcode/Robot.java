@@ -95,6 +95,7 @@ public class Robot {
     public CommandBuilder shootSpindexUnsorted() {
         return sequential(
                 i.in(),
+                Commands.instant(() -> p.moveTo(1)),
                 Commands.instant(s::close),
                 Commands.instant(t::on),
                 Commands.waitUntil(s::atTarget),

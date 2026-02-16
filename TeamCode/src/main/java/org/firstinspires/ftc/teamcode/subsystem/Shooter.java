@@ -2,6 +2,8 @@ package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.Matrix;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -157,6 +159,83 @@ public class Shooter {
         setTarget(1650);
         setHood(0.55);
         on();
+    }
+
+    public static Pose getProjectedPoseWithConstantVelocity(
+            Pose initialPose,
+            double time,
+            Pose velocity
+    ) {
+        double vx = velocity.getX();
+        double vy = velocity.getY();
+        double omega = velocity.getHeading();
+
+        double theta0 = initialPose.getHeading();
+
+        // Pure translation (limit ω → 0)
+        if (Math.abs(omega) < 1e-9) {
+            double dx = (vx * Math.cos(theta0) - vy * Math.sin(theta0)) * time;
+            double dy = (vx * Math.sin(theta0) + vy * Math.cos(theta0)) * time;
+
+            return new Pose(
+                    initialPose.getX() + dx,
+                    initialPose.getY() + dy,
+                    theta0
+            );
+        }
+
+        double theta = omega * time;
+        double sinT = Math.sin(theta);
+        double cosT = Math.cos(theta);
+
+        // V(theta) * v   (body → local frame)
+        double dxLocal =
+                ( sinT * vx - (1 - cosT) * vy ) / omega;
+        double dyLocal =
+                ( (1 - cosT) * vx + sinT * vy ) / omega;
+
+        // Rotate into world frame
+        double cos0 = Math.cos(theta0);
+        double sin0 = Math.sin(theta0);
+
+        double dxWorld = cos0 * dxLocal - sin0 * dyLocal;
+        double dyWorld = sin0 * dxLocal + cos0 * dyLocal;
+
+        return new Pose(
+                initialPose.getX() + dxWorld,
+                initialPose.getY() + dyWorld,
+                theta0 + theta
+        );
+    }
+
+    private Pose iterateOffset(Pose targetPos, Pose currentPos, Pose fieldVelocity) {
+        Matrix inverseRotation = rotMatrix(currentPos.getHeading()).transposed();
+        Vector velVector = fieldVelocity.getAsVector();
+        Vector robotLinearVel = velVector.transform(inverseRotation);
+        Pose robotVelPose = new Pose(robotLinearVel.getXComponent(), robotLinearVel.getYComponent(), fieldVelocity.getHeading());
+
+        Pose currentIteration = targetPos.minus(currentPos);
+        for (int i = 0; i < 10; i++) {
+//            Pose disp = currentIteration.minus(currentPos);
+            double shotTime = 1; //airTime.interpolate(currentIteration.getX(), currentIteration.getY());
+            currentIteration = targetPos.minus(getProjectedPoseWithConstantVelocity(
+                    currentPos,
+                    shotTime,
+                    robotVelPose
+            ));
+        }
+
+        return currentIteration;
+    }
+
+    public static Matrix rotMatrix(double angle) {
+        double cos = Math.cos(angle);
+        double sin = Math.sin(angle);
+        double[][] vals = new double[][] {
+                {cos, -sin},
+                {-sin, cos}
+        };
+        return new Matrix(vals);
     }
 
 }

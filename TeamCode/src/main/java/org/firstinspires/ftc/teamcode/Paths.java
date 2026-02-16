@@ -230,7 +230,7 @@ public class Paths {
                                 corner
                         )
                 )
-                .setLinearHeadingInterpolation(spike1.getHeading(), gateHit.getHeading())
+                .setLinearHeadingInterpolation(score.getHeading(), corner.getHeading())
                 .build();
         return PedroCommands.follow(this.f, path);
     }

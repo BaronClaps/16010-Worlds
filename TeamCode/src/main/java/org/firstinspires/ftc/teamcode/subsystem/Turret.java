@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PIDFController;
 import com.pedropathing.geometry.Pose;
+import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -19,7 +20,7 @@ public class Turret {
     private final PIDFController p, s; // pidf controller for turret
     private double t = 0;
     public static double pidfSwitch = 15; // target for turret
-    public static double kp = 1.5, kf = 0.05, kd = 0.005, sp = 0.2, sf = 0.03, sd = 0.001;
+    public static double kp = 1, kf = 0.05, kd = 0.005, sp = 0.2, sf = 0.03, sd = 0.001;
 
     public static boolean on = true, manual = false;
 
@@ -109,6 +110,7 @@ public class Turret {
     public void face(Pose targetPose, Pose robotPose) {
         double angleToTargetFromCenter = Math.atan2(targetPose.getY() - robotPose.getY(), targetPose.getX() - robotPose.getX());
         double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.getHeading());
+        robotAngleDiff = MathFunctions.clamp(robotAngleDiff, -(Math.PI)/2, Math.PI/2);
         setYaw(robotAngleDiff);
     }
 

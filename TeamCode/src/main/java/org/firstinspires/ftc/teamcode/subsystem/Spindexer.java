@@ -16,7 +16,7 @@ public class Spindexer {
 
     public static boolean sort = false, autoRotate = false, shooting = false;
     public static int checkInterval = 2;
-    public static double timeToSpin = 0.3, timeToShoot = 0.7, upperDistThres = 1.6, lowerDistThres = 1.4, needToShoot = -1;
+    public static double timeToSpin = 0.3, timeToShoot = 1.25, upperDistThres = 1.6, lowerDistThres = 1.4, needToShoot = -1;
 
     public static double kEngaged = .85, kDisengaged = 1, bgOpen = 0.36, bgClosed = .5, tgOpen = .575, tgClosed = .675;
     public double dist;

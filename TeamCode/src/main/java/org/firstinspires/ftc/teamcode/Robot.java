@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.*;
 import org.firstinspires.ftc.teamcode.util.Alliance;
+import org.firstinspires.ftc.teamcode.util.BaronPose;
 import org.firstinspires.ftc.teamcode.util.Pattern;
 
 import java.util.List;
@@ -54,7 +55,7 @@ public class Robot {
     }
 
     public void periodic() {
-        setShootTarget();
+       // setShootTarget();
 
 //        if (loop.getElapsedTime() % 10 == 0) {
 //            hub.clearBulkCache();
@@ -84,7 +85,7 @@ public class Robot {
         if (a == Alliance.BLUE && shootTarget.getX() != 2)
             shootTarget = new Pose(2, 144 - 2, 0);
         else if (a == Alliance.RED && shootTarget.getX() != (144 - 2))
-            shootTarget = shootTarget.mirror();
+            shootTarget = BaronPose.mirror(new Pose(2, 144 - 2, 0));
     }
 
     public Pose getShootTarget() {
@@ -95,10 +96,11 @@ public class Robot {
         return sequential(
                 i.in(),
                 Commands.instant(s::close),
+                Commands.instant(t::on),
                 Commands.waitUntil(s::atTarget),
                 i.in(),
                 Commands.instant(() -> {
-                            p.shootDirection = p.currentIndex > 3 ? -1: 1;
+                            p.shootDirection = p.currentIndex >= 3 ? -1: 1;
                             p.openBottomGate();
                             p.openTopGate();
                             p.engageKicker();
@@ -137,10 +139,11 @@ public class Robot {
     public CommandBuilder intakeSpindexUnsorted() {
         return sequential(
                 Commands.instant(() -> {
+                    t.off();
                     p.disableSort();
                     p.enableAutoRotate();
                     p.disengageKicker();
-                    p.openTopGate();
+                    p.closeTopGate();
                     p.closeBottomGate();
                 }),
                 i.in()//,

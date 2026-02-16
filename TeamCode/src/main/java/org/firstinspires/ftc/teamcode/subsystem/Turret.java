@@ -18,8 +18,8 @@ public class Turret {
     public final DcMotorEx m;
     private final PIDFController p, s; // pidf controller for turret
     private double t = 0;
-    public static double pidfSwitch = 25; // target for turret
-    public static double kp = 0.5, kf = 0.05, kd = 0.003, sp = .001, sf = 0.05, sd = 0.001;
+    public static double pidfSwitch = 15; // target for turret
+    public static double kp = 1.5, kf = 0.05, kd = 0.005, sp = 0.2, sf = 0.03, sd = 0.001;
 
     public static boolean on = true, manual = false;
 
@@ -60,17 +60,17 @@ public class Turret {
             error = getTurretTarget() - getTurret();
             double errorInRadians = error * rpt;
 
-//            if (Math.abs(error) > pidfSwitch) {
+            if (Math.abs(error) > pidfSwitch) {
                 p.updateError(errorInRadians);
                 p.updateFeedForwardInput(Math.signum(errorInRadians));
                 power = p.run();
                 m.setPower(power);
-//            } else {
-//                s.updateError(errorInRadians);
-//                s.updateFeedForwardInput(Math.signum(errorInRadians));
-//                power = s.run();
-//                m.setPower(power);
-//            }
+            } else {
+                s.updateError(errorInRadians);
+                s.updateFeedForwardInput(Math.signum(errorInRadians));
+                power = s.run();
+                m.setPower(power);
+            }
         } else {
             m.setPower(0);
         }

@@ -114,25 +114,33 @@ public class Shooter {
 
     public void forDistance(double distance, boolean close) {
         if (!close) {
-            setTarget(2000);
-            setHood(.6);
+            setTarget(2100);
+            setHood(.5);
         } else {
 //            if (distance < 120 && distance > 35) {
 //                setHood(hoodILUT.get(distance));
 //                setTarget(shooterILUT.get(distance));
 //            } else {
             //setTarget(953.09995 * Math.pow(distance, 0.166662));
-            setTarget((0.00255451 * Math.pow(distance, 3)) - (0.557218 * Math.pow(distance, 2)) + (41.91515 * distance) + 805.00963);
-            double hood = (-0.000327755 * Math.pow(distance, 2)) + (0.0391562 * distance) - 0.482427;
-
-            if (hood >= .77)
-                hood = .77;
-
-            if (hood <= .22)
-                hood = .22;
-
-            setHood(hood);
+            //setTarget((0.00255451 * Math.pow(distance, 3)) - (0.557218 * Math.pow(distance, 2)) + (41.91515 * distance) + 805.00963);
+//            double hood = (-0.000327755 * Math.pow(distance, 2)) + (0.0391562 * distance) - 0.482427;
+//
+//            if (hood >= .77)
+//                hood = .77;
+//
+//            if (hood <= .22)
+//                hood = .22;
+//
+//            setHood(hood);
 //            }
+
+            if (distance > 90) {
+                setHood(.5);
+                setTarget(1800);
+            }
+
+            setHood(.55);
+            setTarget(1650);
 
         }
     }
@@ -146,8 +154,8 @@ public class Shooter {
     }
 
     public void close() {
-        setTarget(1750);
-        setHood(0.5);
+        setTarget(1650);
+        setHood(0.55);
         on();
     }
 

@@ -1,26 +1,29 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
+import org.firstinspires.ftc.teamcode.subsystem.Spindexer;
 
-@TeleOp
+@TeleOp(group="Tests")
 @Config
 public class ShootTest extends OpMode {
     Shooter s;
     Intake i;
-    public static double ipower = 1, hood = .5, target = 1200;
+    Spindexer sp;
+    public static double ipower = 1, hood = .5, target = 1650;
 
 
     @Override
     public void init() {
         s = new Shooter(hardwareMap);
         i = new Intake(hardwareMap);
+        sp = new Spindexer(hardwareMap);
         s.off();
+        sp.moveTo(2);
+        sp.engageKicker();
     }
 
     @Override
@@ -36,7 +39,7 @@ public class ShootTest extends OpMode {
 
     public void start() {
         s.on();
-        s.setTarget(1700);
+        s.setTarget(1650);
     }
 
     @Override

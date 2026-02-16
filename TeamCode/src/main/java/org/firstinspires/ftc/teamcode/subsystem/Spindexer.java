@@ -16,11 +16,13 @@ public class Spindexer {
 
     public static boolean sort = false, autoRotate = false, shooting = false;
     public static int checkInterval = 2;
-    public static double timeToSpin = 0.3, timeToShoot = 0.7, upperDistThres = 1.8, lowerDistThres = 1.5, needToShoot = 3;
+    public static double timeToSpin = 0.3, timeToShoot = 0.7, upperDistThres = 1.6, lowerDistThres = 1.4, needToShoot = -1;
 
-    public static double kEngaged = .85, kDisengaged = 1, bgOpen = 0.36, bgClosed = .5;
+    public static double kEngaged = .85, kDisengaged = 1, bgOpen = 0.36, bgClosed = .5, tgOpen = .575, tgClosed = .675;
+    public double dist;
+    public Timer done = new Timer();
     private final Timer spinTimer = new Timer(), shootTimer = new Timer(), allTimer = new Timer();
-    private Servo right, left, k, bg; // Left/Kicker commented out as per original
+    private Servo right, left, k, bg, tg; // Left/Kicker commented out as per original
     public final RevColorSensorV3 sensor;
 
     public enum Index {
@@ -41,7 +43,7 @@ public class Spindexer {
     }
 
     public Artifact[] slots = new Artifact[PHYSICAL_SLOTS];
-    public int currentIndex = 0;
+    public int currentIndex;
     private Pattern currentPattern = null;
     public int shootDirection = 1;
     private int loops;
@@ -52,7 +54,9 @@ public class Spindexer {
         sensor = h.get(RevColorSensorV3.class, "c");
         k = h.get(Servo.class, "k");
         bg = h.get(Servo.class, "bg");
-        reset();
+        tg = h.get(Servo.class, "tg");
+
+        slots = new Artifact[PHYSICAL_SLOTS];
     }
 
     // --- LOGIC ---
@@ -126,10 +130,6 @@ public class Spindexer {
         moveTo(currentIndex + steps);
     }
 
-    /**
-     * NOTE: This loop runs instantly. To see it move, you must call this
-     * in an OpMode with sleep() or use a state machine in periodic().
-     */
     public void all() {
         openTopGate();
         openBottomGate();
@@ -223,18 +223,18 @@ public class Spindexer {
 
     public void reset() {
         slots = new Artifact[PHYSICAL_SLOTS];
-        currentIndex = 0;
+        currentIndex = 2;
         moveTo(2);
     }
 
     public void periodic() {
-        if (!autoRotate) return;
         loops++;
 
-        if (shootTimer.getElapsedTimeSeconds() > timeToShoot) {
+        if (shootTimer.getElapsedTimeSeconds() > timeToShoot && shooting) {
             shooting = false;
+            done.resetTimer();
         } else {
-            if (needToShoot > 0 && allTimer.getElapsedTimeSeconds() > timeToShoot/3) {
+            if (needToShoot > 0 && allTimer.getElapsedTimeSeconds() > timeToShoot/4) {
                 remove();
                 spin(shootDirection);
                 allTimer.resetTimer();
@@ -242,9 +242,11 @@ public class Spindexer {
             }
         }
 
+        if (!autoRotate) return;
+
         if (loops % checkInterval == 0 && !full() && !shooting) {
             if (spinTimer.getElapsedTimeSeconds() >= timeToSpin) {
-                double dist = sensor.getDistance(DistanceUnit.INCH);
+                dist = sensor.getDistance(DistanceUnit.INCH);
                 if (dist < upperDistThres && dist > lowerDistThres) {
                     add(sort ? getSimpleColor() : Artifact.UNIDENTIFIED);
                     if (!full()) empty();
@@ -290,11 +292,11 @@ public class Spindexer {
     }
 
     public void openTopGate() {
-        //t.setPosition(topGateOpen);
+        tg.setPosition(tgOpen);
     }
 
     public void closeTopGate() {
-        //t.setPosition(topGateClosed);
+        tg.setPosition(tgClosed);
     }
 
     public void openBottomGate() {

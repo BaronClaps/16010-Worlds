@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -8,9 +8,7 @@ import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Spindexer;
 import org.firstinspires.ftc.teamcode.util.Pattern;
 
-import java.util.Arrays;
-
-@TeleOp
+@TeleOp(group="Tests")
 @Config
 public class SpindexTest extends OpMode {
     Spindexer s;

@@ -70,7 +70,7 @@ public class Auto extends CommandOpMode {
                }),
                 Groups.sequential(
                         p.preload(),
-                        r.shootSpindexUnsorted(),
+                        r.shootPassthrough(),
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike1()
                                 .raceWith(Commands.wait(3000.0)),
@@ -80,8 +80,9 @@ public class Auto extends CommandOpMode {
                                                 Commands.wait(500.0)
                                                         .then(
                                                                 r.i.off())),
-                                Commands.wait(3000.0)),
-                        Commands.wait(1000.0),
+                                Commands.wait(3000.0)
+                        ),
+                       // Commands.wait(),
                         r.i.in(),
                         p.scoreHitGate(),
                         r.shootSpindexUnsorted(),

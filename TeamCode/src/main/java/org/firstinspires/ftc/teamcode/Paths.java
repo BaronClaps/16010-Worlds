@@ -37,8 +37,8 @@ public class Paths {
     public Pose gateControl1 = new Pose(48, 79);
     public Pose gateControl2 = new Pose(23.25, 47);
 
-    public Pose cornerControl = new Pose(0, 30);
-    public Pose corner = new Pose(9, 9, Math.toRadians(270));
+    public Pose cornerControl = new Pose(10, 30);
+    public Pose corner = new Pose(11, 11, Math.toRadians(270));
 
     public Pose park = new Pose(36, 72, Math.toRadians(180));
 
@@ -230,7 +230,7 @@ public class Paths {
                                 corner
                         )
                 )
-                .setLinearHeadingInterpolation(score.getHeading(), corner.getHeading())
+                .setLinearHeadingInterpolation(score.getHeading(), corner.getHeading(), 0.5)
                 .build();
         return PedroCommands.follow(this.f, path);
     }

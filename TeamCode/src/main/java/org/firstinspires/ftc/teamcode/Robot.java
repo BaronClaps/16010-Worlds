@@ -99,6 +99,7 @@ public class Robot {
                 Commands.instant(s::close),
                 Commands.instant(t::on),
                 Commands.waitUntil(s::atTarget),
+                Commands.waitUntil(t::isReady),
                 i.in(),
                 Commands.instant(() -> {
                             p.shootDirection = p.currentIndex >= 3 ? -1: 1;

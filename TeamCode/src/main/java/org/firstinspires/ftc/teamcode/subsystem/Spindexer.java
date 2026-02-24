@@ -16,9 +16,9 @@ public class Spindexer {
 
     public static boolean sort = false, autoRotate = false, shooting = false;
     public static int checkInterval = 2;
-    public static double timeToSpin = 0.3, timeToShoot = 1.25, upperDistThres = 1.6, lowerDistThres = 1.4, needToShoot = -1;
+    public static double timeToSpin = 0.3, timeToShoot = 1.25, upperDistThres = 1.45, lowerDistThres = 1.35, needToShoot = -1;
 
-    public static double kEngaged = .85, kDisengaged = 1, bgOpen = 0.36, bgClosed = .5, tgOpen = .575, tgClosed = .675;
+    public static double kEngaged = .85, kDisengaged = 1, bgOpen = 0.36, bgClosed = .5, tgOpen = .575, tgClosed = .725;
     public double dist;
     public Timer done = new Timer();
     private final Timer spinTimer = new Timer(), shootTimer = new Timer(), allTimer = new Timer();

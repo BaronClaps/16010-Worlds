@@ -1,19 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.pedropathing.ivy.Command;
 import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.ivy.groups.Groups;
-import com.pedropathing.ivy.pedro.PedroCommands;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Robot;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.CommandOpMode;
 
 import java.util.Arrays;
-
-import static com.pedropathing.ivy.groups.Groups.sequential;
 
 public class Auto extends CommandOpMode {
     Alliance a;
@@ -49,15 +41,15 @@ public class Auto extends CommandOpMode {
         schedule(
                Commands.infinite(() -> {
                    r.periodic();
-//                   double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 10;
-//                   boolean close = r.f.getPose().getY() > 48;
-//                   r.s.forDistance(dist, close);
+                   double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
+                   boolean close = r.f.getPose().getY() > 48;
+                   r.s.forDistance(dist, close);
                    //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
 //                r.s.setTarget(shootTarget);
 //                r.s.setHood(hoodTarget);
 
                  //  r.t.face(r.getShootTarget(), r.f.getPose());
-                   r.t.face(r.getShootTarget(), p.score);
+                   r.t.face(r.getShootTarget(), r.f.getPose());
                    r.t.automatic();
 
                    telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
@@ -70,12 +62,12 @@ public class Auto extends CommandOpMode {
                }),
                 Groups.sequential(
                         p.preload(),
-                        r.shootPassthrough(),
+                        r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike1()
                                 .raceWith(Commands.wait(3000.0)),
                         Groups.race(
-                        p.hitGate()
+                        p.hitGateAfterFirst()
                                         .with(
                                                 Commands.wait(500.0)
                                                         .then(

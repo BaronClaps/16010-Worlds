@@ -21,7 +21,7 @@ public class Paths {
     public Pose spike1Control1 = new Pose(48, 79);
     public Pose spike1Control2 = spike1.withX(39.5);
     
-    public Pose spike2 = new Pose(10, 60, Math.toRadians(180));
+    public Pose spike2 = new Pose(8, 60, Math.toRadians(180));
     public Pose spike2Control1 = new Pose(45, 80);
     public Pose spike2Control2 = spike2.withX(65);
 
@@ -36,8 +36,8 @@ public class Paths {
     public Pose gateControl1 = new Pose(48, 79);
     public Pose gateControl2 = new Pose(23.25, 47);
 
-    public Pose cornerControl = new Pose(8, 30);
-    public Pose corner = new Pose(8, 11, Math.toRadians(270));
+    public Pose cornerControl = new Pose(-5, 30);
+    public Pose corner = new Pose(6.5, 11, Math.toRadians(270));
 
     public Pose park = new Pose(36, 72, Math.toRadians(180));
 

@@ -112,7 +112,7 @@ public class AstraAuto extends CommandOpMode {
                         r.i.off()
                 )
                         .with(
-                                Commands.wait(29500.0)
+                                Commands.wait(29250.0)
                                         .then(
                                                 Commands.instant(r.f::breakFollowing),
                                                 Commands.instant(() -> r.f.holdPoint(r.f.getPose(), false))

@@ -81,11 +81,13 @@ public class Auto extends CommandOpMode {
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike2()
                                 .raceWith(Commands.wait(3000.0)),
+
                         p.scoreSpike2(),
                         r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike3()
                                 .raceWith(Commands.wait(3000.0)),
+                        Commands.wait(1000.0),
                         p.scoreSpike3(),
                         r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
@@ -97,6 +99,13 @@ public class Auto extends CommandOpMode {
                         Commands.instant(r.s::off),
                         r.i.off()
                 )
+                        .with(
+                                Commands.wait(29250.0)
+                                        .then(
+                                                Commands.instant(r.f::breakFollowing),
+                                                Commands.instant(() -> r.f.holdPoint(r.f.getPose(), false))
+                                        )
+                        )
         );
     }
 

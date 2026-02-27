@@ -14,7 +14,7 @@ public class Turret {
     private double error = 0;
     public static double power = 0;
     private double manualPower = 0;
-    public static double rpt = 0.00866048974;
+    public static double rpt = 0.00866048974, turretOffset = 3.3111811;
 
     public final DcMotorEx m;
     private final PIDFController p, s; // pidf controller for turret
@@ -108,9 +108,33 @@ public class Turret {
     }
 
     public void face(Pose targetPose, Pose robotPose) {
-        double angleToTargetFromCenter = Math.atan2(targetPose.getY() - robotPose.getY(), targetPose.getX() - robotPose.getX());
-        double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.getHeading());
-        robotAngleDiff = MathFunctions.clamp(robotAngleDiff, -(Math.PI)/2, Math.PI/2);
+
+        double heading = robotPose.getHeading();
+
+        double offsetXRobot = turretOffset;
+        double offsetYRobot = 0;
+
+        double cos = Math.cos(heading);
+        double sin = Math.sin(heading);
+
+        double offsetXField = offsetXRobot * cos - offsetYRobot * sin;
+        double offsetYField = offsetXRobot * sin + offsetYRobot * cos;
+
+        double turretX = robotPose.getX() + offsetXField;
+        double turretY = robotPose.getY() + offsetYField;
+
+        double angleToTarget =
+                Math.atan2(targetPose.getY() - turretY,
+                        targetPose.getX() - turretX);
+
+        double robotAngleDiff =
+                normalizeAngle(angleToTarget - heading);
+
+        robotAngleDiff =
+                MathFunctions.clamp(robotAngleDiff,
+                        -Math.PI/2,
+                        Math.PI/2);
+
         setYaw(robotAngleDiff);
     }
 

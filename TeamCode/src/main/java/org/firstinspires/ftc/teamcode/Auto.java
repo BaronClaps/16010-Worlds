@@ -65,34 +65,34 @@ public class Auto extends CommandOpMode {
                         r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike1()
-                                .raceWith(Commands.wait(3000.0)),
+                                .raceWith(Commands.waitMs(3000.0)),
                         Groups.race(
                         p.hitGateAfterFirst()
                                         .with(
-                                                Commands.wait(500.0)
+                                                Commands.waitMs(500.0)
                                                         .then(
                                                                 r.i.off())),
-                                Commands.wait(3000.0)
+                                Commands.waitMs(3000.0)
                         ),
-                       // Commands.wait(),
+                       // Commands.waitMs(),
                         r.i.in(),
                         p.scoreHitGate(),
                         r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike2()
-                                .raceWith(Commands.wait(3000.0)),
+                                .raceWith(Commands.waitMs(3000.0)),
 
                         p.scoreSpike2(),
                         r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
                         p.intakeSpike3()
-                                .raceWith(Commands.wait(3000.0)),
-                        Commands.wait(1000.0),
+                                .raceWith(Commands.waitMs(3000.0)),
+                        Commands.waitMs(1000.0),
                         p.scoreSpike3(),
                         r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
                         p.intakeCorner()
-                                .raceWith(Commands.wait(6000.0)),
+                                .raceWith(Commands.waitMs(6000.0)),
                         p.scoreCorner(),
                         r.shootSpindexUnsorted(),
                         p.park(),
@@ -100,7 +100,7 @@ public class Auto extends CommandOpMode {
                         r.i.off()
                 )
                         .with(
-                                Commands.wait(29250.0)
+                                Commands.waitMs(29250.0)
                                         .then(
                                                 Commands.instant(r.f::breakFollowing),
                                                 Commands.instant(() -> r.f.holdPoint(r.f.getPose(), false))

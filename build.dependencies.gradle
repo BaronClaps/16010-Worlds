@@ -1,6 +1,5 @@
 repositories {
     mavenCentral()
-    mavenLocal()
     google() // Needed for androidx
     maven {
         url "https://repo.dairy.foundation/releases"
@@ -10,14 +9,8 @@ repositories {
     }
     maven { url = 'https://maven.brott.dev/'}
     maven { url = "https://mymaven.bylazar.com/releases" }
-    maven { url = 'https://central.sonatype.com/repository/maven-snapshots/'}
+ //   maven { url = 'https://central.sonatype.com/repository/maven-snapshots/'}
 }
-
-//configurations.all {
-//    resolutionStrategy {
-//        cacheChangingModulesFor 0, 'minutes'
-//    }
-//}
 
 dependencies {
     implementation 'org.firstinspires.ftc:Inspection:11.1.0'
@@ -30,9 +23,9 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:11.1.0'
     implementation 'org.firstinspires.ftc:Vision:11.1.0'
 
-    implementation 'com.pedropathing:ftc:2.1.0-SNAPSHOT'
+    implementation 'com.pedropathing:ftc:2.1.0-beta.1'
     implementation 'com.pedropathing:telemetry:1.0.0'
-    implementation 'com.pedropathing:ivy:0.0.1-LOCAL' // local
+    implementation 'com.pedropathing:ivy:0.0.1'
     implementation 'com.bylazar:fullpanels:1.0.12'
 
     implementation "dev.frozenmilk.sinister:Sloth:0.2.4"

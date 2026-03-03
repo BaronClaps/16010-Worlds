@@ -109,32 +109,36 @@ public class Turret {
 
     public void face(Pose targetPose, Pose robotPose) {
 
-        double heading = robotPose.getHeading();
-
-        double offsetXRobot = turretOffset;
-        double offsetYRobot = 0;
-
-        double cos = Math.cos(heading);
-        double sin = Math.sin(heading);
-
-        double offsetXField = offsetXRobot * cos - offsetYRobot * sin;
-        double offsetYField = offsetXRobot * sin + offsetYRobot * cos;
-
-        double turretX = robotPose.getX() + offsetXField;
-        double turretY = robotPose.getY() + offsetYField;
-
-        double angleToTarget =
-                Math.atan2(targetPose.getY() - turretY,
-                        targetPose.getX() - turretX);
-
-        double robotAngleDiff =
-                normalizeAngle(angleToTarget - heading);
-
-        robotAngleDiff =
-                MathFunctions.clamp(robotAngleDiff,
-                        -Math.PI/2,
-                        Math.PI/2);
-
+//        double heading = robotPose.getHeading();
+//
+//        double offsetXRobot = turretOffset;
+//        double offsetYRobot = 0;
+//
+//        double cos = Math.cos(heading);
+//        double sin = Math.sin(heading);
+//
+//        double offsetXField = offsetXRobot * cos - offsetYRobot * sin;
+//        double offsetYField = offsetXRobot * sin + offsetYRobot * cos;
+//
+//        double turretX = robotPose.getX() + offsetXField;
+//        double turretY = robotPose.getY() + offsetYField;
+//
+//        double angleToTarget =
+//                Math.atan2(targetPose.getY() - turretY,
+//                        targetPose.getX() - turretX);
+//
+//        double robotAngleDiff =
+//                normalizeAngle(angleToTarget - heading);
+//
+//        robotAngleDiff =
+//                MathFunctions.clamp(robotAngleDiff,
+//                        -Math.PI/2,
+//                        Math.PI/2);
+//
+//        setYaw(robotAngleDiff);
+        double angleToTargetFromCenter = Math.atan2(targetPose.getY() - robotPose.getY(), targetPose.getX() - robotPose.getX());
+        double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.getHeading());
+        robotAngleDiff = MathFunctions.clamp(robotAngleDiff, -(Math.PI)/2, Math.toRadians(135));
         setYaw(robotAngleDiff);
     }
 

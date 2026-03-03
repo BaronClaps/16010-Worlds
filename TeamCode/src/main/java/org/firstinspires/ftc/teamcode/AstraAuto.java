@@ -35,6 +35,7 @@ public class AstraAuto extends CommandOpMode {
         r.p.enableAutoRotate();
         r.p.disableSort();
         r.p.moveTo(2);
+        r.s.setPower(0);
     }
 
     public void start() {

@@ -116,8 +116,8 @@ public class Shooter {
 
     public void forDistance(double distance, boolean close) {
         if (!close) {
-            setTarget(2100);
-            setHood(.5);
+            setTarget(2000);
+            setHood(.6);
         } else {
 //            if (distance < 120 && distance > 35) {
 //                setHood(hoodILUT.get(distance));

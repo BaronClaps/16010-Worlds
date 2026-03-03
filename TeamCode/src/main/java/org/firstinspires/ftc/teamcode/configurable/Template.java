@@ -36,7 +36,7 @@ public class Template extends CommandOpMode {
                     t.addLine("Intake 1 Close!");
                     t.update();
                 }),
-                Commands.wait(2000.0)
+                Commands.waitMs(2000.0)
         );
     }
 
@@ -47,7 +47,7 @@ public class Template extends CommandOpMode {
                     t.addLine("Intake 2 Close!");
                     t.update();
                 }),
-                Commands.wait(2000.0)
+                Commands.waitMs(2000.0)
         );
     }
 
@@ -58,7 +58,7 @@ public class Template extends CommandOpMode {
                     t.addLine("Shooting Close!");
                     t.update();
                 }),
-                Commands.wait(2000.0)
+                Commands.waitMs(2000.0)
         );
     }
 

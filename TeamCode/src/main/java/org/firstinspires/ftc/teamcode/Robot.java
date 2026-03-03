@@ -109,7 +109,7 @@ public class Robot {
                             p.all(4);
                         }
                 ),
-                Commands.wait(1500.0)
+                Commands.waitMs(1500.0)
 
         );
     }
@@ -120,7 +120,7 @@ public class Robot {
                 Commands.waitUntil(s::atTarget),
                 i.in(),
                 Commands.instant(p::openTopGate),
-                Commands.wait(350.0)
+                Commands.waitMs(350.0)
 
         );
     }
@@ -134,7 +134,7 @@ public class Robot {
                     p.closeBottomGate();
                 }),
                 i.in(),
-                Commands.wait(250.0)
+                Commands.waitMs(250.0)
         );
     }
 
@@ -149,7 +149,7 @@ public class Robot {
                     p.closeBottomGate();
                 }),
                 i.in()//,
-//                Commands.wait(250.0)
+//                Commands.waitMs(250.0)
         );
     }
 
@@ -163,7 +163,7 @@ public class Robot {
                     p.openBottomGate();
                 }),
                 i.in(),
-                Commands.wait(250.0)
+                Commands.waitMs(250.0)
         );
     }
 

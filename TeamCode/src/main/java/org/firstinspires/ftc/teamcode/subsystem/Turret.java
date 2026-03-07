@@ -160,7 +160,7 @@ public class Turret {
     }
 
     public boolean isReady() {
-        return Math.abs(getError()) < 20;
+        return Math.abs(getError()) < 12;
     }
 
     public void setPowerZero() {

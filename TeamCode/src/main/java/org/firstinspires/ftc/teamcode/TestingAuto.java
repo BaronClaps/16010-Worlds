@@ -27,29 +27,30 @@ public class TestingAuto extends CommandOpMode {
 
         r.setShootTarget();
         r.t.setPowerZero();
-        r.p.closeTopGate();
-        r.p.closeBottomGate();
+        //r.p.closeTopGate();
         r.p.disengageKicker();
-        r.p.enableAutoRotate();
+        r.p.disableAutoRotate();
         r.p.disableSort();
         r.p.moveTo(2);
         r.s.setPower(0);
     }
 
     public void start() {
+        r.p.closeTopGate();
+     //   r.s.close();
         schedule(
                 Commands.infinite(() -> {
                     r.periodic();
-//                    double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
-//                    boolean close = r.f.getPose().getY() > 48;
-//                    r.s.forDistance(dist, close);
-//                    //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
+                    double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
+                    boolean close = r.f.getPose().getY() > 36;
+                    r.s.forDistance(dist, close);
+                    //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
 ////                r.s.setTarget(shootTarget);
 ////                r.s.setHood(hoodTarget);
 //
-//                    //  r.t.face(r.getShootTarget(), r.f.getPose());
+                      r.t.face(r.getShootTarget(), r.f.getPose());
 //                    r.t.face(r.getShootTarget(), r.f.getPose());
-//                    r.t.automatic();
+                    r.t.automatic();
 
                     telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
                     telemetry.addData("Slots", Arrays.toString(r.p.slots));
@@ -61,19 +62,52 @@ public class TestingAuto extends CommandOpMode {
                 }),
                 Groups.sequential(
                                 p.preload(),
-                                r.intakeSpindexUnsorted(),
+                                r.shootPassthrough(),
+                                r.intakePassthrough(),
+                                p.intakeSpike2()
+                                        .raceWith(Commands.waitMs(5000.0)),
+                                p.scoreSpike2(),
+                                r.shootPassthrough(),
+                                r.intakePassthrough(),
                                 p.intakeGate()
+                                        .raceWith(Commands.waitMs(4000.0)),
+                                Commands.waitMs(1000.0),
+                                p.scoreGate(),
+                                r.shootPassthrough(),
+                                r.intakePassthrough(),
+                                p.intakeGate()
+                                        .raceWith(Commands.waitMs(4000.0)),
+                                Commands.waitMs(1000.0),
+                                p.scoreGate(),
+                                r.shootPassthrough(),
+                                r.intakePassthrough(),
+                                p.intakeGate()
+                                        .raceWith(Commands.waitMs(4000.0)),
+                                Commands.waitMs(1000.0),
+                                p.scoreGate(),
+                                r.shootPassthrough(),
+                                r.intakePassthrough(),
+                                p.intakeSpike3()
+                                        .raceWith(Commands.waitMs(5000.0)),
+                                p.scoreSpike3(),
+                                r.shootPassthrough(),
+                                r.intakePassthrough(),
+                                p.intakeSpike1()
+                                        .raceWith(Commands.waitMs(2000.0)),
+                                p.scoreSpike1(),
+                                r.shootPassthrough()
+
 //                                r.shootSpindexUnsorted(),
 //                                r.intakeSpindexUnsorted(),
 //                                p.intakeSpike1()
-//                                        .raceWith(Commands.waitMs(3000.0)),
+//                                        .raceWith(Commands.waitMs(4000.0)),
 //                                Groups.race(
 //                                        p.hitGateAfterFirst()
 //                                                .with(
 //                                                        Commands.waitMs(500.0)
 //                                                                .then(
 //                                                                        r.i.off())),
-//                                        Commands.waitMs(3000.0)
+//                                        Commands.waitMs(4000.0)
 //                                ),
 //                                // Commands.waitMs(),
 //                                r.i.in(),
@@ -81,13 +115,13 @@ public class TestingAuto extends CommandOpMode {
 //                                r.shootSpindexUnsorted(),
 //                                r.intakeSpindexUnsorted(),
 //                                p.intakeSpike2()
-//                                        .raceWith(Commands.waitMs(3000.0)),
+//                                        .raceWith(Commands.waitMs(4000.0)),
 //
 //                                p.scoreSpike2(),
 //                                r.shootSpindexUnsorted(),
 //                                r.intakeSpindexUnsorted(),
 //                                p.intakeSpike3()
-//                                        .raceWith(Commands.waitMs(3000.0)),
+//                                        .raceWith(Commands.waitMs(4000.0)),
 //                                Commands.waitMs(1000.0),
 //                                p.scoreSpike3(),
 //                                r.shootSpindexUnsorted(),

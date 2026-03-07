@@ -117,9 +117,13 @@ public class Robot {
     public CommandBuilder shootPassthrough() {
         return sequential(
                 i.in(),
+                Commands.instant(s::close),
+                Commands.instant(t::on),
                 Commands.waitUntil(s::atTarget),
+                Commands.waitUntil(t::isReady),
                 i.in(),
                 Commands.instant(p::openTopGate),
+                Commands.instant(p::engageKicker),
                 Commands.waitMs(350.0)
 
         );
@@ -141,12 +145,13 @@ public class Robot {
     public CommandBuilder intakeSpindexUnsorted() {
         return sequential(
                 Commands.instant(() -> {
-                    t.off();
+               //     t.off();
                     p.disableSort();
                     p.enableAutoRotate();
                     p.disengageKicker();
                     p.closeTopGate();
                     p.closeBottomGate();
+                    t.on();
                 }),
                 i.in()//,
 //                Commands.waitMs(250.0)
@@ -158,9 +163,10 @@ public class Robot {
                 Commands.instant(() -> {
                     p.disableAutoRotate();
                     p.disableSort();
-                    p.engageKicker();
+                    p.disengageKicker();
                     p.closeTopGate();
                     p.openBottomGate();
+                    t.on();
                 }),
                 i.in(),
                 Commands.waitMs(250.0)

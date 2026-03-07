@@ -26,8 +26,8 @@ public class Tele extends CommandOpMode {
     Robot r;
     final Alliance a;
 
-    public boolean shoot = false, manual = false, field = true, wasFull = false, wasDone = true, movingShoot = true;
-    public IndexMode indexMode = IndexMode.UNSORTED;
+    public boolean shoot = false, manual = false, field = false, wasFull = false, wasDone = true, movingShoot = true;
+    private IndexMode indexMode = IndexMode.PASSTHROUGH;
     public double intakeOn = 0, speed = 1;
     public static double shootTarget = 1650, hoodTarget = 0.55;
 
@@ -38,9 +38,9 @@ public class Tele extends CommandOpMode {
     @Override
     public void init() {
         r = new Robot(hardwareMap, a);
-        r.f.setStartingPose(defaultPose);
+        r.f.poseTracker.getLocalizer().update();
+        r.f.setStartingPose(r.f.poseTracker.getLocalizer().getPose());
         r.t.setPowerZero();
-        r.p.setPattern(Robot.currentPattern);
 //        multipleTelemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
     }
 
@@ -52,18 +52,18 @@ public class Tele extends CommandOpMode {
 
     @Override
     public void start() {
+        r.p.setPattern(Robot.currentPattern);
         r.setShootTarget();
-        r.periodic();
         r.t.setPowerZero();
         r.f.startTeleopDrive();
         r.i.spinOff();
         r.p.reset();
         r.p.closeTopGate();
-        r.p.closeBottomGate();
-        r.p.disengageKicker();
-        r.p.enableAutoRotate();
+        r.p.openBottomGate();
         r.p.disableSort();
-        r.s.setHood(.5);
+        r.p.disableAutoRotate();
+        r.p.disengageKicker();
+        r.periodic();
     }
 
     @Override
@@ -95,27 +95,21 @@ public class Tele extends CommandOpMode {
             r.i.spinOff();
 
         if (shoot) {
-            r.s.on();
-            r.t.on();
 
             if (manual) {
                 r.t.manual(-gamepad1.right_trigger + gamepad1.left_trigger);
                 r.s.setTarget(shootTarget);
                 r.s.setHood(hoodTarget);
             } else {
-                Pose poseLookAhead = r.f.getPose();
+         //       Pose poseLookAhead = r.f.getPose();
 
          //       if(movingShoot)
       //              poseLookAhead = Shooter.getProjectedPoseWithConstantVelocity(r.f.getPose(), 1, r.f.poseTracker.getLocalizer().getVelocity());
 
-                double dist = r.getShootTarget().distanceFrom(poseLookAhead) + 8;
+                double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
                 boolean close = r.f.getPose().getY() > 48;
                 r.s.forDistance(dist, close);
-                //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
-//                r.s.setTarget(shootTarget);
-//                r.s.setHood(hoodTarget);
-                r.t.face(r.getShootTarget(), poseLookAhead);
-                r.t.automatic();
+                r.t.face(r.getShootTarget(), r.f.getPose());
             }
         } else {
             r.s.off();
@@ -155,8 +149,17 @@ public class Tele extends CommandOpMode {
         }
 
 
-        if (gamepad1.bWasPressed())
+        if (gamepad1.bWasPressed()) {
             shoot = !shoot;
+
+            if (shoot) {
+                r.s.on();
+                r.t.on();
+            } else {
+                r.s.off();
+                r.t.off();
+            }
+        }
 
         if (gamepad1.dpadUpWasPressed()) {
             if (r.a.equals(Alliance.BLUE)) {
@@ -166,8 +169,13 @@ public class Tele extends CommandOpMode {
             }
         }
 
-        if (gamepad1.dpadLeftWasPressed())
+        if (gamepad1.dpadLeftWasPressed()) {
             manual = !manual;
+
+            if (!manual) {
+                r.t.automatic();
+            }
+        }
 
         if (gamepad1.dpadRightWasPressed())
             field = !field;

@@ -8,26 +8,24 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import org.firstinspires.ftc.teamcode.util.CachedMotor;
 import org.firstinspires.ftc.teamcode.util.InterpLUT;
 import smile.interpolation.BilinearInterpolation;
 import smile.interpolation.Interpolation2D;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 @Config
 
 public class Shooter {
-    private DcMotorEx l, r;
+    private CachedMotor l, r;
     private Servo h;
 
     private double t = 0;
     public static double kS = 0.08, kV = 0.00039, kP = 0.01, useRaw = 250;
     // .22 to .78
 
-    private boolean activated = true;
+    private boolean activated = false;
 
     private static final double[] xs = {44, 72, 100};
     private static final double[] ys = {10, 38, 66};
@@ -49,11 +47,12 @@ public class Shooter {
     public InterpLUT shooterILUT;
     public InterpLUT hoodILUT;
     public static final Interpolation2D closeInterpolation = new BilinearInterpolation(xs, ys, closeVelocities);
+    private double velocity;
 
     public Shooter(HardwareMap hardwareMap) {
         h = hardwareMap.get(Servo.class, "h");
-        l = hardwareMap.get(DcMotorEx.class, "sl");
-        r = hardwareMap.get(DcMotorEx.class, "sr");
+        l = new CachedMotor(hardwareMap.get(DcMotorEx.class, "sl"));
+        r = new CachedMotor(hardwareMap.get(DcMotorEx.class, "sr"));
         l.setDirection(DcMotorSimple.Direction.REVERSE);
 
         shooterILUT = new InterpLUT(distances, velocities);
@@ -65,7 +64,7 @@ public class Shooter {
     }
 
     public double getVelocity() {
-        return -l.getVelocity();
+        return velocity;
     }
 
     public void setPower(double p) {
@@ -93,11 +92,14 @@ public class Shooter {
     }
 
     public void periodic() {
-        if (activated)
+        if (activated) {
+            velocity = -l.getVelocity();
+
             if (Math.abs(getTarget() - getVelocity()) > useRaw)
                 setPower(Math.signum(getTarget() - getVelocity()));
             else
                 setPower((kV * getTarget()) + (kP * (getTarget() - getVelocity())) + kS);
+        }
     }
 
     public boolean atTarget() {

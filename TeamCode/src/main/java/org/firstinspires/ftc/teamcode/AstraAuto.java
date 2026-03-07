@@ -24,10 +24,11 @@ public class AstraAuto extends CommandOpMode {
         r.f.setStartingPose(p.start);
 
         r.t.resetTurret();
-        r.s.setHood(0.5);
-        r.s.setTarget(1800);
+//        r.s.setHood(0.5);
+//        r.s.setTarget(1800);
 
         r.setShootTarget();
+        r.t.automatic();
         r.t.setPowerZero();
         r.p.closeTopGate();
         r.p.closeBottomGate();
@@ -39,6 +40,8 @@ public class AstraAuto extends CommandOpMode {
     }
 
     public void start() {
+        r.s.on();
+        r.t.on();
         schedule(
                 Commands.infinite(() -> {
                     r.periodic();
@@ -51,7 +54,6 @@ public class AstraAuto extends CommandOpMode {
 
                     //  r.t.face(r.getShootTarget(), r.f.getPose());
                     r.t.face(r.getShootTarget(), r.f.getPose());
-                    r.t.automatic();
 
                     telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
                     telemetry.addData("Slots", Arrays.toString(r.p.slots));

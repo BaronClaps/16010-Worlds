@@ -24,10 +24,11 @@ public class Auto extends CommandOpMode {
         r.f.setStartingPose(p.start);
 
         r.t.resetTurret();
-        r.s.setHood(0.5);
-        r.s.setTarget(1800);
+//        r.s.setHood(0.5);
+//        r.s.setTarget(1800);
 
         r.setShootTarget();
+        r.t.automatic();
         r.t.setPowerZero();
         r.p.closeTopGate();
         r.p.closeBottomGate();
@@ -39,19 +40,20 @@ public class Auto extends CommandOpMode {
     }
 
         public void start() {
+        r.s.on();
+        r.t.on();
         schedule(
                Commands.infinite(() -> {
                    r.periodic();
-                   double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
-                   boolean close = r.f.getPose().getY() > 48;
-                   r.s.forDistance(dist, close);
+//                   double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
+//                   boolean close = r.f.getPose().getY() > 48;
+//                   r.s.forDistance(dist, close);
                    //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
 //                r.s.setTarget(shootTarget);
 //                r.s.setHood(hoodTarget);
 
                  //  r.t.face(r.getShootTarget(), r.f.getPose());
                    r.t.face(r.getShootTarget(), r.f.getPose());
-                   r.t.automatic();
 
                    telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
                    telemetry.addData("Slots", Arrays.toString(r.p.slots));

@@ -16,7 +16,8 @@ public class Spindexer {
 
     public static boolean sort = false, autoRotate = false, shooting = false;
     public static int checkInterval = 2;
-    public static double timeToSpin = 0.3, timeToShoot = 1.25, upperDistThres = 1.45, lowerDistThres = 1.35, needToShoot = -1;
+    public static double timeToSpin = 0.3, timeToShoot = 1.25, upperDistThres = 1.45, lowerDistThres = 1.35;
+    private double needToShoot = -1;
 
     public static double kEngaged = .85, kDisengaged = 1, bgOpen = 0.36, bgClosed = .5, tgOpen = .575, tgClosed = .725;
     public double dist;
@@ -59,52 +60,47 @@ public class Spindexer {
         slots = new Artifact[PHYSICAL_SLOTS];
     }
 
-    // --- LOGIC ---
-
     public void optimal() {
         if (currentPattern == null) return;
         Artifact[] goal = getPatternColors(currentPattern);
+        int count = (int) Math.max(1, Math.min(needToShoot, PHYSICAL_SLOTS));
 
         int bestScore = -1;
+        int bestTravel = Integer.MAX_VALUE;
         int bestIndex = currentIndex;
         int bestDir = 1;
 
-        // Check current position and immediate neighbors to minimize travel
-        int[] nearbyIndices = {currentIndex, currentIndex + 1, currentIndex - 1};
+        for (int testIdx = 0; testIdx < THEORETICAL_POSITIONS; testIdx++) {
+            int travel = Math.abs(testIdx - currentIndex);
 
-        for (int testIdx : nearbyIndices) {
-            if (testIdx < 0 || testIdx >= THEORETICAL_POSITIONS) continue;
-
-            // Check Forward path from this testIdx
-            if (testIdx + 2 < THEORETICAL_POSITIONS) {
-                int fScore = scoreSequence(testIdx, 1, goal);
-                if (fScore > bestScore) {
+            if (testIdx + (count - 1) < THEORETICAL_POSITIONS) {
+                int fScore = scoreSequence(testIdx, 1, goal, count);
+                if (fScore > bestScore || (fScore == bestScore && travel < bestTravel)) {
                     bestScore = fScore;
+                    bestTravel = travel;
                     bestIndex = testIdx;
                     bestDir = 1;
                 }
             }
 
-            // Check Backward path from this testIdx
-            if (testIdx - 2 >= 0) {
-                int bScore = scoreSequence(testIdx, -1, goal);
-                if (bScore > bestScore) {
+            if (testIdx - (count - 1) >= 0) {
+                int bScore = scoreSequence(testIdx, -1, goal, count);
+                if (bScore > bestScore || (bScore == bestScore && travel < bestTravel)) {
                     bestScore = bScore;
+                    bestTravel = travel;
                     bestIndex = testIdx;
                     bestDir = -1;
                 }
             }
-            // If perfect match found at current or +1/-1, stop searching
-            if (bestScore == 3) break;
         }
 
         moveTo(bestIndex);
         this.shootDirection = bestDir;
     }
 
-    private int scoreSequence(int startIdx, int dir, Artifact[] goal) {
+    private int scoreSequence(int startIdx, int dir, Artifact[] goal, int count) {
         int score = 0;
-        for (int step = 0; step < 3; step++) {
+        for (int step = 0; step < count; step++) {
             int physSlot = (startIdx + (step * dir) + PHYSICAL_SLOTS * 2) % PHYSICAL_SLOTS;
             if (slots[physSlot] == goal[step]) score++;
         }
@@ -116,8 +112,6 @@ public class Spindexer {
         if (pattern == Pattern.PGP) return new Artifact[]{Artifact.PURPLE, Artifact.GREEN, Artifact.PURPLE};
         return new Artifact[]{Artifact.PURPLE, Artifact.PURPLE, Artifact.GREEN}; // PPG
     }
-
-    // --- MOVEMENT ---
 
     public void moveTo(int targetIndex) {
         currentIndex = Math.max(0, Math.min(targetIndex, THEORETICAL_POSITIONS - 1));
@@ -147,10 +141,8 @@ public class Spindexer {
         shooting = true;
         shootTimer.resetTimer();
         allTimer.resetTimer();
-        Spindexer.needToShoot = needToShoot;
+        this.needToShoot = needToShoot;
     }
-
-    // --- SUBSYSTEM TOOLS ---
 
     public void add(Artifact color) {
         slots[currentIndex % PHYSICAL_SLOTS] = color;
@@ -244,11 +236,15 @@ public class Spindexer {
 
         if (!autoRotate) return;
 
-        if (loops % checkInterval == 0 && !full() && !shooting) {
-            if (spinTimer.getElapsedTimeSeconds() >= timeToSpin) {
+        if (spinTimer.getElapsedTimeSeconds() >= timeToSpin && !full() && !shooting) {
+            if (loops % checkInterval == 0) {
                 dist = sensor.getDistance(DistanceUnit.INCH);
                 if (dist < upperDistThres && dist > lowerDistThres) {
-                    add(sort ? getSimpleColor() : Artifact.UNIDENTIFIED);
+                    if (!sort)
+                        add(Artifact.UNIDENTIFIED);
+                    else
+                        add(getSimpleColor());
+
                     if (!full()) empty();
                     spinTimer.resetTimer();
                 }
@@ -261,7 +257,6 @@ public class Spindexer {
         return shootTimer;
     }
 
-    // Standard Toggle/Setters
     public void setPattern(Pattern p) {
         this.currentPattern = p;
     }

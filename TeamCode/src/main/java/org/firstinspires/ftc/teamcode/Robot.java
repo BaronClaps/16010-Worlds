@@ -124,7 +124,8 @@ public class Robot {
                 i.in(),
                 Commands.instant(p::openTopGate),
                 Commands.instant(p::engageKicker),
-                Commands.waitMs(350.0)
+                Commands.waitMs(350.0),
+                Commands.instant(t::off)
 
         );
     }

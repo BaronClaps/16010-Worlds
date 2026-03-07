@@ -8,24 +8,26 @@ import com.pedropathing.math.MathFunctions;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import org.firstinspires.ftc.teamcode.util.CachedMotor;
 
 @Config
 public class Turret {
     private double error = 0;
-    public static double power = 0;
-    private double manualPower = 0;
+    public double power = 0;
+    private double manualPower = 0, currentPosition;
     public static double rpt = 0.00866048974, turretOffset = 3.3111811;
+    public static boolean tuning = false;
 
-    public final DcMotorEx m;
+    public final CachedMotor m;
     private final PIDFController p, s; // pidf controller for turret
     private double t = 0;
     public static double pidfSwitch = 15; // target for turret
     public static double kp = 1, kf = 0.05, kd = 0.005, sp = 0.2, sf = 0.03, sd = 0.001;
 
-    public static boolean on = true, manual = false;
+    public static boolean on = false, manual = false;
 
     public Turret(HardwareMap hardwareMap) {
-        m = hardwareMap.get(DcMotorEx.class, "t");
+        m = new CachedMotor(hardwareMap.get(DcMotorEx.class, "t"));
         m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         m.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.FLOAT);
         setPowerZero();
@@ -45,18 +47,22 @@ public class Turret {
     }
 
     public double getTurret() {
-        return m.getCurrentPosition();
+        return currentPosition;
     }
 
     public void periodic() {
         if (on) {
+            currentPosition = m.getCurrentPosition();
+
             if (manual) {
                 m.setPower(manualPower);
                 return;
             }
 
-            p.setCoefficients(new PIDFCoefficients(kp, 0, kd, kf));
-            s.setCoefficients(new PIDFCoefficients(sp, 0, sd, sf));
+            if (tuning) {
+                p.setCoefficients(new PIDFCoefficients(kp, 0, kd, kf));
+                s.setCoefficients(new PIDFCoefficients(sp, 0, sd, sf));
+            }
 
             error = getTurretTarget() - getTurret();
             double errorInRadians = error * rpt;

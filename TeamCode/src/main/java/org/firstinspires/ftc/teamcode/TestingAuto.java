@@ -22,12 +22,13 @@ public class TestingAuto extends CommandOpMode {
         r.f.setStartingPose(p.start);
 
         r.t.resetTurret();
-        r.s.setHood(0.5);
-        r.s.setTarget(1800);
+//        r.s.setHood(0.5);
+//        r.s.setTarget(1800);
 
         r.setShootTarget();
+        r.t.automatic();
         r.t.setPowerZero();
-        //r.p.closeTopGate();
+        r.p.openBottomGate();
         r.p.disengageKicker();
         r.p.disableAutoRotate();
         r.p.disableSort();
@@ -36,21 +37,20 @@ public class TestingAuto extends CommandOpMode {
     }
 
     public void start() {
+        r.s.on();
+        r.t.on();
         r.p.closeTopGate();
      //   r.s.close();
         schedule(
                 Commands.infinite(() -> {
                     r.periodic();
-                    double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
-                    boolean close = r.f.getPose().getY() > 36;
-                    r.s.forDistance(dist, close);
-                    //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
-////                r.s.setTarget(shootTarget);
-////                r.s.setHood(hoodTarget);
-//
-                      r.t.face(r.getShootTarget(), r.f.getPose());
-//                    r.t.face(r.getShootTarget(), r.f.getPose());
-                    r.t.automatic();
+//                    double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
+//                    boolean close = r.f.getPose().getY() > 36;
+//                    r.s.forDistance(dist, close);
+//                    r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
+//                    r.s.setTarget(shootTarget);
+//                    r.s.setHood(hoodTarget);
+                    r.t.face(r.getShootTarget(), r.f.getPose());
 
                     telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
                     telemetry.addData("Slots", Arrays.toString(r.p.slots));
@@ -134,19 +134,11 @@ public class TestingAuto extends CommandOpMode {
 //                                Commands.instant(r.s::off),
 //                                r.i.off()
                         )
-                        .with(
-                                Commands.waitMs(29250.0)
-                                        .then(
-                                                Commands.instant(r.f::breakFollowing),
-                                                Commands.instant(() -> r.f.holdPoint(r.f.getPose(), false))
-                                        )
-                        )
         );
     }
 
     public void stop() {
         super.stop();
         r.saveEnd();
-
     }
 }

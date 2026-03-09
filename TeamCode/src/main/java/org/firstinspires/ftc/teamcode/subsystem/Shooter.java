@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.CachedMotor;
-import org.firstinspires.ftc.teamcode.util.InterpLUT;
 import smile.interpolation.BilinearInterpolation;
 import smile.interpolation.Interpolation2D;
 
@@ -27,12 +26,20 @@ public class Shooter {
 
     private boolean activated = false;
 
-    private static final double[] xs = {44, 72, 100};
-    private static final double[] ys = {10, 38, 66};
+    private static final double[] xs = {36, 60, 84, 108}; // abs(goal.getX() - current.getX())
+    private static final double[] ys = {132, 108, 84}; // actual y value
     private static final double[][] closeVelocities = {
-            {1200, 1200, 1275},
-            {1275, 1275, 1350},
-            {1325, 1360, 1400}
+            {1700, 1700, 1700}, // x1 + y1, x1 + y2, x1 + y3
+            {1700, 1700, 1700},
+            {1700, 1700, 1700},
+            {1700, 1700, 1700},
+    };
+
+    private static final double[][] closeHood = {
+            {0.55, 0.55, 0.55}, // x1 + y1, x1 + y2, x1 + y3
+            {0.55, 0.55, 0.55}, // servo positions
+            {0.55, 0.55, 0.55},
+            {0.55, 0.55, 0.55},
     };
 
     private static final List<Double> distances =
@@ -44,8 +51,8 @@ public class Shooter {
     private static final List<Double> hoods =
             List.of(.5, .55, .6, .65, .7, .55, .65);
 
-    public InterpLUT shooterILUT;
-    public InterpLUT hoodILUT;
+//    public InterpLUT shooterILUT;
+//    public InterpLUT hoodILUT;
     public static final Interpolation2D closeInterpolation = new BilinearInterpolation(xs, ys, closeVelocities);
     private double velocity;
 
@@ -55,8 +62,8 @@ public class Shooter {
         r = new CachedMotor(hardwareMap.get(DcMotorEx.class, "sr"));
         l.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        shooterILUT = new InterpLUT(distances, velocities);
-        hoodILUT = new InterpLUT(distances, hoods);
+//        shooterILUT = new InterpLUT(distances, velocities);
+//        hoodILUT = new InterpLUT(distances, hoods);
     }
 
     public double getTarget() {
@@ -108,12 +115,11 @@ public class Shooter {
 
     public void forPose(Pose current, Pose target, boolean close) {
         double xDistance = Math.abs(target.getX() - current.getX());
-        double yDistance = Math.abs(target.getY() - current.getY());
 
         if (close)
-            setTarget(closeInterpolation.interpolate(xDistance, yDistance) + 500);
+            setTarget(closeInterpolation.interpolate(xDistance, current.getY()));
         else
-            setTarget(2000);
+            setTarget(2000); // make a far interpolation
     }
 
     public void forDistance(double distance, boolean close) {

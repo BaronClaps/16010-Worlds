@@ -18,7 +18,7 @@ public class Turret {
     private double manualPower = 0, currentPosition;
     public static double rpt = 0.00866048974, turretOffset = 3.3111811;
     public static double kShift = 0.12; // Inches of shift per inch away from wall
-    public static double maxShift = 10.0;
+    public static double maxShift = 12;
     public static boolean tuning = false;
 
     public final CachedMotor m;
@@ -117,34 +117,6 @@ public class Turret {
     }
 
     public void face(Pose targetPose, Pose robotPose) {
-
-//        double heading = robotPose.getHeading();
-//
-//        double offsetXRobot = turretOffset;
-//        double offsetYRobot = 0;
-//
-//        double cos = Math.cos(heading);
-//        double sin = Math.sin(heading);
-//
-//        double offsetXField = offsetXRobot * cos - offsetYRobot * sin;
-//        double offsetYField = offsetXRobot * sin + offsetYRobot * cos;
-//
-//        double turretX = robotPose.getX() + offsetXField;
-//        double turretY = robotPose.getY() + offsetYField;
-//
-//        double angleToTarget =
-//                Math.atan2(targetPose.getY() - turretY,
-//                        targetPose.getX() - turretX);
-//
-//        double robotAngleDiff =
-//                normalizeAngle(angleToTarget - heading);
-//
-//        robotAngleDiff =
-//                MathFunctions.clamp(robotAngleDiff,
-//                        -Math.PI/2,
-//                        Math.PI/2);
-//
-//        setYaw(robotAngleDiff);
         double angleToTargetFromCenter = Math.atan2(targetPose.getY() - robotPose.getY(), targetPose.getX() - robotPose.getX());
         double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.getHeading());
         robotAngleDiff = MathFunctions.clamp(robotAngleDiff, -(Math.PI)/2, Math.toRadians(135));

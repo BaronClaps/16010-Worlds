@@ -4,6 +4,7 @@ import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
+import com.pedropathing.localization.Localizer;
 import com.pedropathing.util.Timer;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -32,6 +33,7 @@ public class Robot {
     private final Timer loop = new Timer();
     public double loops = 0, lastLoop = 0, loopTime = 0;
     public static Pose defaultPose = new Pose(8 + 24, 6.25 + 24, 0);
+    public static Localizer localizer = null;
     public static Pose shootTarget = new Pose(2, 144 - 2, 0);
 
     public Robot(HardwareMap h, Alliance a) {
@@ -41,7 +43,11 @@ public class Robot {
         s = new Shooter(h);
         p = new Spindexer(h);
         t = new Turret(h);
-        f = Constants.createFollower(h);
+
+        if (localizer != null)
+            f = Constants.createFollower(h, localizer);
+        else
+            f = Constants.createFollower(h);
 
         hubs = h.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
@@ -78,6 +84,7 @@ public class Robot {
 
     public void saveEnd() {
         defaultPose = f.getPose();
+        localizer = f.getPoseTracker().getLocalizer();
     }
 
 

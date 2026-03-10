@@ -26,7 +26,7 @@ public class Tele extends CommandOpMode {
     Robot r;
     final Alliance a;
 
-    public boolean shoot = false, manual = false, field = false, wasFull = false, wasDone = true, movingShoot = true;
+    public boolean shoot = false, manual = false, field = false, wasFull = false, wasDone = true, movingShoot = true, offsetAiming = true;
     private IndexMode indexMode = IndexMode.PASSTHROUGH;
     public double intakeOn = 0, speed = 1;
     public static double shootTarget = 1650, hoodTarget = 0.55;
@@ -38,8 +38,12 @@ public class Tele extends CommandOpMode {
     @Override
     public void init() {
         r = new Robot(hardwareMap, a);
-        r.f.poseTracker.getLocalizer().update();
-        r.f.setStartingPose(r.f.poseTracker.getLocalizer().getPose());
+        if (Robot.localizer != null) {
+            r.f.poseTracker.getLocalizer().update();
+            r.f.setStartingPose(r.f.poseTracker.getLocalizer().getPose());
+        } else {
+            r.f.setStartingPose(defaultPose);
+        }
         r.t.setPowerZero();
 //        multipleTelemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
     }
@@ -109,7 +113,11 @@ public class Tele extends CommandOpMode {
                 double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
                 boolean close = r.f.getPose().getY() > 48;
                 r.s.forDistance(dist, close);
-                r.t.face(r.getShootTarget(), r.f.getPose());
+
+                if (offsetAiming)
+                    r.t.face(r.getShootTarget(), r.f.getPose(), r.a);
+                else
+                    r.t.face(r.getShootTarget(), r.f.getPose());
             }
         } else {
             r.s.off();
@@ -199,7 +207,7 @@ public class Tele extends CommandOpMode {
             switchIndexing();
 
         if (gamepad1.startWasPressed())
-            movingShoot = !movingShoot;
+            offsetAiming = !offsetAiming;
 
         if (gamepad1.rightStickButtonWasPressed())
             r.p.spin(1);

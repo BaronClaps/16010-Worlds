@@ -7,6 +7,7 @@ import com.pedropathing.follower.FollowerConstants;
 import com.pedropathing.ftc.FollowerBuilder;
 import com.pedropathing.ftc.drivetrains.MecanumConstants;
 import com.pedropathing.ftc.localization.constants.PinpointConstants;
+import com.pedropathing.localization.Localizer;
 import com.pedropathing.paths.PathConstraints;
 import com.qualcomm.hardware.gobilda.GoBildaPinpointDriver;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -49,6 +50,14 @@ public class Constants {
                 .pathConstraints(pathConstraints)
                 .mecanumDrivetrain(mecanumConstants)
                 .pinpointLocalizer(pinpointConstants)
+                .build();
+    }
+
+    public static Follower createFollower(HardwareMap hardwareMap, Localizer localizer) {
+        return new FollowerBuilder(followerConstants, hardwareMap)
+                .pathConstraints(pathConstraints)
+                .mecanumDrivetrain(mecanumConstants)
+                .setLocalizer(localizer)
                 .build();
     }
 }

@@ -16,8 +16,8 @@ public class Turret {
     private double error = 0;
     public double power = 0;
     private double manualPower = 0, currentPosition;
-    public static double rpt = 0.00866048974, turretOffset = 3.3111811;
-    public static double kShift = 0.12; // Inches of shift per inch away from wall
+    public static double rpt = 0.00866048974;
+    public static double kShift = 0.25; //.12 for linear, .25 for angular // Inches of shift per inch away from wall //
     public static double maxShift = 12;
     public static boolean tuning = false;
 
@@ -124,31 +124,26 @@ public class Turret {
     }
 
     public void face(Pose targetPose, Pose robotPose, Alliance alliance) {
-        double targetX = targetPose.getX();
-        double targetY = targetPose.getY();
+        double tx = targetPose.getX();
+        double ty = targetPose.getY();
 
-        double distFromLine;
+        double dx = tx - robotPose.getX();
+        double dy = ty - robotPose.getY();
+
+        double diag = (alliance == Alliance.RED) ? Math.PI / 4.0 : 0.75 * Math.PI;
+        double offset = diag - Math.atan2(dy, dx);
+        double shift = Math.min(maxShift, Math.abs(Math.toDegrees(offset)) * kShift);
 
         if (alliance == Alliance.RED) {
-            distFromLine = Math.abs(robotPose.getX() - robotPose.getY()) / Math.sqrt(2);
-
-            if (robotPose.getX() > robotPose.getY())
-                targetX -= Math.min(maxShift, distFromLine * kShift);
-            else
-                targetY -= Math.min(maxShift, distFromLine * kShift);
-
+            if (offset < 0) tx -= shift;
+            else ty -= shift;
         } else {
-            distFromLine = Math.abs(robotPose.getX() + robotPose.getY() - 144) / Math.sqrt(2);
-
-            if (robotPose.getX() + robotPose.getY() > 144)
-                targetY -= Math.min(maxShift, distFromLine * kShift);
-            else
-                targetX += Math.min(maxShift, distFromLine * kShift);
+            if (offset > 0) tx += shift;
+            else ty -= shift;
         }
 
-        face(new Pose(targetX, targetY), robotPose);
+        face(new Pose(tx, ty), robotPose);
     }
-
     public void resetTurret() {
         m.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         m.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);

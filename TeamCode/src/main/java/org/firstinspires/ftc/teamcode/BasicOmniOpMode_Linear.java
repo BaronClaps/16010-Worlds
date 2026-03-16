@@ -27,18 +27,16 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.bylazar.telemetry.TelemetryManager;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
 /*
@@ -68,8 +66,6 @@ import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list
  */
-
-@Disabled
 
 @TeleOp(name="Basic: Omni Linear OpMode", group="Linear OpMode")
 public class BasicOmniOpMode_Linear extends LinearOpMode {
@@ -176,7 +172,7 @@ public class BasicOmniOpMode_Linear extends LinearOpMode {
             telemetryM.addData("RF Current", frontRightDrive.getCurrent(CurrentUnit.AMPS));
             telemetryM.addData("LB Current", backLeftDrive.getCurrent(CurrentUnit.AMPS));
             telemetryM.addData("RB Current", backRightDrive.getCurrent(CurrentUnit.AMPS));
-
+        telemetryM.addData("Total Current", backLeftDrive.getCurrent(CurrentUnit.AMPS)+backRightDrive.getCurrent(CurrentUnit.AMPS)+frontLeftDrive.getCurrent(CurrentUnit.AMPS)+frontRightDrive.getCurrent(CurrentUnit.AMPS));
             telemetryM.update();
         }
     }}

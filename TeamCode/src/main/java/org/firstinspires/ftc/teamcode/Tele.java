@@ -38,12 +38,6 @@ public class Tele extends CommandOpMode {
     @Override
     public void init() {
         r = new Robot(hardwareMap, a);
-        if (Robot.localizer != null) {
-            r.f.poseTracker.getLocalizer().update();
-            r.f.setStartingPose(r.f.poseTracker.getLocalizer().getPose());
-        } else {
-            r.f.setStartingPose(defaultPose);
-        }
         r.t.setPowerZero();
 //        multipleTelemetry = new MultipleTelemetry(FtcDashboard.getInstance().getTelemetry(), telemetry);
     }
@@ -56,6 +50,12 @@ public class Tele extends CommandOpMode {
 
     @Override
     public void start() {
+//        if (Robot.localizer != null) {
+//            r.f.poseTracker.getLocalizer().update();
+//            r.f.setStartingPose(r.f.poseTracker.getLocalizer().getPose());
+//        } else {
+            r.f.setStartingPose(defaultPose);
+//        }
         r.p.setPattern(Robot.currentPattern);
         r.setShootTarget();
         r.t.setPowerZero();

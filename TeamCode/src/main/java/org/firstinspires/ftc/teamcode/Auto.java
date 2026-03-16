@@ -42,6 +42,7 @@ public class Auto extends CommandOpMode {
         public void start() {
         r.s.on();
         r.t.on();
+        r.s.close();
         schedule(
                Commands.infinite(() -> {
                    r.periodic();

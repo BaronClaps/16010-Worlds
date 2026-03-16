@@ -21,7 +21,7 @@ public class Shooter {
     private Servo h;
 
     private double t = 0;
-    public static double kS = 0.08, kV = 0.00039, kP = 0.01, useRaw = 250;
+    public static double kS = 0.03, kV = 0.00040650, kP = 0.02, useRaw = 75;
     // .22 to .78
 
     private boolean activated = false;

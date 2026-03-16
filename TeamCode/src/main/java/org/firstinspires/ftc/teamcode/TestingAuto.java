@@ -10,13 +10,13 @@ import java.util.Arrays;
 
 @Autonomous
 public class TestingAuto extends CommandOpMode {
-    Alliance a = Alliance.BLUE;
+    Alliance a = Alliance.RED;
     Paths p;
 
     Robot r;
 
     public void init() {
-        r = new Robot(hardwareMap, this.a);
+        r = new Robot(hardwareMap,  Alliance.RED);
         p = new Paths(r);
 
         r.f.setStartingPose(p.start);

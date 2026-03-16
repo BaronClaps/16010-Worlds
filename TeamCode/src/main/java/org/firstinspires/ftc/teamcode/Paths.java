@@ -14,7 +14,7 @@ import org.firstinspires.ftc.teamcode.util.BaronPose;
 public class Paths {
     private final Follower f;
 
-    public Pose start = new Pose(31.3125, 144-11, Math.toRadians(90));
+    public static Pose start = new Pose(31.3125, 144-11, Math.toRadians(90));
     public Pose startMid = start.withY(100);
     public Pose score = new Pose(55, 144-55, Math.toRadians(135));
 

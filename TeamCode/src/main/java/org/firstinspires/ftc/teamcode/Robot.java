@@ -44,9 +44,9 @@ public class Robot {
         p = new Spindexer(h);
         t = new Turret(h);
 
-        if (localizer != null)
-            f = Constants.createFollower(h, localizer);
-        else
+//        if (localizer != null)
+//            f = Constants.createFollower(h, localizer);
+//        else
             f = Constants.createFollower(h);
 
         hubs = h.getAll(LynxModule.class);

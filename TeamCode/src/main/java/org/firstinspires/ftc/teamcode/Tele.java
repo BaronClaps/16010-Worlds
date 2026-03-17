@@ -105,14 +105,16 @@ public class Tele extends CommandOpMode {
                 r.s.setTarget(shootTarget);
                 r.s.setHood(hoodTarget);
             } else {
-         //       Pose poseLookAhead = r.f.getPose();
+                //       Pose poseLookAhead = r.f.getPose();
 
-         //       if(movingShoot)
-      //              poseLookAhead = Shooter.getProjectedPoseWithConstantVelocity(r.f.getPose(), 1, r.f.poseTracker.getLocalizer().getVelocity());
-
-                double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
-                boolean close = r.f.getPose().getY() > 48;
-                r.s.forDistance(dist, close);
+                //       if(movingShoot)
+                //              poseLookAhead = Shooter.getProjectedPoseWithConstantVelocity(r.f.getPose(), 1, r.f.poseTracker.getLocalizer().getVelocity());
+              //  if (r.loops / 2 == 0) {
+                 double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
+                  boolean close = r.f.getPose().getY() > 48;
+                  telemetry.addData("Distance:", dist);
+                  r.s.forDistance(dist, close);
+          //      }
 
                 if (offsetAiming)
                     r.t.face(r.getShootTarget(), r.f.getPose(), r.a);

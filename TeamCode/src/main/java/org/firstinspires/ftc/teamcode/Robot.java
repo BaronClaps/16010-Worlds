@@ -26,7 +26,6 @@ public class Robot {
     public final Follower follower;
     public Alliance a;
 
-    private final List<LynxModule> hubs;
     private final Timer loop = new Timer();
     public double loops = 0, lastLoop = 0, loopTime = 0;
     public static Pose defaultPose = new Pose(8 + 24, 6.25 + 24, 0);
@@ -42,7 +41,7 @@ public class Robot {
 
         follower = Constants.createFollower(h);
 
-        hubs = h.getAll(LynxModule.class);
+        List<LynxModule> hubs = h.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
@@ -84,33 +83,24 @@ public class Robot {
         return shootTarget;
     }
 
-    public CommandBuilder shootPassthrough() {
+    public CommandBuilder shoot() {
         return sequential(
                 intake.inCommand(),
                 Commands.instant(shooter::close),
-                Commands.instant(turret::on),
                 Commands.waitUntil(shooter::atTarget),
-                Commands.waitUntil(turret::isReady),
                 intake.inCommand(),
-                Commands.instant(transfer::openTopGate),
-                Commands.instant(transfer::engageKicker),
-                Commands.waitMs(350.0),
-                Commands.instant(turret::off)
-
+                transfer.openCommand(),
+                transfer.inCommand(),
+                Commands.waitMs(350.0)
         );
     }
 
-    public CommandBuilder intakePassthrough() {
+    public CommandBuilder intake() {
         return sequential(
-                Commands.instant(() -> {
-                    transfer.disableAutoRotate();
-                    transfer.disableSort();
-                    transfer.disengageKicker();
-                    transfer.closeTopGate();
-                    transfer.openBottomGate();
-                    turret.on();
-                }),
+                transfer.closeCommand(),
+                transfer.idleCommand(),
                 intake.inCommand(),
+                intake.lowerCommand(),
                 Commands.waitMs(250.0)
         );
     }

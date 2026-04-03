@@ -5,25 +5,23 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
-import org.firstinspires.ftc.teamcode.subsystem.Spindexer;
+import org.firstinspires.ftc.teamcode.subsystem.Transfer;
 
 @TeleOp(group="Tests")
 @Config
 public class ShootTest extends OpMode {
     Shooter s;
     Intake i;
-    Spindexer sp;
-    public static double ipower = 1, hood = .5, target = 1650;
+    Transfer t;
+    public static double ipower = 0, tpower = 0, target = 1650;
 
 
     @Override
     public void init() {
         s = new Shooter(hardwareMap);
         i = new Intake(hardwareMap);
-        sp = new Spindexer(hardwareMap);
+        t = new Transfer(hardwareMap);
         s.off();
-        sp.moveTo(2);
-        sp.engageKicker();
     }
 
     @Override
@@ -45,7 +43,7 @@ public class ShootTest extends OpMode {
     @Override
     public void loop() {
         i.set(ipower);
-        s.setHood(hood);
+        t.set(tpower);
         s.periodic();
         s.setTarget(target);
 

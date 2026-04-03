@@ -19,27 +19,27 @@ public class TestingAuto extends CommandOpMode {
         r = new Robot(hardwareMap,  Alliance.RED);
         p = new Paths(r);
 
-        r.f.setStartingPose(p.start);
+        r.follower.setStartingPose(p.start);
 
-        r.t.resetTurret();
+        r.turret.resetTurret();
 //        r.s.setHood(0.5);
 //        r.s.setTarget(1800);
 
         r.setShootTarget();
-        r.t.automatic();
-        r.t.setPowerZero();
-        r.p.openBottomGate();
-        r.p.disengageKicker();
-        r.p.disableAutoRotate();
-        r.p.disableSort();
-        r.p.moveTo(2);
-        r.s.setPower(0);
+        r.turret.automatic();
+        r.turret.setPowerZero();
+        r.transfer.openBottomGate();
+        r.transfer.disengageKicker();
+        r.transfer.disableAutoRotate();
+        r.transfer.disableSort();
+        r.transfer.moveTo(2);
+        r.shooter.setPower(0);
     }
 
     public void start() {
-        r.s.on();
-        r.t.on();
-        r.p.closeTopGate();
+        r.shooter.on();
+        r.turret.on();
+        r.transfer.closeTopGate();
      //   r.s.close();
         schedule(
                 Commands.infinite(() -> {
@@ -50,13 +50,13 @@ public class TestingAuto extends CommandOpMode {
 //                    r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
 //                    r.s.setTarget(shootTarget);
 //                    r.s.setHood(hoodTarget);
-                    r.t.face(r.getShootTarget(), r.f.getPose());
+                    r.turret.face(r.getShootTarget(), r.follower.getPose());
 
                     telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
-                    telemetry.addData("Slots", Arrays.toString(r.p.slots));
-                    telemetry.addData("Shooter Velocity", r.s.getVelocity());
-                    telemetry.addData("Turret Error", r.t.getError());
-                    telemetry.addData("Pose", r.f.getPose());
+                    telemetry.addData("Slots", Arrays.toString(r.transfer.slots));
+                    telemetry.addData("Shooter Velocity", r.shooter.getVelocity());
+                    telemetry.addData("Turret Error", r.turret.getError());
+                    telemetry.addData("Pose", r.follower.getPose());
                     telemetry.addData("Target", r.getShootTarget());
                     telemetry.update();
                 }),

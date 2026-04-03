@@ -5,11 +5,9 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
-import com.pedropathing.ivy.pedro.PedroCommands;
 import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedro.FollowPath;
 import org.firstinspires.ftc.teamcode.util.Alliance;
-import org.firstinspires.ftc.teamcode.util.BaronPose;
 
 public class Paths {
     private final Follower f;
@@ -43,36 +41,36 @@ public class Paths {
     public Pose park = new Pose(36, 72, Math.toRadians(180));
 
     public Paths(Robot r) {
-        this.f = r.f;
+        this.f = r.follower;
 
         if (r.a.equals(Alliance.RED)) {
-            start = BaronPose.mirror(start);
-            startMid = BaronPose.mirror(startMid);
-            score = BaronPose.mirror(score);
+            start = start.mirror();
+            startMid = startMid.mirror();
+            score = score.mirror();
 
-            spike1 = BaronPose.mirror(spike1);
-            spike1Control1 = BaronPose.mirror(spike1Control1);
-            spike1Control2 = BaronPose.mirror(spike1Control2);
+            spike1 = spike1.mirror();
+            spike1Control1 = spike1Control1.mirror();
+            spike1Control2 = spike1Control2.mirror();
 
-            spike2 = BaronPose.mirror(spike2);
-            spike2Control1 = BaronPose.mirror(spike2Control1);
-            spike2Control2 = BaronPose.mirror(spike2Control2);
+            spike2 = spike2.mirror();
+            spike2Control1 = spike2Control1.mirror();
+            spike2Control2 = spike2Control2.mirror();
 
-            spike3 = BaronPose.mirror(spike3);
-            spike3Control1 = BaronPose.mirror(spike3Control1);
-            spike3Control2 = BaronPose.mirror(spike3Control2);
+            spike3 = spike3.mirror();
+            spike3Control1 = spike3Control1.mirror();
+            spike3Control2 = spike3Control2.mirror();
 
-            gateIntake = BaronPose.mirror(gateIntake);
-            gateControl1 = BaronPose.mirror(gateControl1);
-            gateControl2 = BaronPose.mirror(gateControl2);
+            gateIntake = gateIntake.mirror();
+            gateControl1 = gateControl1.mirror();
+            gateControl2 = gateControl2.mirror();
 
-            gateHit = BaronPose.mirror(gateHit);
-            gateHitControl = BaronPose.mirror(gateHitControl);
+            gateHit = gateHit.mirror();
+            gateHitControl = gateHitControl.mirror();
 
-            cornerControl = BaronPose.mirror(cornerControl);
-            corner = BaronPose.mirror(corner);
+            cornerControl = cornerControl.mirror();
+            corner = corner.mirror();
 
-            park = BaronPose.mirror(park);
+            park = park.mirror();
         }
     }
 

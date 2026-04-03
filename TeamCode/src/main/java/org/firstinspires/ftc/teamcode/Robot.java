@@ -12,22 +12,19 @@ import org.firstinspires.ftc.teamcode.pedro.Constants;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.*;
 import org.firstinspires.ftc.teamcode.util.Alliance;
-import org.firstinspires.ftc.teamcode.util.BaronPose;
-import org.firstinspires.ftc.teamcode.util.Pattern;
 
 import java.util.List;
 
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 public class Robot {
-    public final Intake i;
+    public final Intake intake;
     //public final Limelight l;
-    public final Shooter s;
-    public final Spindexer p;
-    public final Turret t;
-    public final Follower f;
+    public final Shooter shooter;
+    public final Transfer transfer;
+    public final Turret turret;
+    public final Follower follower;
     public Alliance a;
-    public static Pattern currentPattern = Pattern.PGP;
 
     private final List<LynxModule> hubs;
     private final Timer loop = new Timer();
@@ -38,16 +35,12 @@ public class Robot {
 
     public Robot(HardwareMap h, Alliance a) {
         this.a = a;
-        i = new Intake(h);
-        //l = new Limelight(h, a);
-        s = new Shooter(h);
-        p = new Spindexer(h);
-        t = new Turret(h);
+        intake = new Intake(h);
+        shooter = new Shooter(h);
+        transfer = new Transfer(h);
+        turret = new Turret(h);
 
-//        if (localizer != null)
-//            f = Constants.createFollower(h, localizer);
-//        else
-            f = Constants.createFollower(h);
+        follower = Constants.createFollower(h);
 
         hubs = h.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
@@ -61,12 +54,6 @@ public class Robot {
     }
 
     public void periodic() {
-       // setShootTarget();
-
-//        if (loop.getElapsedTime() % 10 == 0) {
-//            hub.clearBulkCache();
-//        }
-
         loops++;
 
         if (loops > 10) {
@@ -76,15 +63,13 @@ public class Robot {
             loops = 0;
         }
 
-        p.periodic();
-        f.update();
-        t.periodic();
-        s.periodic();
+        follower.update();
+        shooter.periodic();
     }
 
     public void saveEnd() {
-        defaultPose = f.getPose();
-        localizer = f.getPoseTracker().getLocalizer();
+        defaultPose = follower.getPose();
+        localizer = follower.getPoseTracker().getLocalizer();
     }
 
 
@@ -92,91 +77,40 @@ public class Robot {
         if (a == Alliance.BLUE && shootTarget.getX() != 2)
             shootTarget = new Pose(2, 144 - 2, 0);
         else if (a == Alliance.RED && shootTarget.getX() != (144 - 2))
-            shootTarget = BaronPose.mirror(new Pose(2, 144 - 2, 0));
+            shootTarget = new Pose(2, 144 - 2, 0).mirror();
     }
 
     public Pose getShootTarget() {
         return shootTarget;
     }
 
-    public CommandBuilder shootSpindexUnsorted() {
-        return sequential(
-                i.in(),
-                Commands.instant(() -> p.moveTo(1)),
-                Commands.instant(s::close),
-                Commands.instant(t::on),
-                Commands.waitUntil(s::atTarget),
-                Commands.waitUntil(t::isReady),
-                i.in(),
-                Commands.instant(() -> {
-                            p.shootDirection = p.currentIndex >= 3 ? -1: 1;
-                            p.openBottomGate();
-                            p.openTopGate();
-                            p.engageKicker();
-                            p.all(4);
-                        }
-                ),
-                Commands.waitMs(1500.0)
-
-        );
-    }
-
     public CommandBuilder shootPassthrough() {
         return sequential(
-                i.in(),
-                Commands.instant(s::close),
-                Commands.instant(t::on),
-                Commands.waitUntil(s::atTarget),
-                Commands.waitUntil(t::isReady),
-                i.in(),
-                Commands.instant(p::openTopGate),
-                Commands.instant(p::engageKicker),
+                intake.inCommand(),
+                Commands.instant(shooter::close),
+                Commands.instant(turret::on),
+                Commands.waitUntil(shooter::atTarget),
+                Commands.waitUntil(turret::isReady),
+                intake.inCommand(),
+                Commands.instant(transfer::openTopGate),
+                Commands.instant(transfer::engageKicker),
                 Commands.waitMs(350.0),
-                Commands.instant(t::off)
+                Commands.instant(turret::off)
 
-        );
-    }
-
-    public CommandBuilder intakeSorted() {
-        return sequential(
-                Commands.instant(() -> {
-                    p.enableSort();
-                    p.disengageKicker();
-                    p.openTopGate();
-                    p.closeBottomGate();
-                }),
-                i.in(),
-                Commands.waitMs(250.0)
-        );
-    }
-
-    public CommandBuilder intakeSpindexUnsorted() {
-        return sequential(
-                Commands.instant(() -> {
-               //     t.off();
-                    p.disableSort();
-                    p.enableAutoRotate();
-                    p.disengageKicker();
-                    p.closeTopGate();
-                    p.closeBottomGate();
-                    t.on();
-                }),
-                i.in()//,
-//                Commands.waitMs(250.0)
         );
     }
 
     public CommandBuilder intakePassthrough() {
         return sequential(
                 Commands.instant(() -> {
-                    p.disableAutoRotate();
-                    p.disableSort();
-                    p.disengageKicker();
-                    p.closeTopGate();
-                    p.openBottomGate();
-                    t.on();
+                    transfer.disableAutoRotate();
+                    transfer.disableSort();
+                    transfer.disengageKicker();
+                    transfer.closeTopGate();
+                    transfer.openBottomGate();
+                    turret.on();
                 }),
-                i.in(),
+                intake.inCommand(),
                 Commands.waitMs(250.0)
         );
     }

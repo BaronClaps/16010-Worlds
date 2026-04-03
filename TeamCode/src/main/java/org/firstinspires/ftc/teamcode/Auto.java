@@ -5,8 +5,6 @@ import com.pedropathing.ivy.groups.Groups;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.CommandOpMode;
 
-import java.util.Arrays;
-
 public class Auto extends CommandOpMode {
     Alliance a;
     Paths p;
@@ -21,46 +19,22 @@ public class Auto extends CommandOpMode {
         r = new Robot(hardwareMap, this.a);
         p = new Paths(r);
 
-        r.f.setStartingPose(p.start);
-
-        r.t.resetTurret();
-//        r.s.setHood(0.5);
-//        r.s.setTarget(1800);
-
+        r.follower.setStartingPose(p.start);
         r.setShootTarget();
-        r.t.automatic();
-        r.t.setPowerZero();
-        r.p.closeTopGate();
-        r.p.closeBottomGate();
-        r.p.disengageKicker();
-        r.p.enableAutoRotate();
-        r.p.disableSort();
-        r.p.moveTo(2);
-        r.s.setPower(0);
+        r.shooter.setPower(0);
     }
 
         public void start() {
-        r.s.on();
-        r.t.on();
-        r.s.close();
+        r.shooter.on();
+        r.shooter.close();
         schedule(
                Commands.infinite(() -> {
                    r.periodic();
-//                   double dist = r.getShootTarget().distanceFrom(r.f.getPose()) + 8;
-//                   boolean close = r.f.getPose().getY() > 48;
-//                   r.s.forDistance(dist, close);
-                   //r.s.forPose(r.f.getPose(), r.getShootTarget(), close);
-//                r.s.setTarget(shootTarget);
-//                r.s.setHood(hoodTarget);
-
-                 //  r.t.face(r.getShootTarget(), r.f.getPose());
-                   r.t.face(r.getShootTarget(), r.f.getPose());
+                   r.turret.face(r.getShootTarget(), r.follower.getPose());
 
                    telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
-                   telemetry.addData("Slots", Arrays.toString(r.p.slots));
-                   telemetry.addData("Shooter Velocity", r.s.getVelocity());
-                   telemetry.addData("Turret Error", r.t.getError());
-                   telemetry.addData("Pose", r.f.getPose());
+                   telemetry.addData("Shooter Velocity", r.shooter.getVelocity());
+                   telemetry.addData("Pose", r.follower.getPose());
                    telemetry.addData("Target", r.getShootTarget());
                    telemetry.update();
                }),
@@ -75,11 +49,11 @@ public class Auto extends CommandOpMode {
                                         .with(
                                                 Commands.waitMs(500.0)
                                                         .then(
-                                                                r.i.off())),
+                                                                r.intake.offCommand())),
                                 Commands.waitMs(3000.0)
                         ),
                        // Commands.waitMs(),
-                        r.i.in(),
+                        r.intake.inCommand(),
                         p.scoreHitGate(),
                         r.shootSpindexUnsorted(),
                         r.intakeSpindexUnsorted(),
@@ -100,14 +74,14 @@ public class Auto extends CommandOpMode {
                         p.scoreCorner(),
                         r.shootSpindexUnsorted(),
                         p.park(),
-                        Commands.instant(r.s::off),
-                        r.i.off()
+                        Commands.instant(r.shooter::off),
+                        r.intake.offCommand()
                 )
                         .with(
                                 Commands.waitMs(29250.0)
                                         .then(
-                                                Commands.instant(r.f::breakFollowing),
-                                                Commands.instant(() -> r.f.holdPoint(r.f.getPose(), false))
+                                                Commands.instant(r.follower::breakFollowing),
+                                                Commands.instant(() -> r.follower.holdPoint(r.follower.getPose(), false))
                                         )
                         )
         );

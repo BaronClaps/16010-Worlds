@@ -9,24 +9,24 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.CachedMotor;
 
 @Config
-public class Intake {
-    private final CachedMotor intake;
-    private final Servo pivot;
+public class Transfer {
+    private final CachedMotor transfer;
+    private final Servo gate;
     public static double off = 0;
     public static double idle = 0.5;
     public static double in = 1;
     public static double out = -1;
-    public static double up = 0.5;
-    public static double down = 0.5;
+    public static double open = 0.5;
+    public static double closed = 0.5;
 
-    public Intake(HardwareMap hardwareMap) {
-        intake = new CachedMotor(hardwareMap.get(DcMotorEx.class, "i"));
-        pivot = hardwareMap.get(Servo.class, "p");
+    public Transfer(HardwareMap hardwareMap) {
+        transfer = new CachedMotor(hardwareMap.get(DcMotorEx.class, "t"));
+        gate = hardwareMap.get(Servo.class, "g");
         set(0);
     }
 
     public void set(double power) {
-        intake.setPower(power);
+        transfer.setPower(power);
     }
 
     public void in() {
@@ -41,11 +41,11 @@ public class Intake {
     public void idle() {
         set(idle);
     }
-    public void raise() {
-        pivot.setPosition(up);
+    public void open() {
+        gate.setPosition(open);
     }
-    public void lower() {
-        pivot.setPosition(down);
+    public void close() {
+        gate.setPosition(closed);
     }
 
     public CommandBuilder offCommand() {
@@ -60,10 +60,10 @@ public class Intake {
     public CommandBuilder idleCommand() {
         return Commands.instant(this::idle);
     }
-    public CommandBuilder raiseCommand() {
-        return Commands.instant(this::raise);
+    public CommandBuilder openCommand() {
+        return Commands.instant(this::open);
     }
-    public CommandBuilder lowerCommand() {
-        return Commands.instant(this::lower);
+    public CommandBuilder closeCommand() {
+        return Commands.instant(this::close);
     }
 }

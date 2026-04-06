@@ -16,12 +16,12 @@ public class Transfer {
     public static double idle = 0.5;
     public static double in = 1;
     public static double out = -1;
-    public static double open = 0.5;
-    public static double closed = 0.5;
+    public static double open = 0.7;
+    public static double closed = 0;
 
     public Transfer(HardwareMap hardwareMap) {
-        transfer = new CachedMotor(hardwareMap.get(DcMotorEx.class, "t"));
-        gate = hardwareMap.get(Servo.class, "g");
+        transfer = new CachedMotor(hardwareMap.get(DcMotorEx.class, "transfer"));
+        gate = hardwareMap.get(Servo.class, "shooterGate");
         set(0);
     }
 

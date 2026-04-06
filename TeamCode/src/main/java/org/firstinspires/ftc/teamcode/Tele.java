@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
@@ -9,13 +10,17 @@ import org.firstinspires.ftc.teamcode.util.Alliance;
 
 import static org.firstinspires.ftc.teamcode.Robot.defaultPose;
 
+@Config
 public class Tele extends OpMode {
     Alliance alliance;
     Robot robot;
 
-    public boolean shoot = false, manual = false, field = false, shooting = false;
+    public boolean shoot = false;
+    public boolean manual = false;
+    public boolean field = false;
+    public int shooting = 0;
     public double speed = 1, intakeOn = 0;
-    public static double shootTarget = 1250, timeToShoot = 0.5;
+    public static double shootTarget = 1250, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5;
     private final Timer shootTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
@@ -33,6 +38,7 @@ public class Tele extends OpMode {
         robot.follower.setStartingPose(defaultPose);
         robot.setShootTarget();
         robot.follower.startTeleopDrive();
+        robot.turret.set(0.5);
         robot.intake.in();
         robot.shooter.off();
         robot.transfer.close();
@@ -45,7 +51,7 @@ public class Tele extends OpMode {
         robot.periodic();
 
         if (field)
-            robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x, false, robot.a == Alliance.BLUE ? Math.toRadians(180) : 0);
+            robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x, false, robot.alliance == Alliance.BLUE ? Math.toRadians(180) : 0);
         else
             robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x, true);
 
@@ -55,7 +61,7 @@ public class Tele extends OpMode {
             else
                 intakeOn = 1;
 
-        if (gamepad1.dpadDownWasPressed())
+        if (gamepad1.leftBumperWasPressed())
             if (intakeOn == 2)
                 intakeOn = 0;
             else
@@ -90,7 +96,8 @@ public class Tele extends OpMode {
             } else {
                 double dist = robot.getShootTarget().distanceFrom(robot.follower.getPose());
                 boolean close = robot.follower.getPose().getY() > 48;
-                robot.shooter.forDistance(dist, close);
+               // robot.shooter.forDistance(dist, close);
+                robot.shooter.setTarget(shootTarget); // TODO: Regression
                 robot.turret.face(robot.getShootTarget(), robot.follower.getPose());
             }
         } else {
@@ -101,20 +108,32 @@ public class Tele extends OpMode {
             shoot = !shoot;
 
         if (gamepad1.rightTriggerWasPressed() && shoot) {
-            shooting = true;
+            shooting = 1;
             shootTimer.resetTimer();
-            intakeOn = 1;
+            intakeOn = 0;
+        }
+
+        if (shooting == 1 && shootTimer.getElapsedTimeSeconds() > timeToStopIntake) {
+            shooting = 2;
+            shootTimer.resetTimer();
             robot.transfer.open();
         }
 
-        if (shooting && shootTimer.getElapsedTimeSeconds() > timeToShoot) {
-            shooting = false;
+        if (shooting == 2 && shootTimer.getElapsedTimeSeconds() > timeToOpenGate) {
+            shooting = 3;
+            shootTimer.resetTimer();
             intakeOn = 1;
+        }
+
+        if (shooting == 3 && shootTimer.getElapsedTimeSeconds() > timeToShoot) {
+            shooting = 0;
+            intakeOn = 1;
+            shootTimer.resetTimer();
             robot.transfer.close();
         }
 
         if (gamepad1.aWasPressed()) {
-            if (robot.a.equals(Alliance.BLUE)) {
+            if (robot.alliance.equals(Alliance.BLUE)) {
                 robot.follower.setPose(new Pose(7.5, 8.5, Math.toRadians(0)).mirror());
             } else {
                 robot.follower.setPose(new Pose(7.5, 8.5, Math.toRadians(0)));
@@ -137,7 +156,7 @@ public class Tele extends OpMode {
         multipleTelemetry.addData("Shoot Target for Manual", shootTarget);
         multipleTelemetry.addLine();
         multipleTelemetry.addData("Field Centric?", field);
-
+        multipleTelemetry.update();
 
     }
 }

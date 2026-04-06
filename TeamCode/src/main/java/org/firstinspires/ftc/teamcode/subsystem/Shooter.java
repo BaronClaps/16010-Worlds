@@ -12,10 +12,10 @@ import smile.interpolation.Interpolation2D;
 @Config
 
 public class Shooter {
-    private final CachedMotor left, right;
+    private final CachedMotor top, bottom;
 
     private double t = 0;
-    public static double kS = 0.08, kV = 0.00039, kP = 0.01, useRaw = 0;
+    public static double kS = 0.08, kV = 0.00039, kP = 0.01, useRaw = 50;
 
     private boolean activated = false;
 
@@ -32,9 +32,10 @@ public class Shooter {
     private double velocity;
 
     public Shooter(HardwareMap hardwareMap) {
-        left = new CachedMotor(hardwareMap.get(DcMotorEx.class, "sl"));
-        right = new CachedMotor(hardwareMap.get(DcMotorEx.class, "sr"));
-        left.setDirection(DcMotorSimple.Direction.REVERSE);
+        top = new CachedMotor(hardwareMap.get(DcMotorEx.class, "flywheel1"));
+        bottom = new CachedMotor(hardwareMap.get(DcMotorEx.class, "flywheel2"));
+        top.setDirection(DcMotorSimple.Direction.REVERSE);
+        bottom.setDirection(DcMotorSimple.Direction.REVERSE);
     }
 
     public double getTarget() {
@@ -46,8 +47,8 @@ public class Shooter {
     }
 
     public void setPower(double p) {
-        left.setPower(p);
-        right.setPower(p);
+        top.setPower(p);
+        bottom.setPower(p);
     }
 
     public void off() {
@@ -65,7 +66,7 @@ public class Shooter {
 
     public void periodic() {
         if (activated) {
-            velocity = -left.getVelocity();
+            velocity = top.getVelocity();
 
             if (Math.abs(getTarget() - getVelocity()) > useRaw)
                 setPower(Math.signum(getTarget() - getVelocity()));
@@ -99,7 +100,7 @@ public class Shooter {
     }
 
     public void close() {
-        setTarget(1650);
+        setTarget(1200);
         on();
     }
 }

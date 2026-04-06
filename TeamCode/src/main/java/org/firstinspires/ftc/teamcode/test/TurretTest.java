@@ -6,24 +6,24 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Turret;
 
 @TeleOp(group="Tests")
 @Config
-public class IntakeTest extends OpMode {
-    Intake intake;
+public class TurretTest extends OpMode {
+    Turret turret;
+    public static double yaw = 0, position = 0.5;
+    public static boolean useYaw = false;
     @Override
     public void init() {
-        intake = new Intake(hardwareMap);
+        turret = new Turret(hardwareMap);
     }
 
     @Override
     public void loop() {
-        if (gamepad1.aWasPressed()) {
-            intake.set(1);
-        } else if (gamepad1.bWasPressed()) {
-            intake.set(-1);
-        } else if (gamepad1.yWasPressed()) {
-            intake.set(0);
-        }
+        if (useYaw)
+            turret.setYaw(yaw);
+        else
+            turret.set(position);
     }
 }

@@ -16,12 +16,12 @@ public class Intake {
     public static double idle = 0.5;
     public static double in = 1;
     public static double out = -1;
-    public static double up = 0.5;
-    public static double down = 0.5;
+    public static double up = 0.35;
+    public static double down = 0;
 
     public Intake(HardwareMap hardwareMap) {
-        intake = new CachedMotor(hardwareMap.get(DcMotorEx.class, "i"));
-        pivot = hardwareMap.get(Servo.class, "p");
+        intake = new CachedMotor(hardwareMap.get(DcMotorEx.class, "intake"));
+        pivot = hardwareMap.get(Servo.class, "intakePivot");
         set(0);
     }
 

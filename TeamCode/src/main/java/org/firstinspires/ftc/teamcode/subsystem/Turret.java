@@ -10,22 +10,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Turret {
     private final Servo left, right;
     private double position = 0.5;
-    private static final double ppr = (.25 - .5) / (Math.PI / 2.0);
+    private static final double ppr = (.225 - .5) / (Math.PI / 2.0);
 
     public Turret(HardwareMap hardwareMap) {
-        left = hardwareMap.get(Servo.class, "tl");
-        right = hardwareMap.get(Servo.class, "tr");
-
-        set(position);
+        left = hardwareMap.get(Servo.class, "leftTurret");
+        right = hardwareMap.get(Servo.class, "rightTurret");
     }
 
-    private void set(double position) {
+    public void set(double position) {
         left.setPosition(position);
         right.setPosition(position);
         this.position = position;
     }
 
-    private double get() {
+    public double get() {
         return position;
     }
 

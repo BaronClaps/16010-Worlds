@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.test;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
@@ -13,7 +15,8 @@ public class ShootTest extends OpMode {
     Shooter s;
     Intake i;
     Transfer t;
-    public static double ipower = 0, tpower = 0, target = 1650;
+    MultipleTelemetry telemetryM;
+    public static double ipower = 0, tpower = 0, target = 1200;
 
 
     @Override
@@ -22,6 +25,8 @@ public class ShootTest extends OpMode {
         i = new Intake(hardwareMap);
         t = new Transfer(hardwareMap);
         s.off();
+
+        telemetryM = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     @Override
@@ -31,13 +36,13 @@ public class ShootTest extends OpMode {
         if (gamepad1.a)
             s.setPower(1);
 
-        telemetry.addData("Shooter V", s.getVelocity());
-        telemetry.update();
+        telemetryM.addData("Shooter V", s.getVelocity());
+        telemetryM.update();
     }
 
     public void start() {
         s.on();
-        s.setTarget(1650);
+        s.setTarget(1200);
     }
 
     @Override
@@ -47,8 +52,8 @@ public class ShootTest extends OpMode {
         s.periodic();
         s.setTarget(target);
 
-        telemetry.addData("Shooter V", s.getVelocity());
-        telemetry.addData("Shooter T", s.getTarget());
-        telemetry.update();
+        telemetryM.addData("Shooter V", s.getVelocity());
+        telemetryM.addData("Shooter T", s.getTarget());
+        telemetryM.update();
     }
 }

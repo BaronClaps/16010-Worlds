@@ -5,6 +5,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
+import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedro.FollowPath;
 import org.firstinspires.ftc.teamcode.util.Alliance;
@@ -43,7 +44,7 @@ public class Paths {
     public Paths(Robot r) {
         this.f = r.follower;
 
-        if (r.a.equals(Alliance.RED)) {
+        if (r.alliance.equals(Alliance.RED)) {
             start = start.mirror();
             startMid = startMid.mirror();
             score = score.mirror();
@@ -84,7 +85,8 @@ public class Paths {
                 )
                 .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder intakeSpike1() {
@@ -99,7 +101,8 @@ public class Paths {
                 .setLinearHeadingInterpolation(score.getHeading(), spike1.getHeading(), .3)
                 .setBrakingStrength(2)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder scoreSpike1() {
@@ -113,7 +116,8 @@ public class Paths {
                 ).setLinearHeadingInterpolation(spike1.getHeading(), score.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder intakeSpike2() {
@@ -127,7 +131,8 @@ public class Paths {
                 .setLinearHeadingInterpolation(score.getHeading(), spike2.getHeading(), .5)
                 .setBrakingStrength(2)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder scoreSpike2() {
@@ -141,7 +146,8 @@ public class Paths {
                 ).setLinearHeadingInterpolation(spike2.getHeading(), score.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder intakeSpike3() {
@@ -155,7 +161,8 @@ public class Paths {
                 .setLinearHeadingInterpolation(score.getHeading(), spike3.getHeading(), .5)
                 .setBrakingStrength(2)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder scoreSpike3() {
@@ -169,7 +176,8 @@ public class Paths {
                 ).setLinearHeadingInterpolation(spike3.getHeading(), score.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder intakeGate() {
@@ -183,7 +191,8 @@ public class Paths {
                 ).setLinearHeadingInterpolation(score.getHeading(), gateIntake.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder scoreGate() {
@@ -197,7 +206,8 @@ public class Paths {
                 ).setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder hitGateAfterFirst() {
@@ -211,7 +221,8 @@ public class Paths {
                 .setLinearHeadingInterpolation(spike1.getHeading(), gateHit.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder hitGateAfterSecond() {
@@ -225,7 +236,8 @@ public class Paths {
                 .setLinearHeadingInterpolation(spike2.getHeading(), gateHit.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder scoreHitGate() {
@@ -238,7 +250,8 @@ public class Paths {
                 .setLinearHeadingInterpolation(gateHit.getHeading(), score.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder intakeCorner() {
@@ -252,7 +265,8 @@ public class Paths {
                 .setLinearHeadingInterpolation(score.getHeading(), corner.getHeading(), 0.5)
                 .setBrakingStrength(2)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder scoreCorner() {
@@ -265,7 +279,8 @@ public class Paths {
                 .setLinearHeadingInterpolation(corner.getHeading(), score.getHeading())
                 .setBrakingStrength(2)
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 
     public CommandBuilder park() {
@@ -276,6 +291,7 @@ public class Paths {
                         )
                 ).setLinearHeadingInterpolation(score.getHeading(), park.getHeading())
                 .build();
-        return new FollowPath(this.f, path);
+        // return new FollowPath(this.f, path);
+return Commands.waitMs(2000.0);
     }
 }

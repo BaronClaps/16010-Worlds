@@ -24,7 +24,7 @@ public class Robot {
     public final Transfer transfer;
     public final Turret turret;
     public final Follower follower;
-    public Alliance a;
+    public Alliance alliance;
 
     private final Timer loop = new Timer();
     public double loops = 0, lastLoop = 0, loopTime = 0;
@@ -32,16 +32,16 @@ public class Robot {
     public static Localizer localizer = null;
     public static Pose shootTarget = new Pose(2, 144 - 2, 0);
 
-    public Robot(HardwareMap h, Alliance a) {
-        this.a = a;
-        intake = new Intake(h);
-        shooter = new Shooter(h);
-        transfer = new Transfer(h);
-        turret = new Turret(h);
+    public Robot(HardwareMap hardwareMap, Alliance alliance) {
+        this.alliance = alliance;
+        intake = new Intake(hardwareMap);
+        shooter = new Shooter(hardwareMap);
+        transfer = new Transfer(hardwareMap);
+        turret = new Turret(hardwareMap);
 
-        follower = Constants.createFollower(h);
+        follower = Constants.createFollower(hardwareMap);
 
-        List<LynxModule> hubs = h.getAll(LynxModule.class);
+        List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
@@ -73,9 +73,9 @@ public class Robot {
 
 
     public void setShootTarget() {
-        if (a == Alliance.BLUE && shootTarget.getX() != 2)
+        if (alliance == Alliance.BLUE && shootTarget.getX() != 2)
             shootTarget = new Pose(2, 144 - 2, 0);
-        else if (a == Alliance.RED && shootTarget.getX() != (144 - 2))
+        else if (alliance == Alliance.RED && shootTarget.getX() != (144 - 2))
             shootTarget = new Pose(2, 144 - 2, 0).mirror();
     }
 
@@ -83,22 +83,29 @@ public class Robot {
         return shootTarget;
     }
 
-    public CommandBuilder shoot() {
+    public CommandBuilder shoot(Pose score) {
         return sequential(
-                intake.inCommand(),
                 Commands.instant(shooter::close),
+                Commands.instant(() -> turret.face(getShootTarget(), score)),
+                Commands.instant(() -> intake.set(-.00001)),
+                Commands.instant(() -> transfer.set(-.00001)),
+                intake.lowerCommand(),
+                Commands.waitMs(100.0),
+                transfer.openCommand(),
+                Commands.waitMs(250.0),
                 Commands.waitUntil(shooter::atTarget),
                 intake.inCommand(),
-                transfer.openCommand(),
                 transfer.inCommand(),
-                Commands.waitMs(350.0)
+                Commands.waitMs(500.0),
+                transfer.closeCommand(),
+                intake.lowerCommand()
         );
     }
 
     public CommandBuilder intake() {
         return sequential(
                 transfer.closeCommand(),
-                transfer.idleCommand(),
+                transfer.inCommand(),
                 intake.inCommand(),
                 intake.lowerCommand(),
                 Commands.waitMs(250.0)

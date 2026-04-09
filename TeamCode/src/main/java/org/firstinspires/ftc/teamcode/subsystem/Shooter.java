@@ -15,7 +15,7 @@ public class Shooter {
     private final CachedMotor top, bottom;
 
     private double t = 0;
-    public static double kS = 0.08, kV = 0.00039, kP = 0.01, useRaw = 50;
+    public static double kS = 0.08, kV = 0.00039, kP = 0.01, useRaw = 25;
 
     private boolean activated = false;
 
@@ -90,17 +90,17 @@ public class Shooter {
 
     public void forDistance(double distance, boolean close) {
         if (!close) {
-            setTarget(2000);
+            setTarget(1325);
         } else {
             if (distance > 90) {
                 setTarget(1800);
             }
-            setTarget(1650);
+            setTarget(1025);
         }
     }
 
     public void close() {
-        setTarget(1200);
+        setTarget(1025);
         on();
     }
 }

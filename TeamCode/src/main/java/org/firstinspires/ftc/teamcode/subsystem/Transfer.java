@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.CachedMotor;
@@ -21,6 +22,7 @@ public class Transfer {
 
     public Transfer(HardwareMap hardwareMap) {
         transfer = new CachedMotor(hardwareMap.get(DcMotorEx.class, "transfer"));
+        transfer.setDirection(DcMotorSimple.Direction.REVERSE);
         gate = hardwareMap.get(Servo.class, "shooterGate");
         set(0);
     }

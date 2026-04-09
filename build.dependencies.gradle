@@ -19,7 +19,7 @@ dependencies {
 
     implementation 'com.pedropathing:ftc:2.1.1'
     implementation 'com.pedropathing:telemetry:1.0.0'
-    implementation 'com.pedropathing:ivy:0.0.1'
+    implementation 'com.pedropathing:ivy:1.0.0'
 
     implementation "dev.frozenmilk.sinister:Sloth:0.2.4"
     implementation "dev.frozenmilk:Sinister:2.2.0"

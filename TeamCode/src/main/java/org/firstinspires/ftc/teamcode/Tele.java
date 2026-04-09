@@ -20,7 +20,7 @@ public class Tele extends OpMode {
     public boolean field = false;
     public int shooting = 0;
     public double speed = 1, intakeOn = 0;
-    public static double shootTarget = 1250, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5;
+    public static double shootTarget = 1025, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5;
     private final Timer shootTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
@@ -42,7 +42,7 @@ public class Tele extends OpMode {
         robot.intake.in();
         robot.shooter.off();
         robot.transfer.close();
-        robot.intake.lower();
+        robot.intake.raise();
         shootTimer.resetTimer();
     }
 
@@ -70,12 +70,15 @@ public class Tele extends OpMode {
         if (intakeOn == 1) {
             robot.intake.in();
             robot.transfer.in();
+            robot.intake.lower();
         } else if (intakeOn == 2) {
             robot.intake.out();
             robot.transfer.out();
+            robot.intake.raise();
         } else {
             robot.intake.off();
             robot.transfer.off();
+            robot.intake.raise();
         }
 
         if (shoot) {
@@ -134,9 +137,9 @@ public class Tele extends OpMode {
 
         if (gamepad1.aWasPressed()) {
             if (robot.alliance.equals(Alliance.BLUE)) {
-                robot.follower.setPose(new Pose(7.5, 8.5, Math.toRadians(0)).mirror());
+                robot.follower.setPose(new Pose(129.44,80.25, Math.toRadians(0)).mirror());
             } else {
-                robot.follower.setPose(new Pose(7.5, 8.5, Math.toRadians(0)));
+                robot.follower.setPose(new Pose(129.44, 80.25, Math.toRadians(0)));
             }
         }
 

@@ -10,12 +10,12 @@ import java.util.Arrays;
 
 @Autonomous
 public class TestingAuto extends CommandOpMode {
-    Alliance a = Alliance.RED;
+    Alliance a = Alliance.BLUE;
     Paths p;
     Robot r;
 
     public void init() {
-        r = new Robot(hardwareMap,  Alliance.RED);
+        r = new Robot(hardwareMap, a);
         p = new Paths(r);
 
         r.follower.setStartingPose(Paths.start);
@@ -39,42 +39,60 @@ public class TestingAuto extends CommandOpMode {
                     telemetry.update();
                 }),
                 Groups.sequential(
-                                p.preload(),
-                                r.shoot(p.score),
-                                r.intake(),
-                                p.intakeSpike2()
-                                        .raceWith(Commands.waitMs(5000.0)),
-                                p.scoreSpike2(),
-                                r.shoot(p.score),
-                                r.intake(),
-                                p.intakeGate()
-                                        .raceWith(Commands.waitMs(4000.0)),
-                                Commands.waitMs(1000.0),
-                                p.scoreGate(),
-                                r.shoot(p.score),
-                                r.intake(),
-                                p.intakeGate()
-                                        .raceWith(Commands.waitMs(4000.0)),
-                                Commands.waitMs(1000.0),
-                                p.scoreGate(),
-                                r.shoot(p.score),
-                                r.intake(),
-                                p.intakeGate()
-                                        .raceWith(Commands.waitMs(4000.0)),
-                                Commands.waitMs(1000.0),
-                                p.scoreGate(),
-                                r.shoot(p.score),
-                                r.intake(),
-                                p.intakeSpike3()
-                                        .raceWith(Commands.waitMs(5000.0)),
-                                p.scoreSpike3(),
-                                r.shoot(p.score),
-                                r.intake(),
-                                p.intakeSpike1()
-                                        .raceWith(Commands.waitMs(2000.0)),
-                                p.scoreSpike1(),
-                                r.shoot(p.score)
-                        )
+                        p.preload(),
+                        r.shoot(p.score),
+                        r.intake(),
+                        p.intakeSpike2()
+                                .raceWith(Commands.waitMs(5000.0)),
+                        p.scoreSpike2(),
+                        r.shoot(p.score),
+                        r.intake(),
+                        p.intakeGate()
+                                .raceWith(Commands.waitMs(4000.0)),
+                        Commands.waitMs(1000.0),
+                        p.scoreGate()
+                                .with(
+                                        Commands.waitMs(0.0)
+                                                .then(
+                                                        r.intake.raiseCommand()
+                                                )
+                                ),
+                        r.shoot(p.score),
+                        r.intake(),
+                        p.intakeGate()
+                                .raceWith(Commands.waitMs(4000.0)),
+                        Commands.waitMs(1000.0),
+                        p.scoreGate()
+                                .with(
+                                        Commands.waitMs(0.0)
+                                                .then(
+                                                        r.intake.raiseCommand()
+                                                )
+                                ),
+                        r.shoot(p.score),
+                        r.intake(),
+                        p.intakeGate()
+                                .raceWith(Commands.waitMs(4000.0)),
+                        Commands.waitMs(1000.0),
+                        p.scoreGate()
+                                .with(
+                                        Commands.waitMs(0.0)
+                                                .then(
+                                                        r.intake.raiseCommand()
+                                                )
+                                ),
+                        r.shoot(p.score),
+                        r.intake(),
+                        p.intakeSpike3()
+                                .raceWith(Commands.waitMs(5000.0)),
+                        p.scoreSpike3(),
+                        r.shoot(p.score),
+                        r.intake(),
+                        p.intakeSpike1()
+                                .raceWith(Commands.waitMs(2000.0)),
+                        p.scoreSpike1(),
+                        r.shoot(p.score)
+                )
         );
     }
 

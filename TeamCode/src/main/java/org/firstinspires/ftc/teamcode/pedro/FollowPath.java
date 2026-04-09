@@ -48,8 +48,7 @@ public class FollowPath extends CommandBuilder {
     }
 
     private void initialize() {
-//        this.setStart(() -> this.follower.followPath(this.path, this.maxPower, this.holdEnd));
-//        this.setDone(() -> !this.follower.isBusy()); //this.setDone(() -> this.follower.getCurrentTValue() > 0.975);
-        this.setDone(() -> false);
+        this.setStart(() -> this.follower.followPath(this.path, this.maxPower, this.holdEnd));
+        this.setDone(() -> !this.follower.isBusy()); //this.setDone(() -> this.follower.getCurrentTValue() > 0.975);
     }
 }

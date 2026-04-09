@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.util.CachedMotor;
@@ -16,11 +17,12 @@ public class Intake {
     public static double idle = 0.5;
     public static double in = 1;
     public static double out = -1;
-    public static double up = 0.35;
-    public static double down = 0;
+    public static double up = 0;
+    public static double down = 0.35;
 
     public Intake(HardwareMap hardwareMap) {
         intake = new CachedMotor(hardwareMap.get(DcMotorEx.class, "intake"));
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         pivot = hardwareMap.get(Servo.class, "intakePivot");
         set(0);
     }

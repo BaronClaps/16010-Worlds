@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
 import org.firstinspires.ftc.teamcode.subsystem.Shooter;
 import org.firstinspires.ftc.teamcode.subsystem.Transfer;
+import org.firstinspires.ftc.teamcode.subsystem.Turret;
 
 @TeleOp(group="Tests")
 @Config
@@ -15,8 +16,9 @@ public class ShootTest extends OpMode {
     Shooter s;
     Intake i;
     Transfer t;
+    Turret turret;
     MultipleTelemetry telemetryM;
-    public static double ipower = 0, tpower = 0, target = 1200;
+    public static double ipower = 0, tpower = 0, target = 1025, turretYaw = 0;
 
 
     @Override
@@ -24,6 +26,7 @@ public class ShootTest extends OpMode {
         s = new Shooter(hardwareMap);
         i = new Intake(hardwareMap);
         t = new Transfer(hardwareMap);
+        turret = new Turret(hardwareMap);
         s.off();
 
         telemetryM = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
@@ -42,13 +45,14 @@ public class ShootTest extends OpMode {
 
     public void start() {
         s.on();
-        s.setTarget(1200);
+        s.setTarget(1025);
     }
 
     @Override
     public void loop() {
         i.set(ipower);
         t.set(tpower);
+        turret.setYaw(turretYaw);
         s.periodic();
         s.setTarget(target);
 

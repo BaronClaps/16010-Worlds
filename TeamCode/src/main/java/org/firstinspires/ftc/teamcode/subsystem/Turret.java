@@ -43,7 +43,7 @@ public class Turret {
     public void face(Pose targetPose, Pose robotPose) {
         double angleToTargetFromCenter = Math.atan2(targetPose.getY() - robotPose.getY(), targetPose.getX() - robotPose.getX());
         double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.getHeading());
-        robotAngleDiff = MathFunctions.clamp(robotAngleDiff, -(Math.PI), Math.PI);
+        robotAngleDiff = MathFunctions.clamp(robotAngleDiff, -(Math.PI/2), Math.PI/2);
         setYaw(robotAngleDiff);
     }
 

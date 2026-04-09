@@ -92,9 +92,6 @@ public class Shooter {
         if (!close) {
             setTarget(1325);
         } else {
-            if (distance > 90) {
-                setTarget(1800);
-            }
             setTarget(1025);
         }
     }

@@ -20,7 +20,7 @@ public class Paths {
     public Pose spike1Control1 = new Pose(48, 79);
     public Pose spike1Control2 = spike1.withX(39.5);
     
-    public Pose spike2 = new Pose(8, 60, Math.toRadians(180));
+    public Pose spike2 = new Pose(8, 59, Math.toRadians(180));
     public Pose spike2Control1 = new Pose(45, 50);
     public Pose spike2Control2 = spike2.withX(72);
 
@@ -31,7 +31,7 @@ public class Paths {
     public Pose gateHit = new Pose (15, 74, Math.toRadians(180));
     public Pose gateHitControl = gateHit.withX(32);
 
-    public Pose gateIntake = new Pose(13, 60, Math.toRadians(155));
+    public Pose gateIntake = new Pose(14, 62.5, Math.toRadians(155));
     public Pose gateControl1 = new Pose(48, 79);
     public Pose gateControl2 = new Pose(23.25, 55);
 

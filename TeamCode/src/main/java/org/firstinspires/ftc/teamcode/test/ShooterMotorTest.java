@@ -11,8 +11,8 @@ public class ShooterMotorTest extends OpMode {
     DcMotor l,r;
     @Override
     public void init() {
-        l = hardwareMap.get(DcMotor.class, "sl");
-        r = hardwareMap.get(DcMotor.class, "sr");
+        l = hardwareMap.get(DcMotor.class, "flywheel1");
+        r = hardwareMap.get(DcMotor.class, "flywheel2");
     }
 
     @Override

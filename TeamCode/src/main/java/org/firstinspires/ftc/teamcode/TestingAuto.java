@@ -1,103 +1,115 @@
 package org.firstinspires.ftc.teamcode;
 
+import static com.pedropathing.ivy.commands.Commands.waitMs;
+
+import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.ivy.groups.Groups;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.CommandOpMode;
 
-import java.util.Arrays;
-
 @Autonomous
 public class TestingAuto extends CommandOpMode {
     Alliance a = Alliance.BLUE;
     Paths p;
-    Robot r;
+    Robot robot;
+    MultipleTelemetry telemetryM;
 
     public void init() {
-        r = new Robot(hardwareMap, a);
-        p = new Paths(r);
+        robot = new Robot(hardwareMap, a);
+        p = new Paths(robot);
 
-        r.follower.setStartingPose(Paths.start);
-        r.shooter.setPower(0);
-        r.turret.face(r.getShootTarget(), p.score);
-        r.transfer.close();
-        r.intake.raise();
+        robot.follower.setStartingPose(Paths.start);
+        robot.shooter.setPower(0);
+        robot.turret.setYaw(0);
+        robot.transfer.close();
+        robot.intake.raise();
+
+        telemetryM = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
     }
 
     public void start() {
-        r.shooter.on();
-        r.shooter.close();
+        robot.shooter.on();
+        robot.shooter.close();
+        robot.turret.face(robot.getShootTarget(), p.score);
         schedule(
                 Commands.infinite(() -> {
-                    r.periodic();
+                    robot.periodic();
 
-                    telemetry.addData("LoopTime Hz", r.getLoopTimeHz());
-                    telemetry.addData("Pose", r.follower.getPose());
-                    telemetry.addData("Target", r.getShootTarget());
-                    telemetry.addData("Shooter Velocity", r.shooter.getVelocity());
-                    telemetry.update();
+                    telemetryM.addData("LoopTime Hz", robot.getLoopTimeHz());
+                    telemetryM.addData("Pose", robot.follower.getPose());
+                    telemetryM.addData("Target", robot.getShootTarget());
+                    telemetryM.addData("Shooter Velocity", robot.shooter.getVelocity());
+                    telemetryM.update();
                 }),
                 Groups.sequential(
                         p.preload(),
-                        r.shoot(p.score),
-                        r.intake(),
+                        robot.shoot(p.score),
+                        robot.intakeSpike(),
                         p.intakeSpike2()
-                                .raceWith(Commands.waitMs(5000.0)),
-                        p.scoreSpike2(),
-                        r.shoot(p.score),
-                        r.intake(),
-                        p.intakeGate()
-                                .raceWith(Commands.waitMs(4000.0)),
-                        Commands.waitMs(1000.0),
-                        p.scoreGate()
+                                .raceWith(waitMs(5000.0)),
+                        p.scoreSpike2()
                                 .with(
-                                        Commands.waitMs(0.0)
+                                        waitMs(250.0)
                                                 .then(
-                                                        r.intake.raiseCommand()
+                                                        robot.intake.raiseCommand()
                                                 )
                                 ),
-                        r.shoot(p.score),
-                        r.intake(),
+                        robot.shoot(p.score),
+                        robot.intake(),
                         p.intakeGate()
-                                .raceWith(Commands.waitMs(4000.0)),
-                        Commands.waitMs(1000.0),
+                                .raceWith(waitMs(4000.0)),
+                        waitMs(1000.0),
                         p.scoreGate()
                                 .with(
-                                        Commands.waitMs(0.0)
+                                        waitMs(0.0)
                                                 .then(
-                                                        r.intake.raiseCommand()
+                                                        robot.intake.raiseCommand()
                                                 )
                                 ),
-                        r.shoot(p.score),
-                        r.intake(),
+                        robot.shoot(p.score),
+                        robot.intake(),
                         p.intakeGate()
-                                .raceWith(Commands.waitMs(4000.0)),
-                        Commands.waitMs(1000.0),
+                                .raceWith(waitMs(4000.0)),
+                        waitMs(1000.0),
                         p.scoreGate()
                                 .with(
-                                        Commands.waitMs(0.0)
+                                        waitMs(0.0)
                                                 .then(
-                                                        r.intake.raiseCommand()
+                                                        robot.intake.raiseCommand()
                                                 )
                                 ),
-                        r.shoot(p.score),
-                        r.intake(),
-                        p.intakeSpike3()
-                                .raceWith(Commands.waitMs(5000.0)),
-                        p.scoreSpike3(),
-                        r.shoot(p.score),
-                        r.intake(),
+                        robot.shoot(p.score),
+                        robot.intake(),
+                        p.intakeGate()
+                                .raceWith(waitMs(4000.0)),
+                        waitMs(1000.0),
+                        p.scoreGate()
+                                .with(
+                                        waitMs(0.0)
+                                                .then(
+                                                        robot.intake.raiseCommand()
+                                                )
+                                ),
+                        robot.shoot(p.score),
+                        robot.intakeSpike(),
                         p.intakeSpike1()
-                                .raceWith(Commands.waitMs(2000.0)),
+                                .raceWith(waitMs(5000.0)),
                         p.scoreSpike1(),
-                        r.shoot(p.score)
+                        robot.shoot(p.score),
+                        robot.intakeSpike(),
+                        p.intakeSpike3()
+                                .raceWith(waitMs(2000.0)),
+                        p.scoreSpike3(),
+                        robot.shoot(p.score)
                 )
         );
     }
 
     public void stop() {
         super.stop();
-        r.saveEnd();
+        robot.saveEnd();
     }
 }

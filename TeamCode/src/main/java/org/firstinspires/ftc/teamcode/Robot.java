@@ -112,6 +112,13 @@ public class Robot {
         );
     }
 
+    public CommandBuilder intakeSpike() {
+        return sequential(
+                intake(),
+                intake.raiseCommand()
+        );
+    }
+
     public double getLoopTimeMs() {
         return loopTime;
     }

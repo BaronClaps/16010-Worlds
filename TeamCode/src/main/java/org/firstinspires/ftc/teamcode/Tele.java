@@ -18,9 +18,10 @@ public class Tele extends OpMode {
     public boolean shoot = false;
     public boolean manual = false;
     public boolean field = false;
+    public boolean raised = true;
     public int shooting = 0;
     public double speed = 1, intakeOn = 0;
-    public static double shootTarget = 1025, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5;
+    public static double shootTarget = 1025, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5;
     private final Timer shootTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
@@ -55,13 +56,13 @@ public class Tele extends OpMode {
         else
             robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x, true);
 
-        if (gamepad1.rightBumperWasPressed())
+        if (gamepad2.rightBumperWasPressed())
             if (intakeOn == 1)
                 intakeOn = 0;
             else
                 intakeOn = 1;
 
-        if (gamepad1.leftBumperWasPressed())
+        if (gamepad2.leftBumperWasPressed())
             if (intakeOn == 2)
                 intakeOn = 0;
             else
@@ -70,16 +71,27 @@ public class Tele extends OpMode {
         if (intakeOn == 1) {
             robot.intake.in();
             robot.transfer.in();
-            robot.intake.lower();
         } else if (intakeOn == 2) {
             robot.intake.out();
             robot.transfer.out();
-            robot.intake.raise();
         } else {
             robot.intake.off();
             robot.transfer.off();
-            robot.intake.raise();
         }
+
+        if (gamepad1.rightBumperWasPressed()) {
+            if (raised)
+                robot.intake.lower();
+            else
+                robot.intake.raise();
+            raised = !raised;
+        }
+
+        if (gamepad1.leftBumperWasPressed())
+            if (speed != 1)
+                speed = 1;
+            else
+                speed = slowSpeed;
 
         if (shoot) {
             robot.shooter.on();
@@ -99,18 +111,18 @@ public class Tele extends OpMode {
             } else {
                 double dist = robot.getShootTarget().distanceFrom(robot.follower.getPose());
                 boolean close = robot.follower.getPose().getY() > 48;
-               // robot.shooter.forDistance(dist, close);
-                robot.shooter.setTarget(shootTarget); // TODO: Regression
+                robot.shooter.forDistance(dist, close);
+               // robot.shooter.setTarget(shootTarget); // TODO: Regression
                 robot.turret.face(robot.getShootTarget(), robot.follower.getPose());
             }
         } else {
             robot.shooter.off();
         }
 
-        if (gamepad1.leftTriggerWasPressed())
+        if (gamepad2.leftTriggerWasPressed())
             shoot = !shoot;
 
-        if (gamepad1.rightTriggerWasPressed() && shoot) {
+        if (gamepad2.rightTriggerWasPressed() && shoot) {
             shooting = 1;
             shootTimer.resetTimer();
             intakeOn = 0;

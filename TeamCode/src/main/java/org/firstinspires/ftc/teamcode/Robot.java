@@ -30,7 +30,8 @@ public class Robot {
     public double loops = 0, lastLoop = 0, loopTime = 0;
     public static Pose defaultPose = new Pose(8 + 24, 6.25 + 24, 0);
     public static Localizer localizer = null;
-    public static Pose shootTarget = new Pose(2, 144 - 2, 0);
+    public static Pose shootTarget = new Pose(0, 141.5, 0);
+    public static Pose aimTarget = new Pose(2, 141.5-2, 0);
 
     public Robot(HardwareMap hardwareMap, Alliance alliance) {
         this.alliance = alliance;
@@ -73,14 +74,22 @@ public class Robot {
 
 
     public void setShootTarget() {
-        if (alliance == Alliance.BLUE && shootTarget.getX() != 2)
-            shootTarget = new Pose(2, 144 - 2, 0);
-        else if (alliance == Alliance.RED && shootTarget.getX() != (144 - 2))
-            shootTarget = new Pose(2, 144 - 2, 0).mirror();
+        if (alliance == Alliance.BLUE && shootTarget.getX() != 0)
+            shootTarget = new Pose(0, 141.5, 0);
+        else if (alliance == Alliance.RED && shootTarget.getX() != 141.5)
+            shootTarget = new Pose(0, 141.5, 0).mirror();
+
+        if (alliance == Alliance.BLUE && aimTarget.getX() != 2)
+            aimTarget = new Pose(2, 141.5 - 2, 0);
+        else if (alliance == Alliance.RED && aimTarget.getX() != (141.5 - 2))
+            aimTarget = new Pose(2, 141.5 - 2, 0).mirror();
     }
 
     public Pose getShootTarget() {
         return shootTarget;
+    }
+    public Pose getAimTarget() {
+        return aimTarget;
     }
 
     public CommandBuilder shoot(Pose score) {

@@ -19,9 +19,10 @@ public class Tele extends OpMode {
     public boolean manual = false;
     public boolean field = false;
     public boolean raised = true;
+    public boolean close = true;
     public int shooting = 0;
-    public double speed = 1, intakeOn = 0;
-    public static double shootTarget = 1025, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5;
+    public double speed = 1, intakeOn = 1, dist;
+    public static double shootTarget = 1100, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5, transferPower = .5;
     private final Timer shootTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
@@ -40,7 +41,6 @@ public class Tele extends OpMode {
         robot.setShootTarget();
         robot.follower.startTeleopDrive();
         robot.turret.set(0.5);
-        robot.intake.in();
         robot.shooter.off();
         robot.transfer.close();
         robot.intake.raise();
@@ -70,7 +70,7 @@ public class Tele extends OpMode {
 
         if (intakeOn == 1) {
             robot.intake.in();
-            robot.transfer.in();
+            robot.transfer.set(transferPower);
         } else if (intakeOn == 2) {
             robot.intake.out();
             robot.transfer.out();
@@ -103,17 +103,17 @@ public class Tele extends OpMode {
                 if (gamepad2.dpadDownWasPressed())
                     shootTarget -= 50;
 
-                if (gamepad2.rightBumperWasPressed())
+                if (gamepad2.rightTriggerWasPressed())
                     robot.turret.manual(0.05);
-                if (gamepad2.leftBumperWasPressed())
+                if (gamepad2.leftTriggerWasPressed())
                     robot.turret.manual(-0.05);
 
             } else {
-                double dist = robot.getShootTarget().distanceFrom(robot.follower.getPose());
-                boolean close = robot.follower.getPose().getY() > 48;
+                dist = robot.getShootTarget().distanceFrom(robot.follower.getPose());
+                close = robot.follower.getPose().getY() > 48;
                 robot.shooter.forDistance(dist, close);
-               // robot.shooter.setTarget(shootTarget); // TODO: Regression
-                robot.turret.face(robot.getShootTarget(), robot.follower.getPose());
+            //    robot.shooter.setTarget(shootTarget); // TODO: Regression
+                robot.turret.face(robot.getAimTarget(), robot.follower.getPose());
             }
         } else {
             robot.shooter.off();
@@ -138,6 +138,11 @@ public class Tele extends OpMode {
             shooting = 3;
             shootTimer.resetTimer();
             intakeOn = 1;
+
+            if (!close)
+                transferPower = .7;
+            else
+                transferPower = 1;
         }
 
         if (shooting == 3 && shootTimer.getElapsedTimeSeconds() > timeToShoot) {
@@ -145,6 +150,7 @@ public class Tele extends OpMode {
             intakeOn = 1;
             shootTimer.resetTimer();
             robot.transfer.close();
+            transferPower = .5;
         }
 
         if (gamepad1.aWasPressed()) {
@@ -163,6 +169,8 @@ public class Tele extends OpMode {
 
         multipleTelemetry.addData("Pose", robot.follower.getPose());
         multipleTelemetry.addData("Goal Target", robot.getShootTarget());
+        multipleTelemetry.addData("Distance", dist);
+        multipleTelemetry.addData("Close?", close);
         multipleTelemetry.addLine();
         multipleTelemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
         multipleTelemetry.addData("Shooter Target", robot.shooter.getTarget());

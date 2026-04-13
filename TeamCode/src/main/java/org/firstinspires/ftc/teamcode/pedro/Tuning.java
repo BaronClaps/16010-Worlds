@@ -31,6 +31,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.Paths;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -145,6 +147,8 @@ class LocalizationTest extends OpMode {
     @Override
     public void init() {
         follower.setStartingPose(new Pose(72,72));
+        // TODO: change
+//        follower.setStartingPose(Paths.start);
     }
 
     /** This initializes the PoseUpdater, the drive motors, and the Panels telemetry. */

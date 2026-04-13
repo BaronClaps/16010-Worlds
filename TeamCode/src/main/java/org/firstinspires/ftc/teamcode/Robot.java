@@ -74,15 +74,15 @@ public class Robot {
 
 
     public void setShootTarget() {
-        if (alliance == Alliance.BLUE && shootTarget.getX() != 0)
+        if (alliance == Alliance.BLUE)
             shootTarget = new Pose(0, 141.5, 0);
-        else if (alliance == Alliance.RED && shootTarget.getX() != 141.5)
+        else if (alliance == Alliance.RED)
             shootTarget = new Pose(0, 141.5, 0).mirror();
 
-        if (alliance == Alliance.BLUE && aimTarget.getX() != 2)
-            aimTarget = new Pose(2, 141.5 - 2, 0);
-        else if (alliance == Alliance.RED && aimTarget.getX() != (141.5 - 2))
-            aimTarget = new Pose(2, 141.5 - 2, 0).mirror();
+        if (alliance == Alliance.BLUE)
+            aimTarget = new Pose(4, 141.5 - 2, 0);
+        else if (alliance == Alliance.RED)
+            aimTarget = new Pose(0, 141.5 - 2, 0).mirror();
     }
 
     public Pose getShootTarget() {
@@ -95,23 +95,27 @@ public class Robot {
     public CommandBuilder shoot(Pose score) {
         return sequential(
                 Commands.instant(shooter::close),
-                Commands.instant(() -> turret.face(getShootTarget(), score)),
                 Commands.instant(() -> intake.set(-.00001)),
                 Commands.instant(() -> transfer.set(-.00001)),
                 intake.lowerCommand(),
-                Commands.waitMs(100.0),
+                Commands.waitMs(250.0),
                 transfer.openCommand(),
                 Commands.waitMs(250.0),
                 Commands.waitUntil(shooter::atTarget),
                 intake.inCommand(),
                 transfer.inCommand(),
-                Commands.waitMs(500.0),
+                Commands.waitMs(250.0),
                 transfer.closeCommand(),
                 intake.lowerCommand()
-        );
+        )
+                .raceWith(
+                        Commands.infinite(() -> {
+                            turret.face(getAimTarget(), follower.getPose());
+                            shooter.forDistance(getShootTarget().distanceFrom(follower.getPose()), follower.getPose().getY() > 48);
+                        }));
     }
 
-    public CommandBuilder intake() {
+    public CommandBuilder intakeLowered() {
         return sequential(
                 transfer.closeCommand(),
                 transfer.inCommand(),
@@ -121,10 +125,13 @@ public class Robot {
         );
     }
 
-    public CommandBuilder intakeSpike() {
+    public CommandBuilder intakeRaised() {
         return sequential(
-                intake(),
-                intake.raiseCommand()
+                transfer.closeCommand(),
+                transfer.inCommand(),
+                intake.inCommand(),
+                intake.raiseCommand(),
+                Commands.waitMs(250.0)
         );
     }
 

@@ -22,7 +22,7 @@ public class Tele extends OpMode {
     public boolean close = true;
     public int shooting = 0;
     public double speed = 1, intakeOn = 1, dist;
-    public static double shootTarget = 1100, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5, transferPower = .5;
+    public static double shootTarget = 1100, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5, transferPower = 1; // .5;
     private final Timer shootTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
@@ -139,10 +139,10 @@ public class Tele extends OpMode {
             shootTimer.resetTimer();
             intakeOn = 1;
 
-            if (!close)
-                transferPower = .7;
-            else
-                transferPower = 1;
+//            if (!close)
+//                transferPower = .7;
+//            else
+//                transferPower = 1;
         }
 
         if (shooting == 3 && shootTimer.getElapsedTimeSeconds() > timeToShoot) {
@@ -150,7 +150,7 @@ public class Tele extends OpMode {
             intakeOn = 1;
             shootTimer.resetTimer();
             robot.transfer.close();
-            transferPower = .5;
+//            transferPower = .5;
         }
 
         if (gamepad1.aWasPressed()) {

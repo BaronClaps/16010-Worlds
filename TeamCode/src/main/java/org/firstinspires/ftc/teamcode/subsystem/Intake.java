@@ -18,7 +18,7 @@ public class Intake {
     public static double in = 1;
     public static double out = -1;
     public static double up = 0;
-    public static double down = 0.325;
+    public static double down = 0.31;
 
     public Intake(HardwareMap hardwareMap) {
         intake = new CachedMotor(hardwareMap.get(DcMotorEx.class, "intake"));

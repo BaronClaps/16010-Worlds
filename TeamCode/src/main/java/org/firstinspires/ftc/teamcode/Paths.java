@@ -16,13 +16,13 @@ public class Paths {
     public Pose startMid = start.withY(100);
     public Pose score = new Pose(55, 144-55, Math.toRadians(180+35));
 
-    public Pose spike1 = new Pose(17.5, 85, Math.toRadians(180));
+    public Pose spike1 = new Pose(17.5+2, 85, Math.toRadians(180));
     public Pose spike1Control1 = new Pose(48, 79);
     public Pose spike1Control2 = spike1.withX(39.5);
     
     public Pose spike2 = new Pose(8, 59, Math.toRadians(180));
-    public Pose spike2Control1 = new Pose(45, 50);
-    public Pose spike2Control2 = spike2.withX(72);
+    public Pose spike2Control1 = new Pose(45, 72);
+    public Pose spike2Control2 = spike2.withX(50);
 
     public Pose spike3 = new Pose(10, 60-24, Math.toRadians(180));
     public Pose spike3Control1 = new Pose(45, 80-24);
@@ -31,14 +31,14 @@ public class Paths {
     public Pose gateHit = new Pose (15, 74, Math.toRadians(180));
     public Pose gateHitControl = gateHit.withX(32);
 
-    public Pose gateIntake = new Pose(14, 62.5, Math.toRadians(155));
-    public Pose gateControl1 = new Pose(48, 79);
-    public Pose gateControl2 = new Pose(23.25, 55);
+    public Pose gateIntake = new Pose(11.25, 61.5, 2.58);
+    public Pose gateControl1 = new Pose(48, 85);
+    public Pose gateControl2 = new Pose(23.25, 60);
 
     public Pose cornerControl = new Pose(-5, 30);
     public Pose corner = new Pose(6.5, 11, Math.toRadians(270));
 
-    public Pose park = new Pose(36, 72, Math.toRadians(180));
+    public Pose park = new Pose(48, 144-36, Math.toRadians(180));
 
     public Paths(Robot r) {
         this.f = r.follower;
@@ -98,7 +98,7 @@ public class Paths {
                 )
                 .setLinearHeadingInterpolation(score.getHeading(), spike1.getHeading(), .3)
                 .setBrakingStrength(2)
-                .setNoDeceleration()
+//                .setNoDeceleration()
                 .build();
         return new FollowPath(this.f, path);
     }
@@ -133,14 +133,14 @@ public class Paths {
 
     public CommandBuilder scoreSpike2() {
         PathChain path = f.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 spike2,
-//                                spike2Control2,
-//                                spike2Control1,
+                                spike2Control2,
+                                spike2Control1,
                                 score
                         )
                 ).setLinearHeadingInterpolation(spike2.getHeading(), score.getHeading())
-                .setBrakingStrength(1.5)
+                .setBrakingStrength(2)
                 .build();
         return new FollowPath(this.f, path);
     }
@@ -185,7 +185,6 @@ public class Paths {
                         )
                 ).setLinearHeadingInterpolation(score.getHeading(), gateIntake.getHeading())
                 .setBrakingStrength(1.5)
-                .setNoDeceleration()
                 .build();
         return new FollowPath(this.f, path);
     }

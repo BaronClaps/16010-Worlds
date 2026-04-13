@@ -47,7 +47,7 @@ public class TestingAuto extends CommandOpMode {
                 Groups.sequential(
                         p.preload(),
                         robot.shoot(p.score),
-                        robot.intakeSpike(),
+                        robot.intakeLowered(),
                         p.intakeSpike2()
                                 .raceWith(waitMs(5000.0)),
                         p.scoreSpike2()
@@ -58,7 +58,7 @@ public class TestingAuto extends CommandOpMode {
                                                 )
                                 ),
                         robot.shoot(p.score),
-                        robot.intake(),
+                        robot.intakeLowered(),
                         p.intakeGate()
                                 .raceWith(waitMs(4000.0)),
                         waitMs(1000.0),
@@ -70,10 +70,10 @@ public class TestingAuto extends CommandOpMode {
                                                 )
                                 ),
                         robot.shoot(p.score),
-                        robot.intake(),
+                        robot.intakeLowered(),
                         p.intakeGate()
                                 .raceWith(waitMs(4000.0)),
-                        waitMs(1000.0),
+                        waitMs(1500.0),
                         p.scoreGate()
                                 .with(
                                         waitMs(0.0)
@@ -82,10 +82,10 @@ public class TestingAuto extends CommandOpMode {
                                                 )
                                 ),
                         robot.shoot(p.score),
-                        robot.intake(),
+                        robot.intakeLowered(),
                         p.intakeGate()
                                 .raceWith(waitMs(4000.0)),
-                        waitMs(1000.0),
+                        waitMs(1500.0),
                         p.scoreGate()
                                 .with(
                                         waitMs(0.0)
@@ -94,16 +94,17 @@ public class TestingAuto extends CommandOpMode {
                                                 )
                                 ),
                         robot.shoot(p.score),
-                        robot.intakeSpike(),
+                        robot.intakeLowered(),
                         p.intakeSpike1()
                                 .raceWith(waitMs(5000.0)),
                         p.scoreSpike1(),
                         robot.shoot(p.score),
-                        robot.intakeSpike(),
-                        p.intakeSpike3()
-                                .raceWith(waitMs(2000.0)),
-                        p.scoreSpike3(),
-                        robot.shoot(p.score)
+                        p.park()
+//                        robot.intakeRaised(),
+//                        p.intakeSpike3()
+//                                .raceWith(waitMs(2000.0)),
+//                        p.scoreSpike3(),
+//                        robot.shoot(p.score)
                 )
         );
     }

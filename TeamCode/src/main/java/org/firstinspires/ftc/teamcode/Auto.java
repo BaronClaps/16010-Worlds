@@ -41,7 +41,7 @@ public class Auto extends CommandOpMode {
                 Groups.sequential(
                                 p.preload(),
                                 r.shoot(p.score),
-                                r.intake(),
+                                r.intakeLowered(),
                                 p.intakeSpike1()
                                         .raceWith(Commands.waitMs(3000.0)),
                                 Groups.race(
@@ -55,19 +55,19 @@ public class Auto extends CommandOpMode {
                                 r.intake.inCommand(),
                                 p.scoreHitGate(),
                                 r.shoot(p.score),
-                                r.intake(),
+                                r.intakeLowered(),
                                 p.intakeSpike2()
                                         .raceWith(Commands.waitMs(3000.0)),
 
                                 p.scoreSpike2(),
                                 r.shoot(p.score),
-                                r.intake(),
+                                r.intakeLowered(),
                                 p.intakeSpike3()
                                         .raceWith(Commands.waitMs(3000.0)),
                                 Commands.waitMs(1000.0),
                                 p.scoreSpike3(),
                                 r.shoot(p.score),
-                                r.intake(),
+                                r.intakeLowered(),
                                 p.intakeCorner()
                                         .raceWith(Commands.waitMs(6000.0)),
                                 p.scoreCorner(),

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.subsystem;
 import com.acmerobotics.dashboard.config.Config;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.math.MathFunctions;
+import com.pedropathing.math.Vector;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -52,5 +53,18 @@ public class Turret {
         if (angle <= -Math.PI) angle += Math.PI * 2D;
         if (angle > Math.PI) angle -= Math.PI * 2D;
         return angle;
+    }
+
+    public static Pose getPredictedPose(Pose current, Pose aim, Vector velocity, double angularVelocity) {
+        double tof = getTOF(current.distanceFrom(aim));
+        return new Pose(
+                current.getX() + velocity.getXComponent() * tof,
+                current.getY() + velocity.getYComponent() * tof,
+                current.getHeading()
+        );
+    }
+
+    public static double getTOF(double distance) {
+        return .3;
     }
 }

@@ -94,11 +94,11 @@ public class Robot {
 
     public CommandBuilder shoot(Pose score) {
         return sequential(
-                Commands.instant(shooter::close),
+                Commands.instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
                 Commands.instant(() -> intake.set(-.00001)),
                 Commands.instant(() -> transfer.set(-.00001)),
                 intake.lowerCommand(),
-                Commands.waitMs(250.0),
+           //     Commands.waitMs(250.0),
                 transfer.openCommand(),
                 Commands.waitMs(250.0),
                 Commands.waitUntil(shooter::atTarget),
@@ -110,8 +110,8 @@ public class Robot {
         )
                 .raceWith(
                         Commands.infinite(() -> {
-                            turret.face(getAimTarget(), follower.getPose());
-                            shooter.forDistance(getShootTarget().distanceFrom(follower.getPose()), follower.getPose().getY() > 48);
+                            turret.face(getAimTarget(), Turret.getPredictedPose(follower.getPose(), getAimTarget(), follower.getVelocity(), follower.getAngularVelocity()));
+//                            shooter.forDistance(getShootTarget().distanceFrom(follower.getPose()), follower.getPose().getY() > 48);
                         }));
     }
 
@@ -120,8 +120,8 @@ public class Robot {
                 transfer.closeCommand(),
                 transfer.inCommand(),
                 intake.inCommand(),
-                intake.lowerCommand(),
-                Commands.waitMs(250.0)
+                intake.lowerCommand()
+               // Commands.waitMs(250.0)
         );
     }
 
@@ -130,8 +130,8 @@ public class Robot {
                 transfer.closeCommand(),
                 transfer.inCommand(),
                 intake.inCommand(),
-                intake.raiseCommand(),
-                Commands.waitMs(250.0)
+                intake.raiseCommand()
+               // Commands.waitMs(250.0)
         );
     }
 

@@ -15,7 +15,7 @@ public class Shooter {
     private final CachedMotor top, bottom;
 
     private double t = 0;
-    public static double kS = 0.1, kV = 0.00064, kP = 0.03, useRaw = 60;
+    public static double kS = 0.1, kV = 0.00064, kP = 0.03, useRaw = 40;
 
     private boolean activated = false;
 
@@ -76,7 +76,7 @@ public class Shooter {
     }
 
     public boolean atTarget() {
-        return Math.abs((getTarget() - getVelocity())) < 50;
+        return Math.abs((getTarget() - getVelocity())) < 40;
     }
 
     public void forPose(Pose current, Pose target, boolean close) {
@@ -106,7 +106,7 @@ public class Shooter {
                 - 0.566792  * Math.pow(x, 2)
                 + 45.23831  * x
                 - 306.12169
-                + 75;
+                + 100;
     }
 
     public static double getFar(double x) {

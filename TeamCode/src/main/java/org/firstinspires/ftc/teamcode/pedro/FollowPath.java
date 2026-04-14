@@ -12,6 +12,7 @@ import com.pedropathing.paths.PathChain;
 public class FollowPath extends CommandBuilder {
     private final Follower follower;
     private final PathChain path;
+    private double tConstraint = .975;
     private boolean holdEnd;
     private double maxPower;
 
@@ -23,13 +24,18 @@ public class FollowPath extends CommandBuilder {
         this.initialize();
     }
 
-    public FollowPath(Follower f, PathChain pathChain, double maxPower) {
-        this.follower = f;
-        this.path = pathChain;
-        this.maxPower = maxPower;
-        this.holdEnd = this.follower.constants.automaticHoldEnd;
-        this.initialize();
+    public FollowPath(Follower f, PathChain pathChain, double tConstraint) {
+        this(f, pathChain);
+        this.tConstraint = tConstraint;
     }
+
+//    public FollowPath(Follower f, PathChain pathChain, double maxPower) {
+//        this.follower = f;
+//        this.path = pathChain;
+//        this.maxPower = maxPower;
+//        this.holdEnd = this.follower.constants.automaticHoldEnd;
+//        this.initialize();
+//    }
 
     public FollowPath(Follower f, PathChain pathChain, boolean holdEnd) {
         this.follower = f;
@@ -49,6 +55,7 @@ public class FollowPath extends CommandBuilder {
 
     private void initialize() {
         this.setStart(() -> this.follower.followPath(this.path, this.maxPower, this.holdEnd));
-        this.setDone(() -> !this.follower.isBusy()); //this.setDone(() -> this.follower.getCurrentTValue() > 0.975);
+        this.setDone(() -> this.follower.getCurrentTValue() > tConstraint);
+        //this.setDone(() -> !this.follower.isBusy());
     }
 }

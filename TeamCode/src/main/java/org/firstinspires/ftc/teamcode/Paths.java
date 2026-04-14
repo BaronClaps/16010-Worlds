@@ -14,9 +14,9 @@ public class Paths {
 
     public static Pose start = new Pose(24+8.5, 144-8.375, Math.toRadians(90));
     public Pose startMid = start.withY(100);
-    public Pose score = new Pose(55, 144-55, Math.toRadians(180+35));
+    public Pose score = new Pose(55, 144-55, Math.toRadians(180+20));
 
-    public Pose spike1 = new Pose(17.5+2, 85, Math.toRadians(180));
+    public Pose spike1 = new Pose(17.5, 85, Math.toRadians(180));
     public Pose spike1Control1 = new Pose(48, 79);
     public Pose spike1Control2 = spike1.withX(39.5);
     
@@ -31,14 +31,14 @@ public class Paths {
     public Pose gateHit = new Pose (15, 74, Math.toRadians(180));
     public Pose gateHitControl = gateHit.withX(32);
 
-    public Pose gateIntake = new Pose(11.25, 61.5, 2.58);
-    public Pose gateControl1 = new Pose(48, 85);
-    public Pose gateControl2 = new Pose(23.25, 60);
+    public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
+    public Pose gateControl1 = new Pose(48, 70);
+    public Pose gateControl2 = new Pose(23.25, 65);
 
     public Pose cornerControl = new Pose(-5, 30);
     public Pose corner = new Pose(6.5, 11, Math.toRadians(270));
 
-    public Pose park = new Pose(48, 144-36, Math.toRadians(180));
+    public Pose park = new Pose(48, 144-24, Math.toRadians(180));
 
     public Paths(Robot r) {
         this.f = r.follower;
@@ -114,7 +114,7 @@ public class Paths {
                 ).setLinearHeadingInterpolation(spike1.getHeading(), score.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        return new FollowPath(this.f, path, .95);
     }
 
     public CommandBuilder intakeSpike2() {
@@ -142,7 +142,7 @@ public class Paths {
                 ).setLinearHeadingInterpolation(spike2.getHeading(), score.getHeading())
                 .setBrakingStrength(2)
                 .build();
-        return new FollowPath(this.f, path);
+        return new FollowPath(this.f, path, .95);
     }
 
     public CommandBuilder intakeSpike3() {
@@ -200,7 +200,7 @@ public class Paths {
                 ).setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
-        return new FollowPath(this.f, path);
+        return new FollowPath(this.f, path, .95);
     }
 
     public CommandBuilder hitGateAfterFirst() {

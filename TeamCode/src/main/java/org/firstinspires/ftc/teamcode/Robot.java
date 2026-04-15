@@ -110,8 +110,9 @@ public class Robot {
         )
                 .raceWith(
                         Commands.infinite(() -> {
-                            turret.face(getAimTarget(), Turret.getPredictedPose(follower.getPose(), getAimTarget(), follower.getVelocity(), follower.getAngularVelocity()));
-//                            shooter.forDistance(getShootTarget().distanceFrom(follower.getPose()), follower.getPose().getY() > 48);
+                            Pose predicted = Turret.getPredictedPose(follower.getPose(), getAimTarget(), follower.getVelocity(), follower.getAngularVelocity());
+                            turret.face(getAimTarget(), predicted);
+                            shooter.forDistance(getShootTarget().distanceFrom(predicted), predicted.getY() > 48);
                         }));
     }
 

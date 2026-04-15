@@ -9,7 +9,7 @@ import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedro.FollowPath;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 
-public class Paths {
+public class ClosePaths {
     private final Follower f;
 
     public static Pose start = new Pose(24+8.5, 144-8.375, Math.toRadians(90));
@@ -40,7 +40,7 @@ public class Paths {
 
     public Pose park = new Pose(48, 144-24, Math.toRadians(180));
 
-    public Paths(Robot r) {
+    public ClosePaths(Robot r) {
         this.f = r.follower;
 
         if (r.alliance.equals(Alliance.RED)) {

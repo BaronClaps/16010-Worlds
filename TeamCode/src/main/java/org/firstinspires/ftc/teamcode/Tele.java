@@ -20,10 +20,11 @@ public class Tele extends OpMode {
     public boolean field = false;
     public boolean raised = true;
     public boolean close = true;
+    public boolean prev = false, curr = false, intakeTime = false;
     public int shooting = 0;
-    public double speed = 1, intakeOn = 1, dist;
-    public static double shootTarget = 1100, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5, transferPower = 1; // .5;
-    private final Timer shootTimer = new Timer();
+    public double speed = 1, intakeOn = 1, dist, intakeDist;
+    public static double shootTarget = 1100, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5, transferPower = 1, timeFor3rd = .15; // .5;
+    private final Timer shootTimer = new Timer(), intakeTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
     public Tele(Alliance alliance) {
@@ -56,7 +57,7 @@ public class Tele extends OpMode {
         else
             robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x, true);
 
-        if (gamepad2.rightBumperWasPressed())
+        if (gamepad2.rightBumperWasPressed() /*&& gamepad1.leftBumperWasPressed()*/) //TODO: this is solo
             if (intakeOn == 1)
                 intakeOn = 0;
             else
@@ -74,6 +75,9 @@ public class Tele extends OpMode {
         } else if (intakeOn == 2) {
             robot.intake.out();
             robot.transfer.out();
+
+            if (curr)
+                curr = false;
         } else {
             robot.intake.off();
             robot.transfer.off();
@@ -87,11 +91,11 @@ public class Tele extends OpMode {
             raised = !raised;
         }
 
-        if (gamepad1.leftBumperWasPressed())
-            if (speed != 1)
-                speed = 1;
-            else
-                speed = slowSpeed;
+//        if (gamepad1.leftBumperWasPressed())
+//            if (speed != 1)
+//                speed = 1;
+//            else
+//                speed = slowSpeed;
 
         if (shoot) {
             robot.shooter.on();
@@ -119,10 +123,10 @@ public class Tele extends OpMode {
             robot.shooter.off();
         }
 
-        if (gamepad2.leftTriggerWasPressed())
+        if (gamepad2.leftTriggerWasPressed() /*|| gamepad1.leftTriggerWasPressed()*/) //TODO: e
             shoot = !shoot;
 
-        if (gamepad2.rightTriggerWasPressed() && shoot) {
+        if ((gamepad2.rightTriggerWasPressed() /*|| gamepad1.rightTriggerWasPressed()*/) && shoot) { // TODO: ee
             shooting = 1;
             shootTimer.resetTimer();
             intakeOn = 0;
@@ -150,6 +154,7 @@ public class Tele extends OpMode {
             intakeOn = 1;
             shootTimer.resetTimer();
             robot.transfer.close();
+            curr = false;
 //            transferPower = .5;
         }
 
@@ -167,6 +172,30 @@ public class Tele extends OpMode {
         if (gamepad1.yWasPressed())
             field = !field;
 
+        if (robot.loops % 3 == 0) {
+            intakeDist = robot.intake.getDistance();
+            curr = robot.intake.isDetected(intakeDist);
+        }
+
+        if (curr != prev) {
+            intakeTimer.resetTimer();
+        }
+
+        if (!intakeTime)
+            intakeTime = intakeTimer.getElapsedTimeSeconds() >= timeFor3rd;
+
+
+        if (curr && intakeTime) {
+            robot.intake.light.green();
+//            if (!manual && shooting == 0) {
+//                intakeOn = 0;
+//                robot.intake.raise();
+//            }
+        } else
+            robot.intake.light.blue();
+
+        prev = curr;
+
         multipleTelemetry.addData("Pose", robot.follower.getPose());
         multipleTelemetry.addData("Goal Target", robot.getShootTarget());
         multipleTelemetry.addData("Distance", dist);
@@ -174,6 +203,10 @@ public class Tele extends OpMode {
         multipleTelemetry.addLine();
         multipleTelemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
         multipleTelemetry.addData("Shooter Target", robot.shooter.getTarget());
+        multipleTelemetry.addLine();
+        multipleTelemetry.addData("Looptime Hz", robot.getLoopTimeHz());
+        multipleTelemetry.addData("Intake Distance", intakeDist);
+        multipleTelemetry.addData("Intake 3rd Detected", curr);
         multipleTelemetry.addLine();
         multipleTelemetry.addData("Manual", manual);
         multipleTelemetry.addData("Shoot Target for Manual", shootTarget);

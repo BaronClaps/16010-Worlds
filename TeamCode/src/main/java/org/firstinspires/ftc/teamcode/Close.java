@@ -9,6 +9,8 @@ import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.ivy.groups.Groups;
+import com.pedropathing.util.Timer;
+
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.CommandOpMode;
 
@@ -18,6 +20,9 @@ public class Close extends CommandOpMode {
     ClosePaths p;
     Robot robot;
     MultipleTelemetry telemetryM;
+    boolean intakeTime, curr, prev, full;
+    Timer intakeTimer = new Timer();
+    double intakeDist;
     public static double tValueToShoot = .5;
 
     public Close(Alliance a) {
@@ -40,6 +45,29 @@ public class Close extends CommandOpMode {
                 Commands.infinite(() -> {
                     robot.periodic();
 
+                    if (robot.loops % 3 == 0) {
+                        intakeDist = robot.intake.getDistance();
+                        curr = robot.intake.isDetected(intakeDist);
+                    }
+
+                    if (curr && !prev) {
+                        intakeTimer.resetTimer();
+                    }
+
+                    if (!intakeTime)
+                        intakeTime = intakeTimer.getElapsedTimeSeconds() >= .5;
+
+
+                    if (curr && intakeTime) {
+                        robot.intake.light.green();
+                        //full = true;
+                    } else {
+                        robot.intake.light.blue();
+                        full = false;
+                    }
+
+                    prev = curr;
+
                     telemetryM.addData("LoopTime Hz", robot.getLoopTimeHz());
                     telemetryM.addData("Pose", robot.follower.getPose());
                     telemetryM.addData("Target", robot.getShootTarget());
@@ -49,12 +77,12 @@ public class Close extends CommandOpMode {
                 Groups.sequential(
                         p.preload()
                                 .with(
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > .85)
+                                        waitUntil(() -> robot.follower.getCurrentTValue() > .75)
                                                 .then(robot.shoot(p.score))
                                 ),
                         robot.intakeLowered(),
                         p.intakeSpike2()
-                                .raceWith(waitMs(5000.0)),
+                                .raceWith(waitMs(3000.0)),
                         p.scoreSpike2()
                                 .with(
                                         waitMs(20.0)
@@ -68,8 +96,9 @@ public class Close extends CommandOpMode {
                                 ),
                         robot.intakeRaised(),
                         p.intakeGate()
-                                .raceWith(waitMs(4000.0)),
-                        waitMs(1000.0),
+                                .raceWith(waitMs(2000.0)),
+                        waitMs(1500.0)
+                                .raceWith(Commands.waitUntil(() -> full)),
                         p.scoreGate()
                                 .with(
                                         parallel(
@@ -83,8 +112,9 @@ public class Close extends CommandOpMode {
                                 ),
                         robot.intakeRaised(),
                         p.intakeGate()
-                                .raceWith(waitMs(4000.0)),
-                        waitMs(1500.0),
+                                .raceWith(waitMs(2000.0)),
+                        waitMs(1500.0)
+                                .raceWith(Commands.waitUntil(() -> full)),
                         p.scoreGate()
                                 .with(
                                         parallel(
@@ -98,7 +128,7 @@ public class Close extends CommandOpMode {
                                 ),
                         robot.intakeLowered(),
                         p.intakeSpike1()
-                                .raceWith(waitMs(5000.0)),
+                                .raceWith(waitMs(2000.0)),
                         p.scoreSpike1()
                                 .with(
                                         waitUntil(() -> robot.follower.getCurrentTValue() > .85)
@@ -106,8 +136,9 @@ public class Close extends CommandOpMode {
                                 ),
                         robot.intakeRaised(),
                         p.intakeGate()
-                                .raceWith(waitMs(4000.0)),
-                        waitMs(1500.0),
+                                .raceWith(waitMs(2000.0)),
+                        waitMs(1500.0)
+                                .raceWith(Commands.waitUntil(() -> full)),
                         p.scoreGate()
                                 .with(
                                         parallel(
@@ -121,8 +152,9 @@ public class Close extends CommandOpMode {
                                 ),
                         robot.intakeRaised(),
                         p.intakeGate()
-                                .raceWith(waitMs(4000.0)),
-                        waitMs(1500.0),
+                                .raceWith(waitMs(2000.0)),
+                        waitMs(1500.0)
+                                .raceWith(Commands.waitUntil(() -> full)),
                         p.scoreGate()
                                 .with(
                                         parallel(

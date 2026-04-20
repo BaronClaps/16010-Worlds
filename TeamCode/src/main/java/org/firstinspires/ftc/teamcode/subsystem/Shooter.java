@@ -110,7 +110,7 @@ public class Shooter {
     }
 
     public static double getFar(double x) {
-        return 2.83784 * x + 947.97297 + 100;
+        return 2.83784 * x + 947.97297 + 120;
     }
 }
 

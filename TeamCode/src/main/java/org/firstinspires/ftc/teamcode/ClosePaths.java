@@ -5,6 +5,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedro.FollowPath;
 import org.firstinspires.ftc.teamcode.util.Alliance;
@@ -31,7 +32,8 @@ public class ClosePaths {
     public Pose gateHit = new Pose (15, 74, Math.toRadians(180));
     public Pose gateHitControl = gateHit.withX(32);
 
-    public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
+    //public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
+    public Pose gateIntake = new Pose(130.5, 61, Math.toRadians(40)).mirror();
     public Pose gateControl1 = new Pose(48, 70);
     public Pose gateControl2 = new Pose(23.25, 65);
 
@@ -61,6 +63,7 @@ public class ClosePaths {
             spike3Control2 = spike3Control2.mirror();
 
             gateIntake = gateIntake.mirror();
+//            gateIntakeDown = gateIntakeDown.mirror();
             gateControl1 = gateControl1.mirror();
             gateControl2 = gateControl2.mirror();
 
@@ -76,15 +79,22 @@ public class ClosePaths {
 
     public CommandBuilder preload() {
         PathChain path = f.pathBuilder().addPath(
-                        new BezierCurve(
+                        new BezierLine(
                                 start,
-                                startMid,
                                 score
                         )
                 )
-                .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0, .75, HeadingInterpolator.tangent),
+                                new HeadingInterpolator.PiecewiseNode(.75, 1, HeadingInterpolator.linear(start.getHeading(), score.getHeading())
+                        )
+                    )
+                )
+//                .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
+                .setBrakingStrength(2)
                 .build();
-        return new FollowPath(this.f, path);
+        return new FollowPath(this.f, path, .95);
     }
 
     public CommandBuilder intakeSpike1() {

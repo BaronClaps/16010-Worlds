@@ -71,7 +71,7 @@ public class Shooter {
             if (Math.abs(getTarget() - getVelocity()) > useRaw)
                 setPower(Math.signum(getTarget() - getVelocity()));
             else
-                setPower((kV * getTarget()) + (kP * (getTarget() - getVelocity())) + kS);
+                setPower(Math.max(0,(kV * getTarget()) + (kP * (getTarget() - getVelocity())) + kS));
         }
     }
 

@@ -11,6 +11,7 @@ import org.firstinspires.ftc.teamcode.util.Alliance;
 
 public class FarPaths {
     private final Follower f;
+    Alliance a = Alliance.BLUE;
 
     public static Pose start = new Pose(88, 10.3, 0).mirror();
     public Pose score = new Pose(72-4, 18, Math.toRadians(180));
@@ -24,7 +25,7 @@ public class FarPaths {
     public FarPaths(Robot r) {
         this.f = r.follower;
 
-        if (r.alliance.equals(Alliance.RED)) {
+        if (r.alliance != a) {
             start = start.mirror();
             score = score.mirror();
 
@@ -34,6 +35,8 @@ public class FarPaths {
             gateIntake = gateIntake.mirror();
             corner = corner.mirror();
             park = park.mirror();
+
+            a = r.alliance;
         }
     }
 

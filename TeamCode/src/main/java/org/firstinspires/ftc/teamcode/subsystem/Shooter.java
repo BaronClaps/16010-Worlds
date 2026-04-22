@@ -96,6 +96,14 @@ public class Shooter {
         }
     }
 
+    public void forClose(double distance) {
+        setTarget(getClose(distance));
+    }
+
+    public void forFar(double distance) {
+        setTarget(getFar(distance));
+    }
+
     public void close() {
         setTarget(1100);
         on();
@@ -106,7 +114,7 @@ public class Shooter {
                 - 0.566792  * Math.pow(x, 2)
                 + 45.23831  * x
                 - 306.12169
-                + 120;
+                + 140;
     }
 
     public static double getFar(double x) {

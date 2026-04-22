@@ -20,7 +20,7 @@ public class Tele extends OpMode {
     public boolean field = false;
     public boolean raised = true;
     public boolean close = true;
-    public boolean prev = false, curr = false, intakeTime = false;
+    public boolean prev = false, curr = false, intakeTime = false, closeMode = true;
     public int shooting = 0;
     public double speed = 1, intakeOn = 1, dist, intakeDist;
     public static double shootTarget = 1100, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5, transferPower = 1, timeFor3rd = .15; // .5;
@@ -69,8 +69,14 @@ public class Tele extends OpMode {
             else
                 intakeOn = 2;
 
+        if (gamepad1.rightTriggerWasPressed())
+            closeMode = true;
+
+        if (gamepad1.leftTriggerWasPressed())
+            closeMode = false;
+
         if (intakeOn == 1) {
-            robot.intake.in();
+            robot.intake.set(transferPower);
             robot.transfer.set(transferPower);
         } else if (intakeOn == 2) {
             robot.intake.out();
@@ -115,18 +121,26 @@ public class Tele extends OpMode {
             } else {
                 dist = robot.getShootTarget().distanceFrom(robot.follower.getPose());
                 close = robot.follower.getPose().getY() > 48;
-                robot.shooter.forDistance(dist, close);
-            //    robot.shooter.setTarget(shootTarget); // TODO: Regression
+
+                if (!close && !closeMode)
+                    robot.shooter.forFar(dist);
+                else if (close && !closeMode)
+                    robot.shooter.setTarget(1000);
+                else if (close)
+                    robot.shooter.forClose(dist);
+                else
+                    robot.shooter.setTarget(700);
+
                 robot.turret.face(robot.getAimTarget(), robot.follower.getPose());
             }
         } else {
             robot.shooter.off();
         }
 
-        if (gamepad2.leftTriggerWasPressed() /*|| gamepad1.leftTriggerWasPressed()*/) //TODO: e
+        if (gamepad2.leftTriggerWasPressed())//TODO: e
             shoot = !shoot;
 
-        if ((gamepad2.rightTriggerWasPressed() /*|| gamepad1.rightTriggerWasPressed()*/) && shoot) { // TODO: ee
+        if (gamepad2.rightTriggerWasPressed() && shoot) { // TODO: ee
             shooting = 1;
             shootTimer.resetTimer();
             intakeOn = 0;
@@ -141,6 +155,12 @@ public class Tele extends OpMode {
         if (shooting == 2 && shootTimer.getElapsedTimeSeconds() > timeToOpenGate) {
             shooting = 3;
             shootTimer.resetTimer();
+
+            if (!closeMode)
+                transferPower = .7;
+            else
+                transferPower = 1;
+
             intakeOn = 1;
 
 //            if (!close)
@@ -152,6 +172,7 @@ public class Tele extends OpMode {
         if (shooting == 3 && shootTimer.getElapsedTimeSeconds() > timeToShoot) {
             shooting = 0;
             intakeOn = 1;
+            transferPower = 1;
             shootTimer.resetTimer();
             robot.transfer.close();
             curr = false;
@@ -160,7 +181,7 @@ public class Tele extends OpMode {
 
         if (gamepad1.aWasPressed()) {
             if (robot.alliance.equals(Alliance.BLUE)) {
-                robot.follower.setPose(new Pose(129.44,80.25, Math.toRadians(0)).mirror());
+                robot.follower.setPose(new Pose(129.44, 80.25, Math.toRadians(0)).mirror());
             } else {
                 robot.follower.setPose(new Pose(129.44, 80.25, Math.toRadians(0)));
             }
@@ -186,13 +207,16 @@ public class Tele extends OpMode {
 
 
         if (curr && intakeTime) {
-            robot.intake.light.green();
-//            if (!manual && shooting == 0) {
-//                intakeOn = 0;
-//                robot.intake.raise();
-//            }
-        } else
-            robot.intake.light.blue();
+            if (!robot.shooter.atTarget())
+                robot.intake.light.orange();
+            else
+                robot.intake.light.green();
+        } else {
+            if (!robot.shooter.atTarget())
+                robot.intake.light.violet();
+            else
+                robot.intake.light.blue();
+        }
 
         prev = curr;
 

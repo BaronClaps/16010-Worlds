@@ -31,7 +31,7 @@ public class Robot {
     public static Pose defaultPose = new Pose(8 + 24, 6.25 + 24, 0);
     public static Localizer localizer = null;
     public static Pose shootTarget = new Pose(0, 141.5, 0);
-    public static Pose aimTarget = new Pose(2, 141.5-2, 0);
+    public static Pose aimTarget = new Pose(0, 141.5, 0);
 
     public Robot(HardwareMap hardwareMap, Alliance alliance) {
         this.alliance = alliance;
@@ -80,9 +80,9 @@ public class Robot {
             shootTarget = new Pose(0, 141.5, 0).mirror();
 
         if (alliance == Alliance.BLUE)
-            aimTarget = new Pose(4, 141.5 - 2, 0);
+            aimTarget = new Pose(0, 141.5, 0);
         else if (alliance == Alliance.RED)
-            aimTarget = new Pose(0, 141.5 - 2, 0).mirror();
+            aimTarget = new Pose(0, 141.5, 0).mirror();
     }
 
     public Pose getShootTarget() {

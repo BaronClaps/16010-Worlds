@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.teamcode.FarPaths.start;
+
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -12,9 +14,9 @@ import org.firstinspires.ftc.teamcode.util.Alliance;
 
 public class ClosePaths {
     private final Follower f;
+    Alliance a = Alliance.BLUE;
 
     public static Pose start = new Pose(24+8.5, 144-8.375, Math.toRadians(90));
-    public Pose startMid = start.withY(100);
     public Pose score = new Pose(55, 144-55, Math.toRadians(180+20));
 
     public Pose spike1 = new Pose(17.5, 85, Math.toRadians(180));
@@ -33,7 +35,7 @@ public class ClosePaths {
     public Pose gateHitControl = gateHit.withX(32);
 
     //public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
-    public Pose gateIntake = new Pose(130.5, 61, Math.toRadians(40)).mirror();
+    public Pose gateIntake = new Pose(132.5, 61, Math.toRadians(30)).mirror();
     public Pose gateControl1 = new Pose(48, 70);
     public Pose gateControl2 = new Pose(23.25, 65);
 
@@ -45,40 +47,15 @@ public class ClosePaths {
     public ClosePaths(Robot r) {
         this.f = r.follower;
 
-        if (r.alliance.equals(Alliance.RED)) {
-            start = start.mirror();
-            startMid = startMid.mirror();
-            score = score.mirror();
-
-            spike1 = spike1.mirror();
-            spike1Control1 = spike1Control1.mirror();
-            spike1Control2 = spike1Control2.mirror();
-
-            spike2 = spike2.mirror();
-            spike2Control1 = spike2Control1.mirror();
-            spike2Control2 = spike2Control2.mirror();
-
-            spike3 = spike3.mirror();
-            spike3Control1 = spike3Control1.mirror();
-            spike3Control2 = spike3Control2.mirror();
-
-            gateIntake = gateIntake.mirror();
-//            gateIntakeDown = gateIntakeDown.mirror();
-            gateControl1 = gateControl1.mirror();
-            gateControl2 = gateControl2.mirror();
-
-            gateHit = gateHit.mirror();
-            gateHitControl = gateHitControl.mirror();
-
-            cornerControl = cornerControl.mirror();
-            corner = corner.mirror();
-
-            park = park.mirror();
+        if (!r.alliance.equals(a)) {
+            mirrorAll();
+            a = r.alliance;
         }
     }
 
     public CommandBuilder preload() {
-        PathChain path = f.pathBuilder().addPath(
+        PathChain path = f.pathBuilder()
+                .addPath(
                         new BezierLine(
                                 start,
                                 score
@@ -86,12 +63,11 @@ public class ClosePaths {
                 )
                 .setHeadingInterpolation(
                         HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0, .75, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(.75, 1, HeadingInterpolator.linear(start.getHeading(), score.getHeading())
+                                new HeadingInterpolator.PiecewiseNode(0, .25, HeadingInterpolator.tangent.reverse()),
+                                new HeadingInterpolator.PiecewiseNode(.25, 1, HeadingInterpolator.linear(start.getHeading(), score.getHeading())
+                                )
                         )
-                    )
                 )
-//                .setLinearHeadingInterpolation(start.getHeading(), score.getHeading())
                 .setBrakingStrength(2)
                 .build();
         return new FollowPath(this.f, path, .95);
@@ -193,7 +169,15 @@ public class ClosePaths {
                                 gateControl2,
                                 gateIntake
                         )
-                ).setLinearHeadingInterpolation(score.getHeading(), gateIntake.getHeading())
+                )
+                .setHeadingInterpolation(
+                        HeadingInterpolator.piecewise(
+                                new HeadingInterpolator.PiecewiseNode(0, .25, HeadingInterpolator.tangent),
+                                new HeadingInterpolator.PiecewiseNode(.25, 1, HeadingInterpolator.linear(score.getHeading(), gateIntake.getHeading())
+                                )
+                        )
+                )
+//                .setLinearHeadingInterpolation(score.getHeading(), gateIntake.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
         return new FollowPath(this.f, path);
@@ -207,7 +191,14 @@ public class ClosePaths {
                                 gateControl1,
                                 score
                         )
-                ).setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading())
+                )
+//                .setHeadingInterpolation(
+//                        HeadingInterpolator.piecewise(
+//                                new HeadingInterpolator.PiecewiseNode(0, .5, HeadingInterpolator.linear(gateIntake.getHeading(), score.getHeading())),
+//                                new HeadingInterpolator.PiecewiseNode(.5, 1, HeadingInterpolator.tangent.reverse())
+//                        )
+//                )
+                .setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
         return new FollowPath(this.f, path, .95);
@@ -291,4 +282,34 @@ public class ClosePaths {
                 .build();
         return new FollowPath(this.f, path);
     }
+
+    private void mirrorAll() {
+        start = start.mirror();
+        score = score.mirror();
+
+        spike1 = spike1.mirror();
+        spike1Control1 = spike1Control1.mirror();
+        spike1Control2 = spike1Control2.mirror();
+
+        spike2 = spike2.mirror();
+        spike2Control1 = spike2Control1.mirror();
+        spike2Control2 = spike2Control2.mirror();
+
+        spike3 = spike3.mirror();
+        spike3Control1 = spike3Control1.mirror();
+        spike3Control2 = spike3Control2.mirror();
+
+        gateIntake = gateIntake.mirror();
+        gateControl1 = gateControl1.mirror();
+        gateControl2 = gateControl2.mirror();
+
+        gateHit = gateHit.mirror();
+        gateHitControl = gateHitControl.mirror();
+
+        cornerControl = cornerControl.mirror();
+        corner = corner.mirror();
+
+        park = park.mirror();
+    }
+
 }

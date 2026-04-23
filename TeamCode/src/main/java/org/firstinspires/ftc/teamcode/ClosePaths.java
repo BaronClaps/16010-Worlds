@@ -35,7 +35,7 @@ public class ClosePaths {
     public Pose gateHitControl = gateHit.withX(32);
 
     //public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
-    public Pose gateIntake = new Pose(132.5, 61, Math.toRadians(30)).mirror();
+    public Pose gateIntake = new Pose(132.5, 60.5, Math.toRadians(30)).mirror();
     public Pose gateControl1 = new Pose(48, 70);
     public Pose gateControl2 = new Pose(23.25, 65);
 
@@ -170,14 +170,14 @@ public class ClosePaths {
                                 gateIntake
                         )
                 )
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0, .25, HeadingInterpolator.tangent),
-                                new HeadingInterpolator.PiecewiseNode(.25, 1, HeadingInterpolator.linear(score.getHeading(), gateIntake.getHeading())
-                                )
-                        )
-                )
-//                .setLinearHeadingInterpolation(score.getHeading(), gateIntake.getHeading())
+//                .setHeadingInterpolation(
+//                        HeadingInterpolator.piecewise(
+//                                new HeadingInterpolator.PiecewiseNode(0, .25, HeadingInterpolator.tangent),
+//                                new HeadingInterpolator.PiecewiseNode(.25, 1, HeadingInterpolator.linear(score.getHeading(), gateIntake.getHeading())
+//                                )
+//                        )
+//                )
+                .setLinearHeadingInterpolation(score.getHeading(), gateIntake.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
         return new FollowPath(this.f, path);

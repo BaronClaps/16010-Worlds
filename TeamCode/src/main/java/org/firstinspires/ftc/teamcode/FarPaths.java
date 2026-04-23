@@ -16,7 +16,7 @@ public class FarPaths {
     public static Pose start = new Pose(88, 10.3, 0).mirror();
     public Pose score = new Pose(72-4, 18, Math.toRadians(180));
 
-    public Pose spike3 = new Pose(10, 42, Math.toRadians(180));
+    public Pose spike3 = new Pose(10, 36, Math.toRadians(180));
     public Pose spike3Control = new Pose(45, 36);
     public Pose gateIntake = new Pose(7.5, 36, Math.toRadians(90));
     public Pose corner = new Pose(10, 13, Math.toRadians(180));

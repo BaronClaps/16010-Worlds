@@ -26,7 +26,8 @@ public class Intake {
     public static double in = 1;
     public static double out = -1;
     public static double up = 0;
-    public static double down = 0.33;
+    public static double down = 0.3325;
+    public static double two = 0.35;
     public static double lowerThreshold = 0, upperThreshold = 2;
 
     public Intake(HardwareMap hardwareMap) {
@@ -59,6 +60,10 @@ public class Intake {
     }
     public void lower() {
         pivot.setPosition(down);
+    }
+
+    public void two() {
+        pivot.setPosition(two);
     }
     public double getDistance() {
         return color.getDistance(DistanceUnit.INCH);

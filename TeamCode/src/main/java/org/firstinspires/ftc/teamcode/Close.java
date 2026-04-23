@@ -168,7 +168,7 @@ public class Close extends CommandOpMode {
                                 .with(
                                         waitMs(250.0)
                                                 .then(
-                                                        robot.intake.raiseCommand()
+//                                                        robot.intake.raiseCommand()
                                                 ),
                                         waitUntil(() -> robot.follower.getCurrentTValue() > tValueToShoot)
                                                 .then(robot.shoot(p.score))

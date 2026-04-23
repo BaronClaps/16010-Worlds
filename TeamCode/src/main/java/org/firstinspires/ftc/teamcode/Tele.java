@@ -20,7 +20,7 @@ public class Tele extends OpMode {
     public boolean field = false;
     public boolean raised = true;
     public boolean close = true;
-    public boolean prev = false, curr = false, intakeTime = false, closeMode = true;
+    public boolean prev = false, curr = false, intakeTime = false, closeMode = true, twoDown = false;
     public int shooting = 0;
     public double speed = 1, intakeOn = 1, dist, intakeDist;
     public static double shootTarget = 1100, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5, transferPower = 1, timeFor3rd = .15; // .5;
@@ -69,6 +69,15 @@ public class Tele extends OpMode {
             else
                 intakeOn = 2;
 
+        if (gamepad1.xWasPressed()) {
+            twoDown = !twoDown;
+
+            if (twoDown)
+                robot.intake.two();
+            else
+                robot.intake.lower();
+        }
+
         if (gamepad1.rightTriggerWasPressed())
             closeMode = true;
 
@@ -95,6 +104,7 @@ public class Tele extends OpMode {
             else
                 robot.intake.raise();
             raised = !raised;
+            twoDown = false;
         }
 
 //        if (gamepad1.leftBumperWasPressed())

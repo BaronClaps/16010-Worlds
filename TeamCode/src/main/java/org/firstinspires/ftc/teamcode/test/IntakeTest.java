@@ -6,17 +6,24 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.subsystem.Intake;
+import org.firstinspires.ftc.teamcode.subsystem.Transfer;
 
 @TeleOp(group="Tests")
 @Config
 public class IntakeTest extends OpMode {
     Intake intake;
+    Transfer transfer;
     Timer timer = new Timer();
+    public static double i, t;
     public boolean prev;
 
     @Override
     public void init() {
         intake = new Intake(hardwareMap);
+        transfer = new Transfer(hardwareMap);
+
+        intake.lower();
+        transfer.close();
     }
 
     public void start() {
@@ -26,13 +33,8 @@ public class IntakeTest extends OpMode {
 
     @Override
     public void loop() {
-        if (gamepad1.aWasPressed()) {
-            intake.set(1);
-        } else if (gamepad1.bWasPressed()) {
-            intake.set(-1);
-        } else if (gamepad1.yWasPressed()) {
-            intake.set(0);
-        }
+        intake.set(i);
+        transfer.set(t);
 
         boolean curr = intake.isDetected();
 

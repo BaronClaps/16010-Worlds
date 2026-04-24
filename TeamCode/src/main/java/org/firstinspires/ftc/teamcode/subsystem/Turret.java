@@ -65,6 +65,6 @@ public class Turret {
     }
 
     public static double getTOF(double distance) {
-        return .20;
+        return .175;
     }
 }

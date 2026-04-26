@@ -17,7 +17,7 @@ public class Far extends CommandOpMode {
     FarPaths p;
     Robot robot;
     MultipleTelemetry telemetryM;
-    public static double tValueToRaise = .25;
+    public static double tValueToRaise = .1;
 
     public Far(Alliance a) {
         this.a = a;
@@ -52,10 +52,9 @@ public class Far extends CommandOpMode {
                                 .raceWith(waitMs(5000.0)),
                         p.scoreSpike3()
                                 .with(
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToRaise)
+                                        waitMs(150.0)
                                                 .then(robot.intake.raiseCommand())
                                 ),
-                        waitMs(1000.0),
                         robot.shoot(p.score),
                         robot.intakeLowered(),
                         p.intakeCorner()
@@ -64,10 +63,9 @@ public class Far extends CommandOpMode {
                                 ),
                         p.scoreCorner()
                                 .with(
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToRaise)
+                                        waitMs(150.0)
                                                 .then(robot.intake.raiseCommand())
                                 ),
-                        waitMs(1000.0),
                         robot.shoot(p.score),
                         robot.intakeLowered(),
                         p.intakeCorner()
@@ -76,10 +74,9 @@ public class Far extends CommandOpMode {
                                 ),
                         p.scoreCorner()
                                 .with(
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToRaise)
+                                        waitMs(150.0)
                                                 .then(robot.intake.raiseCommand())
                                 ),
-                        waitMs(1000.0),
                         robot.shoot(p.score),
                         robot.intakeLowered(),
                         p.intakeCorner()
@@ -88,10 +85,9 @@ public class Far extends CommandOpMode {
                                 ),
                         p.scoreCorner()
                                 .with(
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToRaise)
+                                        waitMs(150.0)
                                                 .then(robot.intake.raiseCommand())
                                 ),
-                        waitMs(1000.0),
                         robot.shoot(p.score),
                         robot.intakeLowered(),
                         p.intakeCorner()
@@ -100,10 +96,9 @@ public class Far extends CommandOpMode {
                                 ),
                         p.scoreCorner()
                                 .with(
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToRaise)
+                                        waitMs(150.0)
                                                 .then(robot.intake.raiseCommand())
                                 ),
-                        waitMs(1000.0),
                         robot.shoot(p.score),
                         robot.intakeLowered(),
                         p.intakeGate()
@@ -112,10 +107,9 @@ public class Far extends CommandOpMode {
                                 ),
                         p.scoreGate()
                                 .with(
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToRaise)
+                                        waitMs(150.0)
                                                 .then(robot.intake.raiseCommand())
                                 ),
-                        waitMs(1000.0),
                         robot.shoot(p.score),
                         p.park()
                 )

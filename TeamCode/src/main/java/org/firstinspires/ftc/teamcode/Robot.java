@@ -116,6 +116,27 @@ public class Robot {
                         }));
     }
 
+    public CommandBuilder shootWithOpenedGate(Pose score) {
+        return sequential(
+                Commands.instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
+                Commands.instant(() -> intake.set(-.00001)),
+                Commands.instant(() -> transfer.set(-.00001)),
+                intake.lowerCommand(),
+                Commands.waitUntil(shooter::atTarget),
+                intake.inCommand(),
+                transfer.inCommand(),
+                Commands.waitMs(250.0),
+                transfer.closeCommand(),
+                intake.lowerCommand()
+        )
+                .raceWith(
+                        Commands.infinite(() -> {
+                            Pose predicted = Turret.getPredictedPose(follower.getPose(), getAimTarget(), follower.getVelocity(), follower.getAngularVelocity());
+                            turret.face(getAimTarget(), predicted);
+                            shooter.forDistance(getShootTarget().distanceFrom(predicted), predicted.getY() > 48);
+                        }));
+    }
+
     public CommandBuilder intakeLowered() {
         return sequential(
                 transfer.closeCommand(),

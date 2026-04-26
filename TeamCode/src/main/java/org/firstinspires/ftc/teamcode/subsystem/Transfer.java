@@ -19,6 +19,7 @@ public class Transfer {
     public static double out = -1;
     public static double open = 0.7;
     public static double closed = 0;
+    private boolean opened = false;
 
     public Transfer(HardwareMap hardwareMap) {
         transfer = new CachedMotor(hardwareMap.get(DcMotorEx.class, "transfer"));
@@ -30,7 +31,6 @@ public class Transfer {
     public void set(double power) {
         transfer.setPower(power);
     }
-
     public void in() {
         set(in);
     }
@@ -43,11 +43,15 @@ public class Transfer {
     public void idle() {
         set(idle);
     }
+
     public void open() {
         gate.setPosition(open);
+        opened = true;
     }
+
     public void close() {
         gate.setPosition(closed);
+        opened = false;
     }
 
     public CommandBuilder offCommand() {
@@ -67,5 +71,9 @@ public class Transfer {
     }
     public CommandBuilder closeCommand() {
         return Commands.instant(this::close);
+    }
+
+    public boolean closed() {
+        return !opened;
     }
 }

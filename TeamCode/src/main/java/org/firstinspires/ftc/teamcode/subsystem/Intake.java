@@ -21,7 +21,7 @@ public class Intake {
     private final Servo pivot;
     private final RevColorSensorV3 color;
     public final RGBLight light;
-    public static double off = 0;
+    public static double off = -.0001;
     public static double idle = 0.5;
     public static double in = 1;
     public static double out = -1;

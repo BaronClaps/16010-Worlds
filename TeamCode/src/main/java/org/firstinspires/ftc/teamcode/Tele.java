@@ -20,11 +20,11 @@ public class Tele extends OpMode {
     public boolean field = false;
     public boolean raised = true;
     public boolean close = true;
-    public boolean prev = false, curr = false, intakeTime = false, closeMode = true, twoDown = false;
+    public boolean prev = false, curr = false, intakeTime = false, closeMode = true, twoDown = false, openingGate = false, bypassOpenWait = false;
     public int shooting = 0;
     public double speed = 1, intakeOn = 1, dist, intakeDist;
     public static double shootTarget = 1100, timeToStopIntake = .1, timeToOpenGate = .25, timeToShoot = 0.5, slowSpeed = .5, transferPower = 1, timeFor3rd = .15; // .5;
-    private final Timer shootTimer = new Timer(), intakeTimer = new Timer();
+    private final Timer shootTimer = new Timer(), intakeTimer = new Timer(), openGateTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
     public Tele(Alliance alliance) {
@@ -78,6 +78,17 @@ public class Tele extends OpMode {
                 robot.intake.lower();
         }
 
+        if (gamepad2.yWasPressed()) {
+            openGateTimer.resetTimer();
+            openingGate = true;
+             intakeOn = 0;
+        }
+
+        if (openGateTimer.getElapsedTimeSeconds() > timeToStopIntake && openingGate) {
+            robot.transfer.open();
+            openingGate = false;
+        }
+
         if (gamepad1.rightTriggerWasPressed())
             closeMode = true;
 
@@ -107,25 +118,19 @@ public class Tele extends OpMode {
             twoDown = false;
         }
 
-//        if (gamepad1.leftBumperWasPressed())
-//            if (speed != 1)
-//                speed = 1;
-//            else
-//                speed = slowSpeed;
-
         if (shoot) {
             robot.shooter.on();
             if (manual) {
                 robot.shooter.setTarget(shootTarget);
 
                 if (gamepad2.dpadUpWasPressed())
-                    shootTarget += 50;
+                    shootTarget += 20;
                 if (gamepad2.dpadDownWasPressed())
-                    shootTarget -= 50;
+                    shootTarget -= 20;
 
-                if (gamepad2.rightTriggerWasPressed())
+                if (gamepad2.dpadRightWasPressed())
                     robot.turret.manual(0.05);
-                if (gamepad2.leftTriggerWasPressed())
+                if (gamepad2.dpadLeftWasPressed())
                     robot.turret.manual(-0.05);
 
             } else {
@@ -147,13 +152,18 @@ public class Tele extends OpMode {
             robot.shooter.off();
         }
 
-        if (gamepad2.leftTriggerWasPressed())//TODO: e
+        if (gamepad2.leftTriggerWasPressed())
             shoot = !shoot;
 
-        if (gamepad2.rightTriggerWasPressed() && shoot) { // TODO: ee
-            shooting = 1;
-            shootTimer.resetTimer();
-            intakeOn = 0;
+        if (gamepad2.rightTriggerWasPressed() && shoot) {
+            if (robot.transfer.closed()) {
+                shooting = 1;
+                shootTimer.resetTimer();
+                intakeOn = 0;
+            } else {
+                shooting = 2;
+                bypassOpenWait = true;
+            }
         }
 
         if (shooting == 1 && shootTimer.getElapsedTimeSeconds() > timeToStopIntake) {
@@ -162,9 +172,10 @@ public class Tele extends OpMode {
             robot.transfer.open();
         }
 
-        if (shooting == 2 && shootTimer.getElapsedTimeSeconds() > timeToOpenGate) {
+        if (shooting == 2 && (shootTimer.getElapsedTimeSeconds() > timeToOpenGate || bypassOpenWait)) {
             shooting = 3;
             shootTimer.resetTimer();
+            bypassOpenWait = false;
 
             if (!closeMode)
                 transferPower = .7;
@@ -172,11 +183,6 @@ public class Tele extends OpMode {
                 transferPower = 1;
 
             intakeOn = 1;
-
-//            if (!close)
-//                transferPower = .7;
-//            else
-//                transferPower = 1;
         }
 
         if (shooting == 3 && shootTimer.getElapsedTimeSeconds() > timeToShoot) {

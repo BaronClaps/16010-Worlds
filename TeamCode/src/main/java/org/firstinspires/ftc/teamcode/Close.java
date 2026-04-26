@@ -88,10 +88,9 @@ public class Close extends CommandOpMode {
                 }),
                 Groups.sequential(
                         p.preload()
-
                                 .with(
                                         waitUntil(() -> robot.follower.getCurrentTValue() > .75)
-                                                .then(robot.shoot(p.score))
+                                                .then(robot.shootWithOpenedGate(p.score))
                                 ),
                         robot.intakeLowered(),
                         p.intakeSpike2()
@@ -181,6 +180,8 @@ public class Close extends CommandOpMode {
     public void start() {
         robot.shooter.on();
         robot.shooter.close();
+        robot.intake.off();
+        robot.transfer.open();
         robot.turret.face(robot.getShootTarget(), p.score);
     }
 

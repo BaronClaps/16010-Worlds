@@ -59,7 +59,7 @@ public class Far extends CommandOpMode {
                         robot.intakeLowered(),
                         p.intakeCorner()
                                 .raceWith(
-                                    waitMs(3000.0)
+                                    waitMs(2000.0)
                                 ),
                         p.scoreCorner()
                                 .with(
@@ -70,7 +70,7 @@ public class Far extends CommandOpMode {
                         robot.intakeLowered(),
                         p.intakeCorner()
                                 .raceWith(
-                                        waitMs(3000.0)
+                                        waitMs(2000.0)
                                 ),
                         p.scoreCorner()
                                 .with(
@@ -81,7 +81,7 @@ public class Far extends CommandOpMode {
                         robot.intakeLowered(),
                         p.intakeCorner()
                                 .raceWith(
-                                        waitMs(3000.0)
+                                        waitMs(2000.0)
                                 ),
                         p.scoreCorner()
                                 .with(
@@ -92,7 +92,7 @@ public class Far extends CommandOpMode {
                         robot.intakeLowered(),
                         p.intakeCorner()
                                 .raceWith(
-                                        waitMs(3000.0)
+                                        waitMs(2000.0)
                                 ),
                         p.scoreCorner()
                                 .with(
@@ -103,7 +103,7 @@ public class Far extends CommandOpMode {
                         robot.intakeLowered(),
                         p.intakeGate()
                                 .raceWith(
-                                        waitMs(3000.0)
+                                        waitMs(2000.0)
                                 ),
                         p.scoreGate()
                                 .with(

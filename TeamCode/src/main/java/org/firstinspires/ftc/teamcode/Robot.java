@@ -15,6 +15,7 @@ import org.firstinspires.ftc.teamcode.util.Alliance;
 
 import java.util.List;
 
+import static com.pedropathing.ivy.commands.Commands.instant;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 public class Robot {
@@ -94,9 +95,9 @@ public class Robot {
 
     public CommandBuilder shoot(Pose score) {
         return sequential(
-                Commands.instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
-                Commands.instant(() -> intake.set(-.00001)),
-                Commands.instant(() -> transfer.set(-.00001)),
+                instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
+                instant(() -> intake.set(-.00001)),
+                instant(() -> transfer.set(-.00001)),
                 intake.lowerCommand(),
            //     Commands.waitMs(250.0),
                 transfer.openCommand(),
@@ -116,11 +117,12 @@ public class Robot {
                         }));
     }
 
-    public CommandBuilder shootWithOpenedGate(Pose score) {
+    public CommandBuilder shootWithOpenedGateNoSOTM(Pose score) {
         return sequential(
-                Commands.instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
-                Commands.instant(() -> intake.set(-.00001)),
-                Commands.instant(() -> transfer.set(-.00001)),
+                instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
+                instant(() -> turret.face(getAimTarget(), score)),
+                instant(() -> intake.set(-.00001)),
+                instant(() -> transfer.set(-.00001)),
                 intake.lowerCommand(),
                 Commands.waitUntil(shooter::atTarget),
                 intake.inCommand(),
@@ -128,13 +130,7 @@ public class Robot {
                 Commands.waitMs(250.0),
                 transfer.closeCommand(),
                 intake.lowerCommand()
-        )
-                .raceWith(
-                        Commands.infinite(() -> {
-                            Pose predicted = Turret.getPredictedPose(follower.getPose(), getAimTarget(), follower.getVelocity(), follower.getAngularVelocity());
-                            turret.face(getAimTarget(), predicted);
-                            shooter.forDistance(getShootTarget().distanceFrom(predicted), predicted.getY() > 48);
-                        }));
+        );
     }
 
     public CommandBuilder intakeLowered() {

@@ -198,8 +198,8 @@ public class ClosePaths {
 //                                new HeadingInterpolator.PiecewiseNode(.5, 1, HeadingInterpolator.tangent.reverse())
 //                        )
 //                )
-                .setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading())
-                .setBrakingStrength(1.5)
+                .setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading(), .2)
+                .setBrakingStrength(2)
                 .build();
         return new FollowPath(this.f, path, .95);
     }

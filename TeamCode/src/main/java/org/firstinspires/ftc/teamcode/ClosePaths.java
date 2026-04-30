@@ -35,7 +35,7 @@ public class ClosePaths {
     public Pose gateHitControl = gateHit.withX(32);
 
     //public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
-    public Pose gateIntake = new Pose(132.5, 60.5, Math.toRadians(30)).mirror();
+    public Pose gateIntake = new Pose(131.5, 62.5, Math.toRadians(30)).mirror();
     public Pose gateControl1 = new Pose(48, 70);
     public Pose gateControl2 = new Pose(23.25, 65);
 
@@ -48,7 +48,32 @@ public class ClosePaths {
         this.f = r.follower;
 
         if (!r.alliance.equals(a)) {
-            mirrorAll();
+            start = start.mirror();
+            score = score.mirror();
+
+            spike1 = spike1.mirror();
+            spike1Control1 = spike1Control1.mirror();
+            spike1Control2 = spike1Control2.mirror();
+
+            spike2 = spike2.mirror();
+            spike2Control1 = spike2Control1.mirror();
+            spike2Control2 = spike2Control2.mirror();
+
+            spike3 = spike3.mirror();
+            spike3Control1 = spike3Control1.mirror();
+            spike3Control2 = spike3Control2.mirror();
+
+            gateIntake = gateIntake.mirror();
+            gateControl1 = gateControl1.mirror();
+            gateControl2 = gateControl2.mirror();
+
+            gateHit = gateHit.mirror();
+            gateHitControl = gateHitControl.mirror();
+
+            cornerControl = cornerControl.mirror();
+            corner = corner.mirror();
+
+            park = park.mirror();
             a = r.alliance;
         }
     }
@@ -61,13 +86,14 @@ public class ClosePaths {
                                 score
                         )
                 )
-                .setHeadingInterpolation(
-                        HeadingInterpolator.piecewise(
-                                new HeadingInterpolator.PiecewiseNode(0, .25, HeadingInterpolator.tangent.reverse()),
-                                new HeadingInterpolator.PiecewiseNode(.25, 1, HeadingInterpolator.linear(start.getHeading(), score.getHeading())
-                                )
-                        )
-                )
+//                .setHeadingInterpolation(
+//                        HeadingInterpolator.piecewise(
+//                                new HeadingInterpolator.PiecewiseNode(0, .25, HeadingInterpolator.tangent.reverse()),
+//                                new HeadingInterpolator.PiecewiseNode(.25, 1, HeadingInterpolator.linear(start.getHeading(), score.getHeading())
+//                                )
+//                        )
+//                )
+                .setLinearHeadingInterpolation(start.getHeading(), score.getHeading(), .5)
                 .setBrakingStrength(2)
                 .build();
         return new FollowPath(this.f, path, .95);
@@ -281,35 +307,6 @@ public class ClosePaths {
                 ).setLinearHeadingInterpolation(score.getHeading(), park.getHeading())
                 .build();
         return new FollowPath(this.f, path);
-    }
-
-    private void mirrorAll() {
-        start = start.mirror();
-        score = score.mirror();
-
-        spike1 = spike1.mirror();
-        spike1Control1 = spike1Control1.mirror();
-        spike1Control2 = spike1Control2.mirror();
-
-        spike2 = spike2.mirror();
-        spike2Control1 = spike2Control1.mirror();
-        spike2Control2 = spike2Control2.mirror();
-
-        spike3 = spike3.mirror();
-        spike3Control1 = spike3Control1.mirror();
-        spike3Control2 = spike3Control2.mirror();
-
-        gateIntake = gateIntake.mirror();
-        gateControl1 = gateControl1.mirror();
-        gateControl2 = gateControl2.mirror();
-
-        gateHit = gateHit.mirror();
-        gateHitControl = gateHitControl.mirror();
-
-        cornerControl = cornerControl.mirror();
-        corner = corner.mirror();
-
-        park = park.mirror();
     }
 
 }

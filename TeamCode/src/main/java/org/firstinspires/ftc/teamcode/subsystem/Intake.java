@@ -26,7 +26,7 @@ public class Intake {
     public static double in = 1;
     public static double out = -1;
     public static double up = 0;
-    public static double down = 0.3325;
+    public static double down = 0.315;
     public static double two = 0.35;
     public static double lowerThreshold = 0, upperThreshold = 2;
 

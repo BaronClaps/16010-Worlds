@@ -89,7 +89,7 @@ public class Close extends CommandOpMode {
                 Groups.sequential(
                         p.preload()
                                 .with(
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > .75)
+                                        waitUntil(() -> robot.follower.getCurrentTValue() > .85)
                                                 .then(robot.shootWithOpenedGateNoSOTM(p.score))
                                 ),
                         robot.intakeLowered(),
@@ -101,7 +101,7 @@ public class Close extends CommandOpMode {
                                                 .then(
                                                         robot.intake.raiseCommand()
                                                 ),
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > .4)
+                                        waitUntil(() -> robot.follower.getCurrentTValue() > .3)
                                                 .then(robot.shoot(p.score))
                                 ),
                         robot.intakeLowered(),

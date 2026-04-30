@@ -16,6 +16,7 @@ import org.firstinspires.ftc.teamcode.util.Alliance;
 import java.util.List;
 
 import static com.pedropathing.ivy.commands.Commands.instant;
+import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 public class Robot {
@@ -96,38 +97,76 @@ public class Robot {
     public CommandBuilder shoot(Pose score) {
         return sequential(
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
-                instant(() -> intake.set(-.00001)),
-                instant(() -> transfer.set(-.00001)),
+//                instant(() -> shooter.setTarget(1300)),
+                instant(() -> intake.set(-.01)),
+                instant(() -> transfer.set(-.01)),
                 intake.lowerCommand(),
-           //     Commands.waitMs(250.0),
+                waitMs(250.0),
                 transfer.openCommand(),
-                Commands.waitMs(300.0),
+                waitMs(300.0),
                 Commands.waitUntil(shooter::atTarget),
                 intake.inCommand(),
                 transfer.inCommand(),
-                Commands.waitMs(250.0),
+                waitMs(250.0),
                 transfer.closeCommand(),
                 intake.lowerCommand()
         )
                 .raceWith(
                         Commands.infinite(() -> {
-                            Pose predicted = Turret.getPredictedPose(follower.getPose(), getAimTarget(), follower.getVelocity(), follower.getAngularVelocity());
-                            turret.face(getAimTarget(), predicted);
-                            shooter.forDistance(getShootTarget().distanceFrom(predicted), predicted.getY() > 48);
+                            Pose predicted = Turret.getPredictedPose(follower.getPose(), getShootTarget(), follower.getVelocity(), follower.getAngularVelocity());
+                            turret.face(getShootTarget(), predicted);
+                           // shooter.forDistance(getShootTarget().distanceFrom(predicted), predicted.getY() > 48);
                         }));
+    }
+
+    public CommandBuilder shootNoSOTM(Pose score) {
+        return sequential(
+                instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
+                instant(() -> turret.face(getShootTarget(), score)),
+                instant(() -> intake.set(-.00001)),
+                instant(() -> transfer.set(-.00001)),
+                intake.lowerCommand(),
+                transfer.openCommand(),
+                waitMs(300.0),
+                Commands.waitUntil(shooter::atTarget),
+                intake.inCommand(),
+                transfer.inCommand(),
+                waitMs(250.0),
+                transfer.closeCommand(),
+                intake.lowerCommand()
+        );
+    }
+
+    public CommandBuilder shootNoSOTMFar(Pose score) {
+        return sequential(
+                instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
+                instant(() -> turret.face(getShootTarget(), score)),
+                instant(() -> intake.set(-.00001)),
+                instant(() -> transfer.set(-.00001)),
+                intake.lowerCommand(),
+                waitMs(150.0),
+                transfer.openCommand(),
+                waitMs(300.0),
+                Commands.waitUntil(shooter::atTarget),
+                instant(() -> intake.set(.7)),
+                instant(() -> transfer.set(.7)),
+                waitMs(250.0),
+                transfer.closeCommand(),
+                intake.lowerCommand()
+        );
     }
 
     public CommandBuilder shootWithOpenedGateNoSOTM(Pose score) {
         return sequential(
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
-                instant(() -> turret.face(getAimTarget(), score)),
+                instant(() -> turret.face(getShootTarget(), score)),
                 instant(() -> intake.set(-.00001)),
                 instant(() -> transfer.set(-.00001)),
                 intake.lowerCommand(),
                 Commands.waitUntil(shooter::atTarget),
                 intake.inCommand(),
                 transfer.inCommand(),
-                Commands.waitMs(250.0),
+                waitMs(250.0),
                 transfer.closeCommand(),
                 intake.lowerCommand()
         );

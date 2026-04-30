@@ -208,6 +208,7 @@ public class Close extends CommandOpMode {
 
     public void stop() {
         robot.saveEnd();
+        robot.transfer.open();
         super.stop();
     }
 }

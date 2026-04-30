@@ -225,6 +225,7 @@ public class Far extends CommandOpMode {
     }
 
     public void stop() {
+        robot.transfer.open();
         robot.saveEnd();
         super.stop();
     }

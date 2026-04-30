@@ -235,10 +235,10 @@ public class CachedMotor implements DcMotorEx {
 
         switch (unit) {
             case AMPS:
-                return val * 1000;
+                return val / 1000;
 
             case MILLIAMPS:
-                return val;
+                return val ;
 
             default:
                 return 0;

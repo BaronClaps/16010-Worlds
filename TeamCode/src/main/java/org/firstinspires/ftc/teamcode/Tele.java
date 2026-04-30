@@ -98,6 +98,16 @@ public class Tele extends OpMode {
         if (intakeOn == 1) {
             robot.intake.set(transferPower);
             robot.transfer.set(transferPower);
+
+            /*
+            if (shooting > 0) {
+                robot.intake.set(transferPower);
+                robot.transfer.set(transferPower);
+            } else {
+                robot.intake.set(transferPower);
+                robot.transfer.set(.3);
+            }
+             */
         } else if (intakeOn == 2) {
             robot.intake.out();
             robot.transfer.out();
@@ -137,14 +147,10 @@ public class Tele extends OpMode {
                 dist = robot.getShootTarget().distanceFrom(robot.follower.getPose());
                 close = robot.follower.getPose().getY() > 48;
 
-                if (!close && !closeMode)
+                if (!closeMode)
                     robot.shooter.forFar(dist);
-                else if (close && !closeMode)
-                    robot.shooter.setTarget(1000);
-                else if (close)
-                    robot.shooter.forClose(dist);
                 else
-                    robot.shooter.setTarget(700);
+                    robot.shooter.forClose(dist);
 
                 robot.turret.face(robot.getAimTarget(), robot.follower.getPose());
             }
@@ -236,10 +242,19 @@ public class Tele extends OpMode {
 
         prev = curr;
 
+        double sAmps = robot.shooter.getCurrent();
+        double tAmps = robot.transfer.getCurrent();
+        double iAmps = robot.intake.getCurrent();
+
         multipleTelemetry.addData("Pose", robot.follower.getPose());
         multipleTelemetry.addData("Goal Target", robot.getShootTarget());
         multipleTelemetry.addData("Distance", dist);
         multipleTelemetry.addData("Close?", close);
+        multipleTelemetry.addLine();
+        multipleTelemetry.addData("Intake Amps", iAmps);
+        multipleTelemetry.addData("Transfer Amps", tAmps);
+        multipleTelemetry.addData("Shooter Amps", sAmps);
+        multipleTelemetry.addData("Total Amps", sAmps + tAmps + iAmps);
         multipleTelemetry.addLine();
         multipleTelemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
         multipleTelemetry.addData("Shooter Target", robot.shooter.getTarget());

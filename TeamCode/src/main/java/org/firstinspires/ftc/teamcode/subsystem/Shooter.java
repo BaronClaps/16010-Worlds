@@ -5,6 +5,8 @@ import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.CachedMotor;
 import smile.interpolation.BilinearInterpolation;
 import smile.interpolation.Interpolation2D;
@@ -119,6 +121,10 @@ public class Shooter {
 
     public static double getFar(double x) {
         return 2.83784 * x + 947.97297 + 130;
+    }
+
+    public double getCurrent() {
+        return top.getCurrent(CurrentUnit.AMPS) + bottom.getCurrent(CurrentUnit.AMPS);
     }
 }
 

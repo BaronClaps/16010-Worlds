@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.util.CachedMotor;
 
 @Config
@@ -18,6 +20,7 @@ public class Transfer {
     public static double in = 1;
     public static double out = -1;
     public static double open = 0.7;
+    public static double transition = 0.35;
     public static double closed = 0;
     private boolean opened = false;
 
@@ -72,8 +75,13 @@ public class Transfer {
     public CommandBuilder closeCommand() {
         return Commands.instant(this::close);
     }
+    public void transition() { gate.setPosition(transition); }
 
     public boolean closed() {
         return !opened;
+    }
+
+    public double getCurrent() {
+        return transfer.getCurrent(CurrentUnit.AMPS);
     }
 }

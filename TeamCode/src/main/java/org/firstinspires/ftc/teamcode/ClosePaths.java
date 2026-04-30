@@ -23,7 +23,7 @@ public class ClosePaths {
     public Pose spike1Control1 = new Pose(48, 79);
     public Pose spike1Control2 = spike1.withX(39.5);
     
-    public Pose spike2 = new Pose(8, 59, Math.toRadians(180));
+    public Pose spike2 = new Pose(8, 60, Math.toRadians(180));
     public Pose spike2Control1 = new Pose(45, 72);
     public Pose spike2Control2 = spike2.withX(50);
 
@@ -35,7 +35,7 @@ public class ClosePaths {
     public Pose gateHitControl = gateHit.withX(32);
 
     //public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
-    public Pose gateIntake = new Pose(131.5, 62.5, Math.toRadians(30)).mirror();
+    public Pose gateIntake = new Pose(131.5, 63, Math.toRadians(30)).mirror();
     public Pose gateControl1 = new Pose(48, 70);
     public Pose gateControl2 = new Pose(23.25, 65);
 

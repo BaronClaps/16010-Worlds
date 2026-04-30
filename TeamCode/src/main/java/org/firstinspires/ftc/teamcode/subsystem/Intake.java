@@ -11,6 +11,7 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.util.CachedMotor;
 import org.firstinspires.ftc.teamcode.util.RGBLight;
@@ -95,5 +96,9 @@ public class Intake {
     }
     public CommandBuilder lowerCommand() {
         return Commands.instant(this::lower);
+    }
+
+    public double getCurrent() {
+        return intake.getCurrent(CurrentUnit.AMPS);
     }
 }

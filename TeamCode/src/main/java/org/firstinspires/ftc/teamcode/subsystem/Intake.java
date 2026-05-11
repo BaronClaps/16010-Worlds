@@ -33,7 +33,7 @@ public class Intake {
 
     public Intake(HardwareMap hardwareMap) {
         intake = new CachedMotor(hardwareMap.get(DcMotorEx.class, "intake"));
-        intake.setDirection(DcMotorSimple.Direction.REVERSE);
+        intake.setDirection(DcMotorSimple.Direction.FORWARD);
         pivot = hardwareMap.get(Servo.class, "intakePivot");
         color = hardwareMap.get(RevColorSensorV3.class, "intakeColor");
         light = new RGBLight(hardwareMap.get(Servo.class, "light"));

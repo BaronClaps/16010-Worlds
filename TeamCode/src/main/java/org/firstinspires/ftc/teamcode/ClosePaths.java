@@ -35,7 +35,7 @@ public class ClosePaths {
     public Pose gateHitControl = gateHit.withX(32);
 
     //public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
-    public Pose gateIntake = new Pose(131.5, 63, Math.toRadians(30)).mirror();
+    public Pose gateIntake = new Pose(131.5, 63, Math.toRadians(30)).mirror(); // 63 for field 2
     public Pose gateControl1 = new Pose(48, 70);
     public Pose gateControl2 = new Pose(23.25, 65);
 

@@ -8,7 +8,6 @@
             <goBILDA5202SeriesMotor name="flywheel1" port="3" />
             <Servo name="rightTurret" port="0" />
             <Servo name="shooterGate" port="2" />
-            <Servo name="light" port="4" />
             <Servo name="intakePivot" port="5" />
         </LynxModule>
         <LynxModule name="Control Hub" port="173">
@@ -19,8 +18,8 @@
             <Servo name="light" port="3" />
             <Servo name="leftTurret" port="5" />
             <ControlHubImuBHI260AP name="imu" port="0" bus="0" />
-            <goBILDAPinpoint name="p" port="0" bus="1" />
-            <RevColorSensorV3 name="intakeColor" port="0" bus="2" />
+            <goBILDAPinpoint name="p" port="0" bus="2" />
+            <RevColorSensorV3 name="intakeColor" port="0" bus="1" />
         </LynxModule>
     </LynxUsbDevice>
 </Robot>

@@ -16,28 +16,28 @@ public class ClosePaths {
     private final Follower f;
     Alliance a = Alliance.BLUE;
 
-    public static Pose start = new Pose(24+8.5, 144-8.375, Math.toRadians(90));
+    public static Pose start = new Pose(32, 130.5, Math.toRadians(90));
     public Pose score = new Pose(55, 144-55, Math.toRadians(180+20));
 
-    public Pose spike1 = new Pose(17.5, 85, Math.toRadians(180));
-    public Pose spike1Control1 = new Pose(48, 79);
+    public Pose spike1 = new Pose(17.5, 82, Math.toRadians(180));
+    public Pose spike1Control1 = new Pose(48, 76);
     public Pose spike1Control2 = spike1.withX(39.5);
     
-    public Pose spike2 = new Pose(8, 60, Math.toRadians(180));
-    public Pose spike2Control1 = new Pose(45, 72);
+    public Pose spike2 = new Pose(8, 57, Math.toRadians(180));
+    public Pose spike2Control1 = new Pose(45, 69);
     public Pose spike2Control2 = spike2.withX(50);
 
     public Pose spike3 = new Pose(10, 60-24, Math.toRadians(180));
     public Pose spike3Control1 = new Pose(45, 80-24);
     public Pose spike3Control2 = spike3.withX(65);
 
-    public Pose gateHit = new Pose (15, 74, Math.toRadians(180));
+    public Pose gateHit = new Pose (15, 70, Math.toRadians(180));
     public Pose gateHitControl = gateHit.withX(32);
 
     //public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
-    public Pose gateIntake = new Pose(131.5, 63, Math.toRadians(30)).mirror(); // 63 for field 2
-    public Pose gateControl1 = new Pose(48, 70);
-    public Pose gateControl2 = new Pose(23.25, 65);
+    public Pose gateIntake = new Pose(131.5, 59, Math.toRadians(30)).mirror(); // 63 for field 2
+    public Pose gateControl1 = new Pose(48, 65);
+    public Pose gateControl2 = new Pose(23.25, 69);
 
     public Pose cornerControl = new Pose(-5, 30);
     public Pose corner = new Pose(6.5, 11, Math.toRadians(270));

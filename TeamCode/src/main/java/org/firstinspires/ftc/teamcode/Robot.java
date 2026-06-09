@@ -82,9 +82,9 @@ public class Robot {
             shootTarget = new Pose(0, 141.5, 0).mirror();
 
         if (alliance == Alliance.BLUE)
-            aimTarget = new Pose(0, 139, 0);
+            aimTarget = new Pose(0, 141.5, 0);
         else if (alliance == Alliance.RED)
-            aimTarget = new Pose(0, 139, 0).mirror();
+            aimTarget = new Pose(0, 141.5, 0).mirror();
     }
 
     public Pose getShootTarget() {
@@ -98,23 +98,23 @@ public class Robot {
         return sequential(
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
 //                instant(() -> shooter.setTarget(1300)),
-                instant(() -> intake.set(-.01)),
-                instant(() -> transfer.set(-.01)),
-                intake.lowerCommand(),
-                waitMs(250.0),
-                transfer.openCommand(),
-                waitMs(300.0),
-                Commands.waitUntil(shooter::atTarget),
+//                instant(() -> intake.set(-.01)),
+//                instant(() -> transfer.set(-.01)),
+//                waitMs(350.0),
                 intake.inCommand(),
                 transfer.inCommand(),
-                waitMs(250.0),
-                transfer.closeCommand(),
-                intake.lowerCommand()
+                Commands.waitUntil(shooter::atTarget),
+                transfer.openCommand(),
+//                waitMs(300.0),
+                intake.inCommand(),
+                transfer.inCommand(),
+                waitMs(500.0),
+                transfer.closeCommand()
         )
                 .raceWith(
                         Commands.infinite(() -> {
                             Pose predicted = Turret.getPredictedPose(follower.getPose(), getShootTarget(), follower.getVelocity(), follower.getAngularVelocity());
-                            turret.face(getShootTarget(), predicted);
+                            turret.face(getAimTarget(), predicted);
                            // shooter.forDistance(getShootTarget().distanceFrom(predicted), predicted.getY() > 48);
                         }));
     }
@@ -122,54 +122,34 @@ public class Robot {
     public CommandBuilder shootNoSOTM(Pose score) {
         return sequential(
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
-                instant(() -> turret.face(getShootTarget(), score)),
-                instant(() -> intake.set(-.00001)),
-                instant(() -> transfer.set(-.00001)),
-                intake.lowerCommand(),
-                transfer.openCommand(),
-                waitMs(300.0),
-                Commands.waitUntil(shooter::atTarget),
+                instant(() -> turret.face(getAimTarget(), score)),
                 intake.inCommand(),
                 transfer.inCommand(),
-                waitMs(250.0),
-                transfer.closeCommand(),
-                intake.lowerCommand()
+                Commands.waitUntil(shooter::atTarget),
+                transfer.openCommand(),
+                intake.inCommand(),
+                transfer.inCommand(),
+                waitMs(500.0),
+                transfer.closeCommand()
         );
     }
 
     public CommandBuilder shootNoSOTMFar(Pose score) {
         return sequential(
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
-                instant(() -> turret.face(getShootTarget(), score)),
-                instant(() -> intake.set(-.00001)),
-                instant(() -> transfer.set(-.00001)),
-                intake.lowerCommand(),
-                waitMs(150.0),
-                transfer.openCommand(),
-                waitMs(300.0),
-                Commands.waitUntil(shooter::atTarget),
+                instant(() -> turret.face(getAimTarget(), score)),
                 instant(() -> intake.set(.7)),
                 instant(() -> transfer.set(.7)),
-                waitMs(250.0),
-                transfer.closeCommand(),
-                intake.lowerCommand()
-        );
-    }
-
-    public CommandBuilder shootWithOpenedGateNoSOTM(Pose score) {
-        return sequential(
-                instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
-                instant(() -> turret.face(getShootTarget(), score)),
-                instant(() -> intake.set(-.00001)),
-                instant(() -> transfer.set(-.00001)),
-                intake.lowerCommand(),
                 Commands.waitUntil(shooter::atTarget),
-                intake.inCommand(),
-                transfer.inCommand(),
                 waitMs(250.0),
-                transfer.closeCommand(),
-                intake.lowerCommand()
-        );
+                transfer.openCommand(),
+                waitMs(750.0),
+                transfer.closeCommand()
+        )
+                .raceWith(
+                        Commands.infinite(() -> {
+                            turret.face(getAimTarget(), follower.getPose());
+                        }));
     }
 
     public CommandBuilder intakeLowered() {

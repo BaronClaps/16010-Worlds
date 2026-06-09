@@ -13,14 +13,14 @@ public class FarPaths {
     private final Follower f;
     Alliance a = Alliance.BLUE;
 
-    public static Pose start = new Pose(86.625, 8.5, 0).mirror();
-    public Pose score = new Pose(72 - 18, 18, Math.toRadians(135));
+    public static Pose start = new Pose(90.125, 8.188, 0).mirror();
+    public Pose score = new Pose(72 - 18, 18, Math.toRadians(180));
 
     public Pose spike3 = new Pose(10, 36, Math.toRadians(180));
     public Pose spike3Control = new Pose(45, 36);
     public Pose gateIntake = new Pose(7.5, 36, Math.toRadians(90));
-    public Pose cornerLowered = new Pose(10, 10, Math.toRadians(180));
-    public Pose cornerRaised = new Pose(8.25, 10, Math.toRadians(180));
+    public Pose corner = new Pose(8.25, 10, Math.toRadians(180));
+    public Pose between = new Pose(8.25, 23, Math.toRadians(180));
     public Pose park = new Pose(36, 24, Math.toRadians(180));
 
     public FarPaths(Robot r) {
@@ -34,8 +34,8 @@ public class FarPaths {
             spike3Control = spike3Control.mirror();
 
             gateIntake = gateIntake.mirror();
-            cornerRaised = cornerRaised.mirror();
-            cornerLowered = cornerLowered.mirror();
+            between = between.mirror();
+            corner = corner.mirror();
             park = park.mirror();
 
             a = r.alliance;
@@ -64,7 +64,7 @@ public class FarPaths {
                         )
                 )
                 .setLinearHeadingInterpolation(score.getHeading(), spike3.getHeading(), .5)
-                .setBrakingStrength(2)
+                .setBrakingStrength(1)
                 .setNoDeceleration()
                 .build();
         return new FollowPath(this.f, path);
@@ -108,27 +108,14 @@ public class FarPaths {
         return new FollowPath(this.f, path, .95);
     }
 
-    public CommandBuilder intakeCornerLowered() {
+    public CommandBuilder intakeCorner() {
         PathChain path = f.pathBuilder().addPath(
                         new BezierLine(
                                 score,
-                                cornerLowered
+                                corner
                         )
                 )
-                .setLinearHeadingInterpolation(score.getHeading(), cornerLowered.getHeading(), .25)
-                .setBrakingStrength(2)
-                .build();
-        return new FollowPath(this.f, path);
-    }
-
-    public CommandBuilder intakeCornerRaised() {
-        PathChain path = f.pathBuilder().addPath(
-                        new BezierLine(
-                                score,
-                                cornerRaised
-                        )
-                )
-                .setLinearHeadingInterpolation(score.getHeading(), cornerRaised.getHeading(), .25)
+                .setLinearHeadingInterpolation(score.getHeading(), corner.getHeading(), .25)
                 .setBrakingStrength(2)
                 .build();
         return new FollowPath(this.f, path);
@@ -137,15 +124,42 @@ public class FarPaths {
     public CommandBuilder scoreCorner() {
         PathChain path = f.pathBuilder().addPath(
                         new BezierLine(
-                                cornerRaised,
+                                corner,
                                 score
                         )
                 )
-                .setLinearHeadingInterpolation(cornerRaised.getHeading(), score.getHeading(), .75)
+                .setLinearHeadingInterpolation(corner.getHeading(), score.getHeading(), .75)
                 .setBrakingStrength(2)
                 .build();
         return new FollowPath(this.f, path, .95);
     }
+
+    public CommandBuilder intakeBetween() {
+        PathChain path = f.pathBuilder().addPath(
+                        new BezierLine(
+                                score,
+                                between
+                        )
+                )
+                .setLinearHeadingInterpolation(score.getHeading(), between.getHeading(), .25)
+                .setBrakingStrength(1.5)
+                .build();
+        return new FollowPath(this.f, path);
+    }
+
+    public CommandBuilder scoreBetween() {
+        PathChain path = f.pathBuilder().addPath(
+                        new BezierLine(
+                                between,
+                                score
+                        )
+                )
+                .setLinearHeadingInterpolation(between.getHeading(), score.getHeading(), .75)
+                .setBrakingStrength(2)
+                .build();
+        return new FollowPath(this.f, path, .95);
+    }
+
 
     public CommandBuilder park() {
         PathChain path = f.pathBuilder().addPath(

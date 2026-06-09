@@ -17,7 +17,7 @@ public class Shooter {
     private final CachedMotor top, bottom;
 
     private double t = 0;
-    public static double kS = 0.1, kV = 0.00064, kP = 0.03, useRaw = 40;
+    public static double kS = 0.07, kV = 0.00036, kP = 0, useRaw = 100;
 
     private boolean activated = false;
 
@@ -37,7 +37,7 @@ public class Shooter {
         top = new CachedMotor(hardwareMap.get(DcMotorEx.class, "flywheel1"));
         bottom = new CachedMotor(hardwareMap.get(DcMotorEx.class, "flywheel2"));
         top.setDirection(DcMotorSimple.Direction.REVERSE);
-        bottom.setDirection(DcMotorSimple.Direction.REVERSE);
+        bottom.setDirection(DcMotorSimple.Direction.FORWARD);
     }
 
     public double getTarget() {
@@ -80,6 +80,9 @@ public class Shooter {
     public boolean atTarget() {
         return Math.abs((getTarget() - getVelocity())) < 40;
     }
+    public boolean atTargetFar() {
+        return Math.abs((getTarget() - getVelocity())) < 20;
+    }
 
     public void forPose(Pose current, Pose target, boolean close) {
         double xDistance = Math.abs(target.getX() - current.getX());
@@ -116,11 +119,11 @@ public class Shooter {
                 - 0.566792  * Math.pow(x, 2)
                 + 45.23831  * x
                 - 306.12169
-                + 150;
+                + 220;
     }
 
     public static double getFar(double x) {
-        return 2.83784 * x + 947.97297 + 130;
+        return 2.83784 * x + 947.97297 + 200;
     }
 
     public double getCurrent() {

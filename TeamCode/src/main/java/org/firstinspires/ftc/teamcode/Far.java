@@ -7,6 +7,7 @@ import static com.pedropathing.ivy.commands.Commands.waitUntil;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.ivy.groups.Groups;
 import com.pedropathing.util.Timer;
@@ -58,7 +59,7 @@ public class Far extends CommandOpMode {
                     }
 
                     if (!intakeTime)
-                        intakeTime = intakeTimer.getElapsedTimeSeconds() >= .5;
+                        intakeTime = intakeTimer.getElapsedTimeSeconds() >= 1;
 
 
                     if (curr && intakeTime) {
@@ -85,134 +86,115 @@ public class Far extends CommandOpMode {
                     telemetryM.addData("Pose", robot.follower.getPose());
                     telemetryM.addData("Target", robot.getShootTarget());
                     telemetryM.addData("Shooter Velocity", robot.shooter.getVelocity());
+                    telemetryM.addData("turret angle", robot.turret.getYaw());
+                    telemetryM.addData("full", full);
                     telemetryM.update();
                 }),
                 Groups.sequential(
                         p.preload(),
-                        robot.shootNoSOTMFar(p.start),
+                        waitMs(250.0),
+robot.shootNoSOTMFar(p.score),
                         robot.intakeLowered(),
                         p.intakeSpike3()
+                                .with()
                                 .raceWith(waitMs(5000.0)),
                         p.scoreSpike3()
                                 .with(
-                                        waitMs(300.0)
+                                        waitMs(750.0)
                                                 .then(
-                                                        conditional(
-                                                                () -> full,
-                                                                robot.intake.raiseCommand(),
-                                                                robot.intake.lowerCommand()
-                                                        )
+                                                                robot.intake.offCommand()
                                                 )
                                 ),
-                        robot.shootNoSOTMFar(p.score),
+                        
+robot.shootNoSOTMFar(p.score),
                         robot.intakeLowered(),
-                        p.intakeCornerLowered()
+                        p.intakeCorner()
                                 .raceWith(
                                     waitMs(4000.0),
                                     waitUntil(() -> full)
                                 ),
                         p.scoreCorner()
                                 .with(
-                                        waitMs(300.0)
+                                        waitMs(750.0)
                                                 .then(
-                                                        conditional(
-                                                                () -> full,
-                                                                robot.intake.raiseCommand(),
-                                                                robot.intake.lowerCommand()
-                                                        )
+                                                                robot.intake.offCommand()
                                                 )
                                 ),
-                        robot.shootNoSOTMFar(p.score),
+                        
+robot.shootNoSOTMFar(p.score),
                         robot.intakeLowered(),
-                        p.intakeCornerLowered()
+                        p.intakeBetween()
+                                .raceWith(
+                                    waitMs(3000.0),
+                                    waitUntil(() -> full)
+                                ),
+                        p.scoreBetween()
+                                .with(
+                                        waitMs(750.0)
+                                                .then(
+                                                                robot.intake.offCommand()
+                                                )
+                                ),
+                        
+robot.shootNoSOTMFar(p.score),
+                        robot.intakeLowered(),
+                        p.intakeCorner()
                                 .raceWith(
                                     waitMs(3000.0),
                                     waitUntil(() -> full)
                                 ),
                         p.scoreCorner()
                                 .with(
-                                        waitMs(300.0)
+                                        waitMs(750.0)
                                                 .then(
-                                                        conditional(
-                                                                () -> full,
-                                                                robot.intake.raiseCommand(),
-                                                                robot.intake.lowerCommand()
-                                                        )
+                                                                robot.intake.offCommand()
                                                 )
                                 ),
-                        robot.shootNoSOTMFar(p.score),
-                        robot.intakeLowered(),
-                        p.intakeCornerLowered()
-                                .raceWith(
-                                    waitMs(3000.0),
-                                    waitUntil(() -> full)
-                                ),
-                        p.scoreCorner()
-                                .with(
-                                        waitMs(300.0)
-                                                .then(
-                                                        conditional(
-                                                                () -> full,
-                                                                robot.intake.raiseCommand(),
-                                                                robot.intake.lowerCommand()
-                                                        )
-                                                )
-                                ),
-                        robot.shootNoSOTMFar(p.score),
-                        robot.intakeLowered(),
-                        p.intakeCornerLowered()
-                                .raceWith(
-                                    waitMs(3000.0),
-                                    waitUntil(() -> full)
-                                ),
-                        p.scoreCorner()
-                                .with(
-                                        waitMs(300.0)
-                                                .then(
-                                                        conditional(
-                                                                () -> full,
-                                                                robot.intake.raiseCommand(),
-                                                                robot.intake.lowerCommand()
-                                                        )
-                                                )
-                                ),
-                        robot.shootNoSOTMFar(p.score),
+                        
+robot.shootNoSOTMFar(p.score),
                         robot.intakeLowered(),
                         p.intakeSpike3()
+                                .raceWith(
+                                    waitMs(3000.0),
+                                    waitUntil(() -> full)
+                                ),
+                        p.scoreSpike3()
+                                .with(
+                                        waitMs(750.0)
+                                                .then(
+                                                                robot.intake.offCommand()
+                                                )
+                                ),
+                        
+                        robot.intakeLowered(),
+                        p.intakeBetween()
                                 .raceWith(
                                         waitMs(3000.0),
                                         waitUntil(() -> full)
                                 ),
-                        p.scoreSpike3()
+                        p.scoreBetween()
                                 .with(
-                                        waitMs(300.0)
+                                        waitMs(750.0)
                                                 .then(
-                                                        conditional(
-                                                                () -> full,
-                                                                robot.intake.raiseCommand(),
-                                                                robot.intake.lowerCommand()
-                                                        )
+                                                                robot.intake.offCommand()
                                                 )
                                 ),
-                        robot.shootNoSOTMFar(p.score),
+                        
+robot.shootNoSOTMFar(p.score),
                         robot.intakeLowered(),
-                        p.intakeCornerLowered()
+                        p.intakeCorner()
                                 .raceWith(
-                                    waitMs(3000.0), 
+                                    waitMs(3000.0),
                                     waitUntil(() -> full)
                                 ),
                         p.scoreCorner()
                                 .with(
-                                        waitMs(300.0)
+                                        waitMs(750.0)
                                                 .then(
-                                                        conditional(
-                                                                () -> full,
-                                                                robot.intake.raiseCommand(),
-                                                                robot.intake.lowerCommand()
-                                                        )
+                                                                robot.intake.offCommand()
                                                 )
                                 ),
-                        robot.shootNoSOTMFar(p.score),
+robot.shootNoSOTMFar(p.score),
                         p.park()
                 )
         );
@@ -220,13 +202,16 @@ public class Far extends CommandOpMode {
 
     public void start() {
         robot.shooter.on();
-        robot.shooter.close();
-        robot.turret.face(robot.getShootTarget(), p.score);
+        robot.shooter.forFar(robot.getAimTarget().distanceFrom(p.score));
     }
 
     public void stop() {
         robot.transfer.open();
         robot.saveEnd();
         super.stop();
+    }
+    
+    public CommandBuilder resetTimer() {
+        return Commands.instant(() -> intakeTimer.resetTimer());
     }
 }

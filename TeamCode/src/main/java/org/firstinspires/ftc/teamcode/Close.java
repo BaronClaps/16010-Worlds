@@ -90,7 +90,7 @@ public class Close extends CommandOpMode {
                         p.preload()
                                 .with(
                                         waitUntil(() -> robot.follower.getCurrentTValue() > .85)
-                                                .then(robot.shootWithOpenedGateNoSOTM(p.score))
+                                                .then(robot.shootNoSOTM(p.score))
                                 ),
                         robot.intakeLowered(),
                         p.intakeSpike2()

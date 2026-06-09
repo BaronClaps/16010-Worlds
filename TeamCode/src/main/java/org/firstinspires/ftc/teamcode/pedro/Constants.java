@@ -38,8 +38,8 @@ public class Constants {
             .rightRearMotorDirection(DcMotorSimple.Direction.FORWARD);
     public static PinpointConstants pinpointConstants = new PinpointConstants()
             .hardwareMapName("p")
-            .forwardPodY(4.1871)
-            .strafePodX(-6.433)
+            .forwardPodY(4.277)
+            .strafePodX(-6.292)
             .forwardEncoderDirection(GoBildaPinpointDriver.EncoderDirection.FORWARD)
             .strafeEncoderDirection(GoBildaPinpointDriver.EncoderDirection.REVERSED);
 

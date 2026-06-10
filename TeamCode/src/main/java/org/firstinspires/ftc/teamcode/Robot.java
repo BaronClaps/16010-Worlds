@@ -152,23 +152,12 @@ public class Robot {
                         }));
     }
 
-    public CommandBuilder intakeLowered() {
+    public CommandBuilder intake() {
         return sequential(
                 transfer.closeCommand(),
                 transfer.inCommand(),
                 intake.inCommand(),
                 intake.lowerCommand()
-               // Commands.waitMs(250.0)
-        );
-    }
-
-    public CommandBuilder intakeRaised() {
-        return sequential(
-                transfer.closeCommand(),
-                transfer.inCommand(),
-                intake.inCommand(),
-                intake.raiseCommand()
-               // Commands.waitMs(250.0)
         );
     }
 

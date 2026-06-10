@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static com.pedropathing.ivy.commands.Commands.conditional;
 import static com.pedropathing.ivy.commands.Commands.waitMs;
 import static com.pedropathing.ivy.commands.Commands.waitUntil;
 
@@ -84,6 +83,7 @@ public class Far extends CommandOpMode {
 
                     telemetryM.addData("LoopTime Hz", robot.getLoopTimeHz());
                     telemetryM.addData("Pose", robot.follower.getPose());
+                    telemetryM.addData("T Value", robot.follower.getCurrentTValue());
                     telemetryM.addData("Target", robot.getShootTarget());
                     telemetryM.addData("Shooter Velocity", robot.shooter.getVelocity());
                     telemetryM.addData("turret angle", robot.turret.getYaw());
@@ -91,110 +91,18 @@ public class Far extends CommandOpMode {
                     telemetryM.update();
                 }),
                 Groups.sequential(
-                        p.preload(),
-                        waitMs(250.0),
-robot.shootNoSOTMFar(p.score),
-                        robot.intakeLowered(),
-                        p.intakeSpike3()
-                                .with()
-                                .raceWith(waitMs(5000.0)),
-                        p.scoreSpike3()
-                                .with(
-                                        waitMs(750.0)
-                                                .then(
-                                                                robot.intake.offCommand()
-                                                )
+                        p.preload()
+                                .then(
+                                        waitMs(250.0),
+                                        robot.shootNoSOTMFar(p.score)
                                 ),
-                        
-robot.shootNoSOTMFar(p.score),
-                        robot.intakeLowered(),
-                        p.intakeCorner()
-                                .raceWith(
-                                    waitMs(4000.0),
-                                    waitUntil(() -> full)
-                                ),
-                        p.scoreCorner()
-                                .with(
-                                        waitMs(750.0)
-                                                .then(
-                                                                robot.intake.offCommand()
-                                                )
-                                ),
-                        
-robot.shootNoSOTMFar(p.score),
-                        robot.intakeLowered(),
-                        p.intakeBetween()
-                                .raceWith(
-                                    waitMs(3000.0),
-                                    waitUntil(() -> full)
-                                ),
-                        p.scoreBetween()
-                                .with(
-                                        waitMs(750.0)
-                                                .then(
-                                                                robot.intake.offCommand()
-                                                )
-                                ),
-                        
-robot.shootNoSOTMFar(p.score),
-                        robot.intakeLowered(),
-                        p.intakeCorner()
-                                .raceWith(
-                                    waitMs(3000.0),
-                                    waitUntil(() -> full)
-                                ),
-                        p.scoreCorner()
-                                .with(
-                                        waitMs(750.0)
-                                                .then(
-                                                                robot.intake.offCommand()
-                                                )
-                                ),
-                        
-robot.shootNoSOTMFar(p.score),
-                        robot.intakeLowered(),
-                        p.intakeSpike3()
-                                .raceWith(
-                                    waitMs(3000.0),
-                                    waitUntil(() -> full)
-                                ),
-                        p.scoreSpike3()
-                                .with(
-                                        waitMs(750.0)
-                                                .then(
-                                                                robot.intake.offCommand()
-                                                )
-                                ),
-                        
-                        robot.intakeLowered(),
-                        p.intakeBetween()
-                                .raceWith(
-                                        waitMs(3000.0),
-                                        waitUntil(() -> full)
-                                ),
-                        p.scoreBetween()
-                                .with(
-                                        waitMs(750.0)
-                                                .then(
-                                                                robot.intake.offCommand()
-                                                )
-                                ),
-                        
-robot.shootNoSOTMFar(p.score),
-                        robot.intakeLowered(),
-                        p.intakeCorner()
-                                .raceWith(
-                                    waitMs(3000.0),
-                                    waitUntil(() -> full)
-                                ),
-                        p.scoreCorner()
-                                .with(
-                                        waitMs(750.0)
-                                                .then(
-                                                                robot.intake.offCommand()
-                                                )
-                                ),
-robot.shootNoSOTMFar(p.score),
+                        spike(),
+                        corner(),
+                        between(),
+                        spike(),
+                        corner(),
+                        between(),
+                        corner(),
                         p.park()
                 )
         );
@@ -210,8 +118,71 @@ robot.shootNoSOTMFar(p.score),
         robot.saveEnd();
         super.stop();
     }
-    
+
     public CommandBuilder resetTimer() {
         return Commands.instant(() -> intakeTimer.resetTimer());
+    }
+
+    private CommandBuilder corner() {
+        return Groups.sequential(
+                robot.intake(),
+                resetTimer(),
+                p.intakeCorner()
+                        .raceWith(
+                                waitMs(3000.0),
+                                Commands.waitMs(1000.0)
+                                        .then(Commands.waitUntil(() -> full))
+                        ),
+                p.scoreCorner()
+                        .with(
+                                waitMs(1250.0)
+                                        .then(
+                                                robot.intake.offCommand()
+                                        )
+                        ),
+                robot.shootNoSOTMFar(p.score)
+        );
+    }
+
+    private CommandBuilder spike() {
+        return Groups.sequential(
+                robot.intake(),
+                resetTimer(),
+                p.intakeSpike3()
+                        .raceWith(
+                                waitMs(3000.0),
+                                Commands.waitMs(1000.0)
+                                        .then(Commands.waitUntil(() -> full))
+                        ),
+                p.scoreSpike3()
+                        .with(
+                                waitMs(1250.0)
+                                        .then(
+                                                robot.intake.offCommand()
+                                        )
+                        ),
+                robot.shootNoSOTMFar(p.score)
+        );
+    }
+
+    private CommandBuilder between() {
+        return Groups.sequential(
+                robot.intake(),
+                resetTimer(),
+                p.intakeBetween()
+                        .raceWith(
+                                waitMs(3000.0),
+                                Commands.waitMs(1000.0)
+                                        .then(Commands.waitUntil(() -> full))
+                        ),
+                p.scoreBetween()
+                        .with(
+                                waitMs(1250.0)
+                                        .then(
+                                                robot.intake.offCommand()
+                                        )
+                        ),
+                robot.shootNoSOTMFar(p.score)
+        );
     }
 }

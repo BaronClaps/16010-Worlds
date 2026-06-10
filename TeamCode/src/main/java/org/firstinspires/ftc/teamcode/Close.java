@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
 import static com.pedropathing.ivy.commands.Commands.*;
-import static com.pedropathing.ivy.groups.Groups.parallel;
 import static com.pedropathing.ivy.groups.Groups.sequential;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.ivy.groups.Groups;
 import com.pedropathing.util.Timer;
@@ -84,6 +84,8 @@ public class Close extends CommandOpMode {
                     telemetryM.addData("T Value", robot.follower.getCurrentTValue());
                     telemetryM.addData("Target", robot.getShootTarget());
                     telemetryM.addData("Shooter Velocity", robot.shooter.getVelocity());
+                    telemetryM.addData("turret angle", robot.turret.getYaw());
+                    telemetryM.addData("full", full);
                     telemetryM.update();
                 }),
                 Groups.sequential(
@@ -92,104 +94,15 @@ public class Close extends CommandOpMode {
                                         waitUntil(() -> robot.follower.getCurrentTValue() > .85)
                                                 .then(robot.shootNoSOTM(p.score))
                                 ),
-                        robot.intakeLowered(),
-                        p.intakeSpike2()
-                                .raceWith(waitMs(3000.0)),
-                        p.scoreSpike2()
-                                .with(
-                                        waitMs(250.0)
-                                                .then(
-                                                        robot.intake.raiseCommand()
-                                                ),
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > .3)
-                                                .then(robot.shoot(p.score))
-                                ),
-                        robot.intakeLowered(),
-                        p.intakeGate()
-                                .raceWith(waitMs(2000.0)),
-                        waitMs(1500.0)
-                                .raceWith(Commands.waitMs(500.0).then(Commands.waitUntil(() -> full))),
-                        p.scoreGate()
-                                .with(
-                                        waitMs(250.0)
-                                                .then(
-                                                        robot.intake.raiseCommand()
-                                                ),
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToShoot)
-                                                .then(robot.shoot(p.score))
-                                ),
-                        robot.intakeLowered(),
-                        p.intakeGate()
-                                .raceWith(waitMs(2000.0)),
-                        waitMs(1500.0)
-                                .raceWith(Commands.waitMs(500.0).then(Commands.waitUntil(() -> full))),
-                        p.scoreGate()
-                                .with(
-                                        waitMs(250.0)
-                                                .then(
-                                                        robot.intake.raiseCommand()
-                                                ),
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToShoot)
-                                                .then(robot.shoot(p.score))
-                                ),
-                        robot.intakeLowered(),
-                        p.intakeSpike1()
-                                .raceWith(waitMs(2000.0)),
-                        p.scoreSpike1()
-                                .with(
-                                        waitMs(250.0)
-                                                .then(
-                                                        robot.intake.raiseCommand()
-                                                ),
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > .4)
-                                                .then(robot.shoot(p.score))
-                                ),
-                        robot.intakeLowered(),
-                        p.intakeGate()
-                                .raceWith(waitMs(2000.0)),
-                        waitMs(1500.0)
-                                .raceWith(Commands.waitMs(500.0).then(Commands.waitUntil(() -> full))),
-                        p.scoreGate()
-                                .with(
-                                        waitMs(250.0)
-                                                .then(
-                                                        robot.intake.raiseCommand()
-                                                ),
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToShoot)
-                                                .then(robot.shoot(p.score))
-                                ),
-                        robot.intakeLowered(),
-                        p.intakeGate()
-                                .raceWith(waitMs(2000.0)),
-                        waitMs(1500.0)
-                                .raceWith(Commands.waitMs(500.0).then(Commands.waitUntil(() -> full))),
-                        p.scoreGate()
-                                .with(
-                                        waitMs(250.0)
-                                                .then(
-//                                                        robot.intake.raiseCommand()
-                                                ),
-                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToShoot)
-                                                .then(robot.shoot(p.score))
-                                ),
+                        spike2(),
+                        gate(),
+                        gate(),
+                        spike1(),
+                        gate(),
+                        gate(),
                         conditional(
                                 () -> opModeTimer.getElapsedTimeSeconds() < 27.5,
-                                sequential(
-                                        robot.intakeLowered(),
-                                        p.intakeGate()
-                                                .raceWith(waitMs(2000.0)),
-                                        waitMs(1500.0)
-                                                .raceWith(Commands.waitMs(500.0).then(Commands.waitUntil(() -> full))),
-                                        p.scoreGate()
-                                                .with(
-                                                        waitMs(250.0)
-                                                                .then(
-//                                                        robot.intake.raiseCommand()
-                                                                ),
-                                                        waitUntil(() -> robot.follower.getCurrentTValue() > tValueToShoot)
-                                                                .then(robot.shoot(p.score))
-                                                )
-                                ),
+                                gate(),
                                 p.park()
                         )
 
@@ -204,6 +117,64 @@ public class Close extends CommandOpMode {
         robot.transfer.open();
         robot.turret.face(robot.getShootTarget(), p.score);
         opModeTimer.resetTimer();
+    }
+
+    private CommandBuilder spike2() {
+        return sequential(
+                robot.intake(),
+                p.intakeSpike2()
+                        .raceWith(waitMs(3000.0)),
+                p.scoreSpike2()
+                        .with(
+                                waitMs(250.0)
+                                        .then(
+                                                robot.intake.raiseCommand()
+                                        ),
+                                waitUntil(() -> robot.follower.getCurrentTValue() > .3)
+                                        .then(robot.shoot(p.score))
+                        )
+        );
+    }
+
+    private CommandBuilder spike1() {
+        return sequential(
+                robot.intake(),
+                p.intakeSpike1()
+                        .raceWith(waitMs(2000.0)),
+                p.scoreSpike1()
+                        .with(
+                                waitMs(250.0)
+                                        .then(
+                                                robot.intake.raiseCommand()
+                                        ),
+                                waitUntil(() -> robot.follower.getCurrentTValue() > .4)
+                                        .then(robot.shoot(p.score))
+                        )
+        );
+    }
+
+    private CommandBuilder gate() {
+        return sequential(
+                robot.intake(),
+                p.intakeGate()
+                        .raceWith(
+                                waitMs(2000.0)
+                        ),
+                waitMs(1500.0)
+                        .raceWith(
+                                Commands.waitMs(500.0)
+                                        .then(Commands.waitUntil(() -> full))
+                        ),
+                p.scoreGate()
+                        .with(
+                                waitMs(500.0)
+                                        .then(
+                                                robot.intake.offCommand()
+                                        ),
+                                waitUntil(() -> robot.follower.getCurrentTValue() > tValueToShoot)
+                                        .then(robot.shoot(p.score))
+                        )
+        );
     }
 
     public void stop() {

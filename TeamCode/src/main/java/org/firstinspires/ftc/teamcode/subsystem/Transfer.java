@@ -60,6 +60,9 @@ public class Transfer {
     public CommandBuilder offCommand() {
         return Commands.instant(this::off);
     }
+    public CommandBuilder setCommand(double speed) {
+        return Commands.instant(() -> set(speed));
+    }
     public CommandBuilder inCommand() {
         return Commands.instant(this::in);
     }

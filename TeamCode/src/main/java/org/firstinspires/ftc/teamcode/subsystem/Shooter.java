@@ -17,7 +17,7 @@ public class Shooter {
     private final CachedMotor top, bottom;
 
     private double t = 0;
-    public static double kS = 0.07, kV = 0.00036, kP = 0, useRaw = 100;
+    public static double kS = 0.07, kV = 0.00035, kP = 0.0005, useRaw = 80;
 
     private boolean activated = false;
 
@@ -109,21 +109,16 @@ public class Shooter {
         setTarget(getFar(distance));
     }
 
-    public void close() {
-        setTarget(1100);
-        on();
-    }
-
     public static double getClose(double x) {
         return 0.00259534 * Math.pow(x, 3)
                 - 0.566792  * Math.pow(x, 2)
                 + 45.23831  * x
                 - 306.12169
-                + 220;
+                + 250;
     }
 
     public static double getFar(double x) {
-        return 2.83784 * x + 947.97297 + 200;
+        return 2.83784 * x + 947.97297 + 250;
     }
 
     public double getCurrent() {

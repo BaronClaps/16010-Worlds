@@ -102,19 +102,18 @@ public class Robot {
 //                instant(() -> transfer.set(-.01)),
 //                waitMs(350.0),
                 intake.inCommand(),
-                transfer.inCommand(),
+                transfer.setCommand(0.5),
                 Commands.waitUntil(shooter::atTarget),
                 transfer.openCommand(),
 //                waitMs(300.0),
                 intake.inCommand(),
-                transfer.inCommand(),
-                waitMs(500.0),
-                transfer.closeCommand()
+                transfer.inCommand()
         )
                 .raceWith(
                         Commands.infinite(() -> {
-                            Pose predicted = Turret.getPredictedPose(follower.getPose(), getShootTarget(), follower.getVelocity(), follower.getAngularVelocity());
-                            turret.face(getAimTarget(), predicted);
+//                            Pose predicted = Turret.getPredictedPose(follower.getPose(), getShootTarget(), follower.getVelocity(), follower.getAngularVelocity());
+                            turret.face(getAimTarget(), follower.getPose());
+                            shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48);
                            // shooter.forDistance(getShootTarget().distanceFrom(predicted), predicted.getY() > 48);
                         }));
     }
@@ -124,7 +123,7 @@ public class Robot {
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
                 instant(() -> turret.face(getAimTarget(), score)),
                 intake.inCommand(),
-                transfer.inCommand(),
+                transfer.setCommand(0.5),
                 Commands.waitUntil(shooter::atTarget),
                 transfer.openCommand(),
                 intake.inCommand(),
@@ -138,9 +137,9 @@ public class Robot {
         return sequential(
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
                 instant(() -> turret.face(getAimTarget(), score)),
+                Commands.waitUntil(shooter::atTarget),
                 instant(() -> intake.set(.7)),
                 instant(() -> transfer.set(.7)),
-                Commands.waitUntil(shooter::atTarget),
                 waitMs(250.0),
                 transfer.openCommand(),
                 waitMs(750.0),
@@ -154,10 +153,9 @@ public class Robot {
 
     public CommandBuilder intake() {
         return sequential(
-                transfer.closeCommand(),
-                transfer.inCommand(),
-                intake.inCommand(),
-                intake.lowerCommand()
+//                transfer.closeCommand(),
+                transfer.setCommand(0.15),
+                intake.inCommand()
         );
     }
 

@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.util.Alliance;
 
 public class ClosePaths {
     private final Follower f;
-    Alliance a = Alliance.BLUE;
 
     public Pose start = new Pose(32, 130.5, Math.toRadians(90));
     public Pose score = new Pose(55, 89, Math.toRadians(200));
@@ -29,21 +28,21 @@ public class ClosePaths {
     public Pose spike3Control1 = new Pose(45, 56);
     public Pose spike3Control2 = spike3.withX(65);
 
-    public Pose gateHit = new Pose (15, 70, Math.toRadians(180));
+    public Pose gateHit = new Pose(15, 70, Math.toRadians(180));
     public Pose gateHitControl = gateHit.withX(32);
-    public Pose gateIntake = new Pose(10, 59, Math.toRadians(150));
-    public Pose gateControl1 = new Pose(48, 65);
-    public Pose gateControl2 = new Pose(23.25, 69);
+    public Pose gateIntake = new Pose(9, 60, Math.toRadians(140));
+    public Pose gateControl1 = new Pose(28, 60, Math.toRadians(140));
+    public Pose gateControl2 = new Pose(23.25, 49);
 
     public Pose cornerControl = new Pose(-5, 30);
     public Pose corner = new Pose(6.5, 11, Math.toRadians(270));
 
     public Pose park = new Pose(48, 120, Math.toRadians(180));
 
-    public ClosePaths(Robot r) {
+    public ClosePaths(Robot r, Alliance alliance) {
         this.f = r.follower;
 
-        if (!r.alliance.equals(a)) {
+        if (alliance.equals(Alliance.RED)) {
             start = start.mirror();
             score = score.mirror();
 
@@ -70,7 +69,6 @@ public class ClosePaths {
             corner = corner.mirror();
 
             park = park.mirror();
-            a = r.alliance;
         }
     }
 
@@ -192,13 +190,6 @@ public class ClosePaths {
                                 gateIntake
                         )
                 )
-//                .setHeadingInterpolation(
-//                        HeadingInterpolator.piecewise(
-//                                new HeadingInterpolator.PiecewiseNode(0, .25, HeadingInterpolator.tangent),
-//                                new HeadingInterpolator.PiecewiseNode(.25, 1, HeadingInterpolator.linear(score.getHeading(), gateIntake.getHeading())
-//                                )
-//                        )
-//                )
                 .setLinearHeadingInterpolation(score.getHeading(), gateIntake.getHeading())
                 .setBrakingStrength(1.5)
                 .build();
@@ -214,12 +205,6 @@ public class ClosePaths {
                                 score
                         )
                 )
-//                .setHeadingInterpolation(
-//                        HeadingInterpolator.piecewise(
-//                                new HeadingInterpolator.PiecewiseNode(0, .5, HeadingInterpolator.linear(gateIntake.getHeading(), score.getHeading())),
-//                                new HeadingInterpolator.PiecewiseNode(.5, 1, HeadingInterpolator.tangent.reverse())
-//                        )
-//                )
                 .setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading(), .2)
                 .setBrakingStrength(1.5)
                 .build();

@@ -7,6 +7,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.util.Alliance;
+import org.firstinspires.ftc.teamcode.util.SOTM;
 
 import static org.firstinspires.ftc.teamcode.Robot.defaultPose;
 
@@ -22,8 +23,8 @@ public class Tele extends OpMode {
     public boolean close = true;
     public boolean prev = false, curr = false, intakeTime = false, closeMode = true, twoDown = false, openingGate = false, bypassOpenWait = false;
     public int shooting = 0;
-    public double speed = 1, intakeOn = 1, dist, intakeDist;
-    public static double shootTarget = 1100, timeToShootClose = 0.5, timeToShootFar = .75, transferPower = 0.9, timeFor3rd = .15; // .5;
+    public double speed = 1, intakeOn = 1, intakePower = 1, dist, intakeDist;
+    public static double shootTarget = 1100, timeToShootClose = 0.5, timeToShootFar = .75, transferPower = 0, timeFor3rd = .15, transferIntakingPower = 0.25; // .5;
     private final Timer shootTimer = new Timer(), intakeTimer = new Timer(), openGateTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
@@ -91,7 +92,7 @@ public class Tele extends OpMode {
             closeMode = false;
 
         if (intakeOn == 1) {
-            robot.intake.set(transferPower);
+            robot.intake.set(intakePower);
             robot.transfer.set(transferPower);
 
             /*
@@ -142,6 +143,16 @@ public class Tele extends OpMode {
                 dist = robot.getShootTarget().distanceFrom(robot.follower.getPose());
                 close = robot.follower.getPose().getY() > 48;
 
+//                Pose virtualRobot = SOTM.calculateVirtualRobot(robot.follower.getPose(), robot.follower.getVelocity(), dist);
+//                double virtualDist = robot.getShootTarget().distanceFrom(virtualRobot);
+//
+//                if (!closeMode)
+//                    robot.shooter.forFar(virtualDist);
+//                else
+//                    robot.shooter.forClose(virtualDist);
+//
+//                robot.turret.face(robot.getAimTarget(), virtualRobot);
+
                 if (!closeMode)
                     robot.shooter.forFar(dist);
                 else
@@ -170,10 +181,13 @@ public class Tele extends OpMode {
         if (shooting == 2) {
             shooting = 3;
 
-            if (!closeMode)
-                transferPower = .7;
-            else
+            if (!closeMode) {
+                transferPower = 0.7;
+                intakePower = 0.7;
+            } else {
                 transferPower = 1;
+                intakePower = 1;
+            }
 
             intakeOn = 1;
         }
@@ -181,11 +195,11 @@ public class Tele extends OpMode {
         if (shooting == 3 && ((closeMode && shootTimer.getElapsedTimeSeconds() > timeToShootClose || (!closeMode && shootTimer.getElapsedTimeSeconds() > timeToShootFar))))  {
             shooting = 0;
             intakeOn = 1;
-            transferPower = 1;
+            transferPower = transferIntakingPower;
+            intakePower = 1;
             shootTimer.resetTimer();
             robot.transfer.close();
             curr = false;
-//            transferPower = .5;
         }
 
         if (gamepad1.aWasPressed()) {

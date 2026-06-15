@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.control.PredictiveBrakingCoefficients;
 import com.pedropathing.follower.Follower;
@@ -16,10 +17,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 public class Constants {
     public static FollowerConstants followerConstants = new FollowerConstants()
             .mass(11.3)
+            .automaticHoldEnd(true)
             .predictiveBrakingCoefficients(new PredictiveBrakingCoefficients(0.25, 0.082519,0.001565))
-            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.5, 0, .01, 0))
-            .headingPIDFCoefficients(new PIDFCoefficients(1.5, 0, 0.015, 0))
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.015,0,0.003,0))
+            .secondaryHeadingPIDFCoefficients(new PIDFCoefficients(0.7638, 0, 0.1192, 0))
+            .headingPIDFCoefficients(new PIDFCoefficients(1.7186, 0, 0.2275, 0))
+//          .translationalPIDFCoefficients(new PIDFCoefficients(.1, 0, 0.01, 0))
+//          .secondaryTranslationalPIDFCoefficients(new PIDFCoefficients(0.075,0,0.05,0))
+//          .drivePIDFCoefficients(new FilteredPIDFCoefficients(0.01, 0, 0.0001, 0.6, 0))
+//          .secondaryDrivePIDFCoefficients(new FilteredPIDFCoefficients(0.02, 0, 0.0005, 0.6, 0))
             .useSecondaryDrivePIDF(true)
             .useSecondaryHeadingPIDF(true)
             .useSecondaryTranslationalPIDF(true);

@@ -23,6 +23,9 @@ dependencies {
 
     implementation "dev.frozenmilk.sinister:Sloth:0.2.4"
     implementation "dev.frozenmilk:Sinister:2.2.0"
+    implementation("page.j5155.AdvantageScope:lite:v26.0.0")
+    implementation 'org.psilynx.psikit:core:0.2.0-beta1'
+    implementation 'org.psilynx.psikit:ftc:0.2.0-beta1'
     implementation 'com.acmerobotics.slothboard:dashboard:0.2.4+0.4.17'
         implementation("com.bylazar.sloth:fullpanels:0.2.4+1.0.12")
 

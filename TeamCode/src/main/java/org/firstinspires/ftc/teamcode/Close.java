@@ -32,7 +32,7 @@ public class Close extends CommandOpMode {
     public void init() {
         robot = new Robot(hardwareMap, a);
         p = new ClosePaths(robot);
-        robot.follower.setStartingPose(ClosePaths.start);
+        robot.follower.setStartingPose(p.start);
         robot.follower.update();
 
         robot.shooter.setPower(0);

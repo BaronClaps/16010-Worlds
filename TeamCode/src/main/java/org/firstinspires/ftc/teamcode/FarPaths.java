@@ -13,7 +13,7 @@ public class FarPaths {
     private final Follower f;
     Alliance a = Alliance.BLUE;
 
-    public static Pose start = new Pose(90.125, 8.188, 0).mirror();
+    public Pose start = new Pose(51.375, 8.188, Math.PI);
     public Pose score = new Pose(72 - 18, 18, Math.toRadians(180));
 
     public Pose spike3 = new Pose(10, 36, Math.toRadians(180));

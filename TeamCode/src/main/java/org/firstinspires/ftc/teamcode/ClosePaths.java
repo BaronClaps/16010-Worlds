@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode;
 
-import static org.firstinspires.ftc.teamcode.FarPaths.start;
-
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
@@ -16,8 +14,8 @@ public class ClosePaths {
     private final Follower f;
     Alliance a = Alliance.BLUE;
 
-    public static Pose start = new Pose(32, 130.5, Math.toRadians(90));
-    public Pose score = new Pose(55, 144-55, Math.toRadians(180+20));
+    public Pose start = new Pose(32, 130.5, Math.toRadians(90));
+    public Pose score = new Pose(55, 89, Math.toRadians(200));
 
     public Pose spike1 = new Pose(17.5, 82, Math.toRadians(180));
     public Pose spike1Control1 = new Pose(48, 76);
@@ -27,22 +25,20 @@ public class ClosePaths {
     public Pose spike2Control1 = new Pose(45, 69);
     public Pose spike2Control2 = spike2.withX(50);
 
-    public Pose spike3 = new Pose(10, 60-24, Math.toRadians(180));
-    public Pose spike3Control1 = new Pose(45, 80-24);
+    public Pose spike3 = new Pose(10, 36, Math.toRadians(180));
+    public Pose spike3Control1 = new Pose(45, 56);
     public Pose spike3Control2 = spike3.withX(65);
 
     public Pose gateHit = new Pose (15, 70, Math.toRadians(180));
     public Pose gateHitControl = gateHit.withX(32);
-
-    //public Pose gateIntake = new Pose(133.5-2, 60.37+2.5, Math.toRadians(20)).mirror();
-    public Pose gateIntake = new Pose(131.5, 59, Math.toRadians(30)).mirror(); // 63 for field 2
+    public Pose gateIntake = new Pose(10, 59, Math.toRadians(150));
     public Pose gateControl1 = new Pose(48, 65);
     public Pose gateControl2 = new Pose(23.25, 69);
 
     public Pose cornerControl = new Pose(-5, 30);
     public Pose corner = new Pose(6.5, 11, Math.toRadians(270));
 
-    public Pose park = new Pose(48, 144-24, Math.toRadians(180));
+    public Pose park = new Pose(48, 120, Math.toRadians(180));
 
     public ClosePaths(Robot r) {
         this.f = r.follower;
@@ -152,7 +148,7 @@ public class ClosePaths {
                                 score
                         )
                 ).setLinearHeadingInterpolation(spike2.getHeading(), score.getHeading())
-                .setBrakingStrength(2)
+                .setBrakingStrength(1.5)
                 .build();
         return new FollowPath(this.f, path, .95);
     }
@@ -225,7 +221,7 @@ public class ClosePaths {
 //                        )
 //                )
                 .setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading(), .2)
-                .setBrakingStrength(2)
+                .setBrakingStrength(1.5)
                 .build();
         return new FollowPath(this.f, path, .95);
     }

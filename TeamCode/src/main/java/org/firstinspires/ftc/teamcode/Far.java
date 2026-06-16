@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
 import static com.pedropathing.ivy.commands.Commands.waitMs;
-import static com.pedropathing.ivy.commands.Commands.waitUntil;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
@@ -94,7 +93,7 @@ public class Far extends CommandOpMode {
                         p.preload()
                                 .then(
                                         waitMs(250.0),
-                                        robot.shootNoSOTMFar(p.score)
+                                        robot.shootFar(p.score)
                                 ),
                         spike(),
                         corner(),
@@ -140,7 +139,7 @@ public class Far extends CommandOpMode {
                                                 robot.intake.offCommand()
                                         )
                         ),
-                robot.shootNoSOTMFar(p.score)
+                robot.shootFar(p.score)
         );
     }
 
@@ -161,7 +160,7 @@ public class Far extends CommandOpMode {
                                                 robot.intake.offCommand()
                                         )
                         ),
-                robot.shootNoSOTMFar(p.score)
+                robot.shootFar(p.score)
         );
     }
 
@@ -182,7 +181,7 @@ public class Far extends CommandOpMode {
                                                 robot.intake.offCommand()
                                         )
                         ),
-                robot.shootNoSOTMFar(p.score)
+                robot.shootFar(p.score)
         );
     }
 }

@@ -206,7 +206,7 @@ public class ClosePaths {
                         )
                 )
                 .setLinearHeadingInterpolation(gateIntake.getHeading(), score.getHeading(), .2)
-                .setBrakingStrength(1.5)
+                .setBrakingStrength(2)
                 .build();
         return new FollowPath(this.f, path, .95);
     }

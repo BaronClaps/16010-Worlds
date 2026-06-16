@@ -114,7 +114,7 @@ public class Shooter {
                 - 0.566792  * Math.pow(x, 2)
                 + 45.23831  * x
                 - 306.12169
-                + 250;
+                + 230;
     }
 
     public static double getFar(double x) {

@@ -133,7 +133,7 @@ public class Robot {
         );
     }
 
-    public CommandBuilder shootNoSOTMFar(Pose score) {
+    public CommandBuilder shootFar(Pose score) {
         return sequential(
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
                 instant(() -> turret.face(getAimTarget(), score)),
@@ -154,7 +154,7 @@ public class Robot {
     public CommandBuilder intake() {
         return sequential(
 //                transfer.closeCommand(),
-                transfer.setCommand(0.15),
+                transfer.inCommand(),
                 intake.inCommand()
         );
     }

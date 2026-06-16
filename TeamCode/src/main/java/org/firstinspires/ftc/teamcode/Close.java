@@ -119,6 +119,7 @@ public class Close extends CommandOpMode {
                     Logger.recordOutput("Loop/Hz",               robot.getLoopTimeHz());
                     Logger.recordOutput("Intake/Full",           full);
                     Logger.recordOutput("Intake/Curr",           curr);
+                    Logger.recordOutput("Time/OpModeMs", opModeTimer.getElapsedTime());
 
                     Logger.periodicAfterUser(0.0, 0.0);
                     // ─────────────────────────────────────────────────────────
@@ -180,7 +181,7 @@ public class Close extends CommandOpMode {
                         .with(
                                 waitMs(250)
                                         .then(
-                                                waitUntil(() -> robot.follower.getCurrentTValue() > .9)
+                                                waitUntil(() -> robot.follower.getCurrentTValue() > 0.95)
                                                         .then(robot.shoot(p.score))
                                         )
                         )
@@ -198,7 +199,7 @@ public class Close extends CommandOpMode {
                         .raceWith(waitMs(2000.0)),
                 p.scoreSpike1()
                         .with(
-                                waitUntil(() -> robot.follower.getCurrentTValue() > .8)
+                                waitUntil(() -> robot.follower.getCurrentTValue() > 0.95)
                                         .then(robot.shoot(p.score))
                         )
         );
@@ -215,11 +216,11 @@ public class Close extends CommandOpMode {
                         .raceWith(
                                 waitMs(2000.0)
                         ),
-                waitMs(1750.0)
-                        .raceWith(
-                                Commands.waitMs(500.0)
-                                        .then(Commands.waitUntil(() -> full))
-                        ),
+                waitMs(1750.0),
+//                        .raceWith(
+//                                Commands.waitMs(500.0)
+//                                        .then(Commands.waitUntil(() -> full))
+//                        ),
                 p.scoreGate()
                         .with(
                                 waitMs(750.0)
@@ -227,8 +228,10 @@ public class Close extends CommandOpMode {
                                                 robot.intake.offCommand()
                                         )
                         ),
-                instant(() -> robot.follower.breakFollowing()),
-                robot.shoot(p.score)
+robot.intake(),
+robot.transfer.openCommand()
+
+//                robot.shoot(p.score)
         );
     }
 

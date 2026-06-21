@@ -5,13 +5,23 @@ import static com.pedropathing.ivy.commands.Commands.waitMs;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
+import com.pedropathing.ftc.InvertedFTCCoordinates;
+import com.pedropathing.ftc.PoseConverter;
+import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.ivy.groups.Groups;
 import com.pedropathing.util.Timer;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 import org.firstinspires.ftc.teamcode.util.CommandOpMode;
+import org.psilynx.psikit.core.Logger;
+import org.psilynx.psikit.core.wpi.math.Pose2d;
+import org.psilynx.psikit.core.wpi.math.Rotation2d;
+import org.psilynx.psikit.ftc.FtcLoggingSession;
 
 @Config
 public class Far extends CommandOpMode {
@@ -19,6 +29,7 @@ public class Far extends CommandOpMode {
     FarPaths p;
     Robot robot;
     MultipleTelemetry telemetryM;
+//    private final FtcLoggingSession psiKit = new FtcLoggingSession();
     boolean intakeTime, curr, prev, full;
     Timer intakeTimer = new Timer(), opModeTimer = new Timer();
     double intakeDist;
@@ -38,6 +49,11 @@ public class Far extends CommandOpMode {
         robot.turret.setYaw(0);
         robot.transfer.close();
         robot.intake.raise();
+
+//        psiKit.start(this, 0);
+//
+//        Logger.recordMetadata("Alliance", a.name());
+//        Logger.recordMetadata("OpMode", "Far");
 
         telemetryM = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         telemetryM.addData("Pose", robot.follower.getPose());
@@ -78,7 +94,30 @@ public class Far extends CommandOpMode {
                     prev = curr;
 
                     robot.shooter.forDistance(robot.getShootTarget().distanceFrom(p.score), p.score.getY() > 48);
-                    robot.turret.face(robot.getShootTarget(), p.score);
+                    robot.turret.face(Robot.aimTargetFarAuto, p.score);
+
+//                    Logger.periodicBeforeUser();
+//                    Pose pose = robot.follower.getPose();
+//                    Pose2D pose2D = PoseConverter.poseToPose2D(pose.getAsCoordinateSystem(InvertedFTCCoordinates.INSTANCE), InvertedFTCCoordinates.INSTANCE);
+//                    Pose2d pose2d = new Pose2d(pose2D.getX(DistanceUnit.METER), pose2D.getY(DistanceUnit.METER), new Rotation2d(pose2D.getHeading(AngleUnit.RADIANS)));
+//                    Logger.recordOutput("Pose2d", pose2d);
+//                    Logger.recordOutput("Pose/X",                pose.getX());
+//                    Logger.recordOutput("Pose/Y",                pose.getY());
+//                    Logger.recordOutput("Pose/Heading",          pose.getHeading());
+//                    Logger.recordOutput("Shooter/Velocity",      robot.shooter.getVelocity());
+//                    Logger.recordOutput("Shooter/AtTarget",      robot.shooter.atTarget());
+//                    Logger.recordOutput("Turret/Yaw",            robot.turret.getYaw());
+//                    Logger.recordOutput("Follower/TValue",       robot.follower.getCurrentTValue());
+//                    Logger.recordOutput("Follower/TranslError",  robot.follower.getTranslationalError().toString());
+//                    Logger.recordOutput("Follower/HeadingError", robot.follower.getHeadingError());
+//                    Logger.recordOutput("Follower/DriveError",   robot.follower.getDriveError());
+//                    Logger.recordOutput("Follower/Path", robot.follower.getCurrentPath().toString());
+//                    Logger.recordOutput("Loop/Hz",               robot.getLoopTimeHz());
+//                    Logger.recordOutput("Intake/Full",           full);
+//                    Logger.recordOutput("Intake/Curr",           curr);
+//                    Logger.recordOutput("Time/OpModeMs", opModeTimer.getElapsedTime());
+//
+//                    Logger.periodicAfterUser(0.0, 0.0);
 
                     telemetryM.addData("LoopTime Hz", robot.getLoopTimeHz());
                     telemetryM.addData("Pose", robot.follower.getPose());
@@ -97,10 +136,13 @@ public class Far extends CommandOpMode {
                                 ),
                         spike(),
                         corner(),
-                        between(),
-                        spike(),
+//                        between(),
+//                        spike(),
                         corner(),
-                        between(),
+//                        between(),
+                        corner(),
+                        corner(),
+                        corner(),
                         corner(),
                         p.park()
                 )
@@ -134,7 +176,7 @@ public class Far extends CommandOpMode {
                         ),
                 p.scoreCorner()
                         .with(
-                                waitMs(1250.0)
+                                waitMs(500.0)
                                         .then(
                                                 robot.intake.offCommand()
                                         )

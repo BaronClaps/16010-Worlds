@@ -34,6 +34,7 @@ public class Robot {
     public static Localizer localizer = null;
     public static Pose shootTarget = new Pose(0, 141.5, 0);
     public static Pose aimTarget = new Pose(2, 141.5 - 2, 0);
+    public static Pose aimTargetFarAuto = new Pose(4, 141.5 - 4, 0);
 
     public Robot(HardwareMap hardwareMap, Alliance alliance) {
         this.alliance = alliance;
@@ -81,10 +82,13 @@ public class Robot {
         else if (alliance == Alliance.RED)
             shootTarget = new Pose(0, 141.5, 0).mirror();
 
-        if (alliance == Alliance.BLUE)
+        if (alliance == Alliance.BLUE) {
             aimTarget = new Pose(0, 141.5, 0);
-        else if (alliance == Alliance.RED)
+            aimTargetFarAuto = new Pose(4, 141.5 - 4, 0);
+        } else if (alliance == Alliance.RED) {
             aimTarget = new Pose(0, 141.5, 0).mirror();
+            aimTargetFarAuto = new Pose(4, 141.5 - 4, 0).mirror();
+        }
     }
 
     public Pose getShootTarget() {
@@ -101,11 +105,12 @@ public class Robot {
 //                instant(() -> intake.set(-.01)),
 //                instant(() -> transfer.set(-.01)),
 //                waitMs(350.0),
-                intake.inCommand(),
-                transfer.setCommand(0.5),
-                Commands.waitUntil(shooter::atTarget),
+                intake.offCommand(),
+                transfer.offCommand(),
+                Commands.waitUntil(shooter::atTarget)
+                        .raceWith(waitMs(1500.0)),
                 transfer.openCommand(),
-//                waitMs(300.0),
+                waitMs(100.0),
                 intake.inCommand(),
                 transfer.inCommand()
         )
@@ -136,18 +141,21 @@ public class Robot {
     public CommandBuilder shootFar(Pose score) {
         return sequential(
                 instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
-                instant(() -> turret.face(getAimTarget(), score)),
-                Commands.waitUntil(shooter::atTarget),
+                instant(() -> turret.face(aimTargetFarAuto, score)),
+                Commands.waitUntil(shooter::atTarget)
+                        .raceWith(waitMs(1500.0)),
+                intake.offCommand(),
+                transfer.offCommand(),
+                transfer.openCommand(),
+                waitMs(250.0),
                 instant(() -> intake.set(.7)),
                 instant(() -> transfer.set(.7)),
-                waitMs(250.0),
-                transfer.openCommand(),
                 waitMs(750.0),
                 transfer.closeCommand()
         )
                 .raceWith(
                         Commands.infinite(() -> {
-                            turret.face(getAimTarget(), follower.getPose());
+                            turret.face(aimTargetFarAuto, follower.getPose());
                         }));
     }
 

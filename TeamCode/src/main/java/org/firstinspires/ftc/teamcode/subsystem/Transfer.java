@@ -19,9 +19,9 @@ public class Transfer {
     public static double idle = 0.5;
     public static double in = 0.85;
     public static double out = -1;
-    public static double open = 0.4;
+    public static double open = 0.37;
     public static double transition = 0.35;
-    public static double closed = 0.25;
+    public static double closed = 0.23;
     private boolean opened = false;
 
     public Transfer(HardwareMap hardwareMap) {

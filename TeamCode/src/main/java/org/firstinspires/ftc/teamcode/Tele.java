@@ -24,7 +24,7 @@ public class Tele extends OpMode {
     public boolean prev = false, curr = false, intakeTime = false, closeMode = true, twoDown = false, openingGate = false, bypassOpenWait = false;
     public int shooting = 0;
     public double speed = 1, intakeOn = 1, intakePower = 1, dist, intakeDist;
-    public static double shootTarget = 1100, timeToShootClose = 0.5, timeToShootFar = .75, transferPower = 0, timeFor3rd = .15, transferIntakingPower = 0.25; // .5;
+    public static double shootTarget = 1100, timeToShootClose = 0.5, timeToShootFar = .75, transferPower = 0.5, timeFor3rd = .15, transferIntakingPower = 0.5; // .5;
     private final Timer shootTimer = new Timer(), intakeTimer = new Timer(), openGateTimer = new Timer();
     MultipleTelemetry multipleTelemetry;
 
@@ -176,9 +176,10 @@ public class Tele extends OpMode {
         if (shooting == 1) {
             shooting = 2;
             robot.transfer.open();
+            shootTimer.resetTimer();
         }
 
-        if (shooting == 2) {
+        if (shooting == 2 && shootTimer.getElapsedTimeSeconds() >= .2) {
             shooting = 3;
 
             if (!closeMode) {
@@ -190,6 +191,7 @@ public class Tele extends OpMode {
             }
 
             intakeOn = 1;
+            shootTimer.resetTimer();
         }
 
         if (shooting == 3 && ((closeMode && shootTimer.getElapsedTimeSeconds() > timeToShootClose || (!closeMode && shootTimer.getElapsedTimeSeconds() > timeToShootFar))))  {
@@ -207,6 +209,14 @@ public class Tele extends OpMode {
                 robot.follower.setPose(new Pose(128.062, 78.125, Math.toRadians(90)).mirror());
             } else {
                 robot.follower.setPose(new Pose(128.062, 78.125, Math.toRadians(90)));
+            }
+        }
+
+        if (gamepad1.bWasPressed()) {
+            if (robot.alliance.equals(Alliance.BLUE)) {
+                robot.follower.setPose(new Pose(134.5, 11.13, Math.toRadians(180)));
+            } else {
+                robot.follower.setPose(new Pose(134.5, 11.13, Math.toRadians(180)).mirror());
             }
         }
 

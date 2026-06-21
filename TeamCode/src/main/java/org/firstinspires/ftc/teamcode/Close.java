@@ -200,7 +200,12 @@ public class Close extends CommandOpMode {
                 p.scoreSpike1()
                         .with(
                                 waitUntil(() -> robot.follower.getCurrentTValue() > 0.95)
-                                        .then(robot.shoot(p.score))
+                                        .then(robot.shoot(p.score)),
+                                waitMs(500.0)
+                                        .then(
+                                robot.intake.offCommand(),
+                                robot.transfer.offCommand()
+                                        )
                         )
         );
     }
@@ -216,20 +221,25 @@ public class Close extends CommandOpMode {
                         .raceWith(
                                 waitMs(2000.0)
                         ),
-                waitMs(1750.0),
-//                        .raceWith(
-//                                Commands.waitMs(500.0)
-//                                        .then(Commands.waitUntil(() -> full))
-//                        ),
+                waitMs(1750.0)
+                        .raceWith(
+                                Commands.waitMs(500.0)
+                                        .then(Commands.waitUntil(() -> full))
+                        ),
                 p.scoreGate()
                         .with(
                                 waitMs(750.0)
                                         .then(
-                                                robot.intake.offCommand()
+                                                robot.intake.offCommand(),
+                                                robot.transfer.offCommand()
                                         )
                         ),
-robot.intake(),
-robot.transfer.openCommand()
+robot.intake.offCommand(),
+robot.transfer.offCommand(),
+robot.transfer.openCommand(),
+                waitMs(150.0),
+                robot.intake(),
+                waitMs(100.0)
 
 //                robot.shoot(p.score)
         );

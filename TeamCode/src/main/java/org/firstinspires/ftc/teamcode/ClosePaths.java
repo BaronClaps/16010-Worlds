@@ -20,7 +20,7 @@ public class ClosePaths {
     public Pose spike1Control1 = new Pose(48, 76);
     public Pose spike1Control2 = spike1.withX(39.5);
     
-    public Pose spike2 = new Pose(8, 57, Math.toRadians(180));
+    public Pose spike2 = new Pose(9.5, 57, Math.toRadians(180));
     public Pose spike2Control1 = new Pose(45, 69);
     public Pose spike2Control2 = spike2.withX(50);
 
@@ -30,9 +30,9 @@ public class ClosePaths {
 
     public Pose gateHit = new Pose(15, 70, Math.toRadians(180));
     public Pose gateHitControl = gateHit.withX(32);
-    public Pose gateIntake = new Pose(9, 60, Math.toRadians(140));
+    public Pose gateIntake = new Pose(12, 62, Math.toRadians(140));
     public Pose gateControl1 = new Pose(28, 60, Math.toRadians(140));
-    public Pose gateControl2 = new Pose(23.25, 49);
+    public Pose gateControl2 = new Pose(23.25, 45);
 
     public Pose cornerControl = new Pose(-5, 30);
     public Pose corner = new Pose(6.5, 11, Math.toRadians(270));

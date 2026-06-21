@@ -16,7 +16,7 @@ public class FarPaths {
     public Pose start = new Pose(51.375, 8.188, Math.PI);
     public Pose score = new Pose(72 - 18, 18, Math.toRadians(180));
 
-    public Pose spike3 = new Pose(10, 36, Math.toRadians(180));
+    public Pose spike3 = new Pose(8, 36, Math.toRadians(180));
     public Pose spike3Control = new Pose(45, 36);
     public Pose gateIntake = new Pose(7.5, 36, Math.toRadians(90));
     public Pose corner = new Pose(8.25, 10, Math.toRadians(180));
@@ -78,7 +78,7 @@ public class FarPaths {
                         )
                 )
                 .setLinearHeadingInterpolation(spike3.getHeading(), score.getHeading())
-                .setBrakingStrength(1.5)
+                .setBrakingStrength(2)
 //                .setNoDeceleration()
                 .build();
         return new FollowPath(this.f, path, .95);

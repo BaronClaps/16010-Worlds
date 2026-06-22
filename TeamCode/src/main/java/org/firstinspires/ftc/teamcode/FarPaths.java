@@ -5,6 +5,7 @@ import com.pedropathing.geometry.BezierCurve;
 import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
+import com.pedropathing.paths.HeadingInterpolator;
 import com.pedropathing.paths.PathChain;
 import org.firstinspires.ftc.teamcode.pedro.FollowPath;
 import org.firstinspires.ftc.teamcode.util.Alliance;
@@ -19,8 +20,9 @@ public class FarPaths {
     public Pose spike3 = new Pose(8, 36, Math.toRadians(180));
     public Pose spike3Control = new Pose(45, 36);
     public Pose gateIntake = new Pose(7.5, 36, Math.toRadians(90));
-    public Pose corner = new Pose(8.25, 10, Math.toRadians(180));
-    public Pose between = new Pose(8.25, 23, Math.toRadians(180));
+    public Pose corner = new Pose(8.25, 9, Math.toRadians(180));
+    public Pose between = new Pose(8.25, 30, Math.toRadians(90));
+    public Pose betweenControl = new Pose(20, 10);
     public Pose park = new Pose(36, 24, Math.toRadians(180));
 
     public FarPaths(Robot r) {
@@ -35,6 +37,7 @@ public class FarPaths {
 
             gateIntake = gateIntake.mirror();
             between = between.mirror();
+            betweenControl = betweenControl.mirror();
             corner = corner.mirror();
             park = park.mirror();
 
@@ -136,12 +139,14 @@ public class FarPaths {
 
     public CommandBuilder intakeBetween() {
         PathChain path = f.pathBuilder().addPath(
-                        new BezierLine(
+                        new BezierCurve(
                                 score,
+                                betweenControl,
                                 between
                         )
                 )
-                .setLinearHeadingInterpolation(score.getHeading(), between.getHeading(), .25)
+//                .setLinearHeadingInterpolation(score.getHeading(), between.getHeading(), .75)
+                .setTangentHeadingInterpolation()
                 .setBrakingStrength(1.5)
                 .build();
         return new FollowPath(this.f, path);

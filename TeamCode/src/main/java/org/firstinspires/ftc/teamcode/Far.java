@@ -136,14 +136,15 @@ public class Far extends CommandOpMode {
                                 ),
                         spike(),
                         corner(),
-//                        between(),
-//                        spike(),
-                        corner(),
-//                        between(),
                         corner(),
                         corner(),
+                        spike(),
                         corner(),
+                        spike(),
                         corner(),
+                        spike(),
+                        corner(),
+                        spike(),
                         p.park()
                 )
         );
@@ -176,7 +177,7 @@ public class Far extends CommandOpMode {
                         ),
                 p.scoreCorner()
                         .with(
-                                waitMs(500.0)
+                                waitMs(750.0)
                                         .then(
                                                 robot.intake.offCommand()
                                         )

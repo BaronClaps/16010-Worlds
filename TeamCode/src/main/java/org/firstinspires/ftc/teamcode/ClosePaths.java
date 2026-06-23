@@ -1,12 +1,12 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.pedropathing.api.Paths;
+import com.pedropathing.api.PoseFactory;
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.BezierCurve;
-import com.pedropathing.geometry.BezierLine;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
-import com.pedropathing.paths.HeadingInterpolator;
-import com.pedropathing.paths.PathChain;
+import com.pedropathing.math.Pose;
+import com.pedropathing.paths.Path;
+
 import org.firstinspires.ftc.teamcode.pedro.FollowPath;
 import org.firstinspires.ftc.teamcode.util.Alliance;
 
@@ -42,55 +42,22 @@ public class ClosePaths {
     public ClosePaths(Robot r, Alliance alliance) {
         this.f = r.follower;
 
-        if (alliance.equals(Alliance.RED)) {
-            start = start.mirror();
-            score = score.mirror();
-
-            spike1 = spike1.mirror();
-            spike1Control1 = spike1Control1.mirror();
-            spike1Control2 = spike1Control2.mirror();
-
-            spike2 = spike2.mirror();
-            spike2Control1 = spike2Control1.mirror();
-            spike2Control2 = spike2Control2.mirror();
-
-            spike3 = spike3.mirror();
-            spike3Control1 = spike3Control1.mirror();
-            spike3Control2 = spike3Control2.mirror();
-
-            gateIntake = gateIntake.mirror();
-            gateControl1 = gateControl1.mirror();
-            gateControl2 = gateControl2.mirror();
-
-            gateHit = gateHit.mirror();
-            gateHitControl = gateHitControl.mirror();
-
-            cornerControl = cornerControl.mirror();
-            corner = corner.mirror();
-
-            park = park.mirror();
-        }
+        PoseFactory.degrees().mirrorX(141.5);
     }
 
     public CommandBuilder preload() {
-        PathChain path = f.pathBuilder()
-                .addPath(
-                        new BezierLine(
-                                start,
-                                score
-                        )
-                )
-//                .setHeadingInterpolation(
-//                        HeadingInterpolator.piecewise(
-//                                new HeadingInterpolator.PiecewiseNode(0, .25, HeadingInterpolator.tangent.reverse()),
-//                                new HeadingInterpolator.PiecewiseNode(.25, 1, HeadingInterpolator.linear(start.getHeading(), score.getHeading())
-//                                )
+//        PathChain path = f.pathBuilder()
+//                .addPath(
+//                        new BezierLine(
+//                                start,
+//                                score
 //                        )
 //                )
-                .setLinearHeadingInterpolation(start.getHeading(), score.getHeading(), .5)
-                .setBrakingStrength(2)
-                .build();
-        return new FollowPath(this.f, path, .95);
+//                .setLinearHeadingInterpolation(start.getHeading(), score.getHeading(), .5)
+//                .setBrakingStrength(2)
+//                .build();
+//        return new FollowPath(this.f, path, .95);
+        Paths.line(start, score).linear(start.heading(), score.heading(), 0.5)
     }
 
     public CommandBuilder intakeSpike1() {

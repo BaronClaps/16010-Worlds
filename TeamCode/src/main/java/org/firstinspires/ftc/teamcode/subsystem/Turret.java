@@ -1,9 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.math.MathFunctions;
-import com.pedropathing.math.Vector;
+import com.pedropathing.math.Pose;
+import com.pedropathing.utils.Utils;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -42,9 +41,9 @@ public class Turret {
     }
 
     public void face(Pose targetPose, Pose robotPose) {
-        double angleToTargetFromCenter = Math.atan2(targetPose.getY() - robotPose.getY(), targetPose.getX() - robotPose.getX());
-        double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.getHeading());
-        robotAngleDiff = MathFunctions.clamp(robotAngleDiff, -(Math.PI/2), Math.PI);
+        double angleToTargetFromCenter = Math.atan2(targetPose.y() - robotPose.y(), targetPose.x() - robotPose.x());
+        double robotAngleDiff = normalizeAngle(angleToTargetFromCenter - robotPose.heading());
+        robotAngleDiff = Utils.clamp(robotAngleDiff, -(Math.PI/2), Math.PI);
         setYaw(robotAngleDiff);
     }
 
@@ -53,18 +52,5 @@ public class Turret {
         if (angle <= -Math.PI) angle += Math.PI * 2D;
         if (angle > Math.PI) angle -= Math.PI * 2D;
         return angle;
-    }
-
-    public static Pose getPredictedPose(Pose current, Pose aim, Vector velocity, double angularVelocity) {
-        double tof = getTOF(current.distanceFrom(aim));
-        return new Pose(
-                current.getX() + velocity.getXComponent() * tof,
-                current.getY() + velocity.getYComponent() * tof,
-                current.getHeading()
-        );
-    }
-
-    public static double getTOF(double distance) {
-        return .25;
     }
 }

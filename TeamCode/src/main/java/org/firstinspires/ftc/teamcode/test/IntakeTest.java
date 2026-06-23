@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.test;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.util.Timer;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -21,13 +21,11 @@ public class IntakeTest extends OpMode {
     public void init() {
         intake = new Intake(hardwareMap);
         transfer = new Transfer(hardwareMap);
-
-        intake.lower();
         transfer.close();
     }
 
     public void start() {
-        timer.resetTimer();
+        timer.reset();
         prev = false;
     }
 
@@ -43,13 +41,15 @@ public class IntakeTest extends OpMode {
 
         // turn green only after detection has stayed true for 0.5s
         if (curr != prev) {
-            timer.resetTimer();
+            timer.reset();
         }
 
-        if (curr && timer.getElapsedTimeSeconds() >= 0.5)
-            intake.light.green();
-        else
-            intake.light.blue();
+//        if (curr && timer.s() >= 0.5)
+//            intake.light.green();
+//        else
+//            intake.light.blue();
+
+        //TODO light
 
         prev = curr;
     }

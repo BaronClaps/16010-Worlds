@@ -22,4 +22,8 @@ public class FollowPath extends CommandBuilder {
         this.setStart(() -> this.follower.follow(this.path));
         this.setDone(() -> this.follower.mode() != Follower.Mode.FOLLOW);
     }
+
+    public static FollowPath follow(Follower f, Path path) {
+        return new FollowPath(f, path);
+    }
 }

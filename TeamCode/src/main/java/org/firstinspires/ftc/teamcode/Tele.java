@@ -3,11 +3,10 @@ package org.firstinspires.ftc.teamcode;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.geometry.Pose;
-import com.pedropathing.util.Timer;
+import com.pedropathing.math.Pose;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.util.Alliance;
-import org.firstinspires.ftc.teamcode.util.SOTM;
 
 import static org.firstinspires.ftc.teamcode.Robot.defaultPose;
 
@@ -39,24 +38,22 @@ public class Tele extends OpMode {
     }
 
     public void start() {
-        robot.follower.setStartingPose(defaultPose);
+        robot.follower.setPose(defaultPose);
         robot.setShootTarget();
-        robot.follower.startTeleopDrive();
         robot.turret.set(0.5);
         robot.shooter.off();
         robot.transfer.close();
-        robot.intake.raise();
-        shootTimer.resetTimer();
+        shootTimer.reset();
     }
 
     @Override
     public void loop() {
         robot.periodic();
 
-        if (field)
-            robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x * .75, false, robot.alliance == Alliance.BLUE ? Math.toRadians(180) : 0);
-        else
-            robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x * .75, true);
+//        if (field)
+        robot.follower.manual(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x * .75);
+//        else
+//            robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x * .75, true);
 
         if (gamepad1.rightBumperWasPressed() || gamepad1.rightBumperWasPressed())
             if (intakeOn == 1)
@@ -70,17 +67,8 @@ public class Tele extends OpMode {
             else
                 intakeOn = 2;
 
-        if (gamepad1.xWasPressed()) {
-            twoDown = !twoDown;
-
-            if (twoDown)
-                robot.intake.two();
-            else
-                robot.intake.lower();
-        }
-
         if (gamepad2.yWasPressed()) {
-            openGateTimer.resetTimer();
+            openGateTimer.reset();
             openingGate = true;
             intakeOn = 0;
         }
@@ -94,16 +82,6 @@ public class Tele extends OpMode {
         if (intakeOn == 1) {
             robot.intake.set(intakePower);
             robot.transfer.set(transferPower);
-
-            /*
-            if (shooting > 0) {
-                robot.intake.set(transferPower);
-                robot.transfer.set(transferPower);
-            } else {
-                robot.intake.set(transferPower);
-                robot.transfer.set(.3);
-            }
-             */
         } else if (intakeOn == 2) {
             robot.intake.out();
             robot.transfer.out();
@@ -113,15 +91,6 @@ public class Tele extends OpMode {
         } else {
             robot.intake.off();
             robot.transfer.off();
-        }
-
-        if (gamepad1.rightBumperWasPressed()) {
-            if (raised)
-                robot.intake.lower();
-            else
-                robot.intake.raise();
-            raised = !raised;
-            twoDown = false;
         }
 
         if (shoot) {
@@ -140,8 +109,8 @@ public class Tele extends OpMode {
                     robot.turret.manual(-0.05);
 
             } else {
-                dist = robot.getShootTarget().distanceFrom(robot.follower.getPose());
-                close = robot.follower.getPose().getY() > 48;
+                dist = robot.getShootTarget().distance(robot.follower.pose());
+                close = robot.follower.pose().y() > 48;
 
 //                Pose virtualRobot = SOTM.calculateVirtualRobot(robot.follower.getPose(), robot.follower.getVelocity(), dist);
 //                double virtualDist = robot.getShootTarget().distanceFrom(virtualRobot);
@@ -158,7 +127,7 @@ public class Tele extends OpMode {
                 else
                     robot.shooter.forClose(dist);
 
-                robot.turret.face(robot.getAimTarget(), robot.follower.getPose());
+                robot.turret.face(robot.getAimTarget(), robot.follower.pose());
             }
         } else {
             robot.shooter.off();
@@ -169,17 +138,17 @@ public class Tele extends OpMode {
 
         if (gamepad1.rightTriggerWasPressed() && shoot && shooting == 0) {
             shooting = 1;
-            shootTimer.resetTimer();
+            shootTimer.reset();
             intakeOn = 0;
         }
 
         if (shooting == 1) {
             shooting = 2;
             robot.transfer.open();
-            shootTimer.resetTimer();
+            shootTimer.reset();
         }
 
-        if (shooting == 2 && shootTimer.getElapsedTimeSeconds() >= .2) {
+        if (shooting == 2 && shootTimer.s() >= .2) {
             shooting = 3;
 
             if (!closeMode) {
@@ -191,22 +160,22 @@ public class Tele extends OpMode {
             }
 
             intakeOn = 1;
-            shootTimer.resetTimer();
+            shootTimer.reset();
         }
 
-        if (shooting == 3 && ((closeMode && shootTimer.getElapsedTimeSeconds() > timeToShootClose || (!closeMode && shootTimer.getElapsedTimeSeconds() > timeToShootFar))))  {
+        if (shooting == 3 && ((closeMode && shootTimer.s() > timeToShootClose || (!closeMode && shootTimer.s() > timeToShootFar))))  {
             shooting = 0;
             intakeOn = 1;
             transferPower = transferIntakingPower;
             intakePower = 1;
-            shootTimer.resetTimer();
+            shootTimer.reset();
             robot.transfer.close();
             curr = false;
         }
 
         if (gamepad1.aWasPressed()) {
             if (robot.alliance.equals(Alliance.BLUE)) {
-                robot.follower.setPose(new Pose(128.062, 78.125, Math.toRadians(90)).mirror());
+                robot.follower.setPose(new Pose(13.438, 78.125, Math.toRadians(270)));
             } else {
                 robot.follower.setPose(new Pose(128.062, 78.125, Math.toRadians(90)));
             }
@@ -216,7 +185,7 @@ public class Tele extends OpMode {
             if (robot.alliance.equals(Alliance.BLUE)) {
                 robot.follower.setPose(new Pose(134.5, 11.13, Math.toRadians(180)));
             } else {
-                robot.follower.setPose(new Pose(134.5, 11.13, Math.toRadians(180)).mirror());
+                robot.follower.setPose(new Pose(7, 11.13, 0));
             }
         }
 
@@ -232,23 +201,24 @@ public class Tele extends OpMode {
         }
 
         if (curr != prev) {
-            intakeTimer.resetTimer();
+            intakeTimer.reset();
         }
 
         if (!intakeTime)
-            intakeTime = intakeTimer.getElapsedTimeSeconds() >= timeFor3rd;
+            intakeTime = intakeTimer.s() >= timeFor3rd;
 
-        if (curr && intakeTime) {
-            if (!robot.shooter.atTarget())
-                robot.intake.light.orange();
-            else
-                robot.intake.light.green();
-        } else {
-            if (!robot.shooter.atTarget())
-                robot.intake.light.violet();
-            else
-                robot.intake.light.blue();
-        }
+//        if (curr && intakeTime) {
+//            if (!robot.shooter.atTarget())
+//                robot.intake.light.orange();
+//            else
+//                robot.intake.light.green();
+//        } else {
+//            if (!robot.shooter.atTarget())
+//                robot.intake.light.violet();
+//            else
+//                robot.intake.light.blue();
+//        }
+        // todo light
 
         prev = curr;
 
@@ -256,7 +226,7 @@ public class Tele extends OpMode {
         double tAmps = robot.transfer.getCurrent();
         double iAmps = robot.intake.getCurrent();
 
-        multipleTelemetry.addData("Pose", robot.follower.getPose());
+        multipleTelemetry.addData("Pose", robot.follower.pose());
         multipleTelemetry.addData("Goal Target", robot.getShootTarget());
         multipleTelemetry.addData("Distance", dist);
         multipleTelemetry.addData("Close?", close);
@@ -281,6 +251,5 @@ public class Tele extends OpMode {
         multipleTelemetry.addLine();
         multipleTelemetry.addData("Field Centric?", field);
         multipleTelemetry.update();
-
     }
 }

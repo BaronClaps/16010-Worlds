@@ -1,11 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.pedropathing.follower.Follower;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.localization.Localizer;
-import com.pedropathing.util.Timer;
+import com.pedropathing.math.Pose;
+import com.pedropathing.utils.Timer;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.pedro.Constants;
@@ -31,7 +31,6 @@ public class Robot {
     private final Timer loop = new Timer();
     public double loops = 0, lastLoop = 0, loopTime = 0;
     public static Pose defaultPose = new Pose(8 + 24, 6.25 + 24, 0);
-    public static Localizer localizer = null;
     public static Pose shootTarget = new Pose(0, 141.5, 0);
     public static Pose aimTarget = new Pose(2, 141.5 - 2, 0);
     public static Pose aimTargetFarAuto = new Pose(4, 141.5 - 4, 0);
@@ -43,14 +42,14 @@ public class Robot {
         transfer = new Transfer(hardwareMap);
         turret = new Turret(hardwareMap);
 
-        follower = Constants.createFollower(hardwareMap);
+        follower = Constants.create(hardwareMap);
 
         List<LynxModule> hubs = hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : hubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.AUTO);
         }
 
-        loop.resetTimer();
+        loop.reset();
         setShootTarget();
 
         periodic();
@@ -60,7 +59,7 @@ public class Robot {
         loops++;
 
         if (loops > 10) {
-            double now = loop.getElapsedTime();
+            double now = loop.ms();
             loopTime = (now - lastLoop) / loops;
             lastLoop = now;
             loops = 0;
@@ -71,8 +70,7 @@ public class Robot {
     }
 
     public void saveEnd() {
-        defaultPose = follower.getPose();
-        localizer = follower.getPoseTracker().getLocalizer();
+        defaultPose = follower.pose();
     }
 
 
@@ -80,14 +78,14 @@ public class Robot {
         if (alliance == Alliance.BLUE)
             shootTarget = new Pose(0, 141.5, 0);
         else if (alliance == Alliance.RED)
-            shootTarget = new Pose(0, 141.5, 0).mirror();
+            shootTarget = new Pose(141.5, 141.5, Math.PI);
 
         if (alliance == Alliance.BLUE) {
             aimTarget = new Pose(0, 141.5, 0);
-            aimTargetFarAuto = new Pose(4, 141.5 - 4, 0);
+            aimTargetFarAuto = new Pose(4, 137.5, 0);
         } else if (alliance == Alliance.RED) {
-            aimTarget = new Pose(0, 141.5, 0).mirror();
-            aimTargetFarAuto = new Pose(4, 141.5 - 4, 0).mirror();
+            aimTarget = new Pose(141.5, 141.5, Math.PI);
+            aimTargetFarAuto = new Pose(137.5, 137.5, Math.PI);
         }
     }
 
@@ -100,7 +98,7 @@ public class Robot {
 
     public CommandBuilder shoot(Pose score) {
         return sequential(
-                instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
+                instant(() -> shooter.forDistance(getShootTarget().distance(score), score.y() > 48)),
 //                instant(() -> shooter.setTarget(1300)),
 //                instant(() -> intake.set(-.01)),
 //                instant(() -> transfer.set(-.01)),
@@ -117,15 +115,15 @@ public class Robot {
                 .raceWith(
                         Commands.infinite(() -> {
 //                            Pose predicted = Turret.getPredictedPose(follower.getPose(), getShootTarget(), follower.getVelocity(), follower.getAngularVelocity());
-                            turret.face(getAimTarget(), follower.getPose());
-                            shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48);
+                            turret.face(getAimTarget(), follower.pose());
+                            shooter.forDistance(getShootTarget().distance(score), score.y() > 48);
                            // shooter.forDistance(getShootTarget().distanceFrom(predicted), predicted.getY() > 48);
                         }));
     }
 
     public CommandBuilder shootNoSOTM(Pose score) {
         return sequential(
-                instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
+                instant(() -> shooter.forDistance(getShootTarget().distance(score), score.y() > 48)),
                 instant(() -> turret.face(getAimTarget(), score)),
                 intake.inCommand(),
                 transfer.setCommand(0.5),
@@ -140,7 +138,7 @@ public class Robot {
 
     public CommandBuilder shootFar(Pose score) {
         return sequential(
-                instant(() -> shooter.forDistance(getShootTarget().distanceFrom(score), score.getY() > 48)),
+                instant(() -> shooter.forDistance(getShootTarget().distance(score), score.y() > 48)),
                 instant(() -> turret.face(aimTargetFarAuto, score)),
                 Commands.waitUntil(shooter::atTarget)
                         .raceWith(waitMs(1500.0)),
@@ -155,7 +153,7 @@ public class Robot {
         )
                 .raceWith(
                         Commands.infinite(() -> {
-                            turret.face(aimTargetFarAuto, follower.getPose());
+                            turret.face(aimTargetFarAuto, follower.pose());
                         }));
     }
 

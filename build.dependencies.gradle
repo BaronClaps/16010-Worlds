@@ -18,7 +18,7 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:11.1.0'
     implementation 'org.firstinspires.ftc:Vision:11.1.0'
 
-    implementation('com.pedropathing:revhub:3.0.0.local.alpha32') {
+    implementation('com.pedropathing:revhub:3.0.0.local.alpha34') {
         exclude group: 'org.aspectj', module: 'aspectjtools'
     }
     implementation 'com.pedropathing:telemetry:1.0.0'

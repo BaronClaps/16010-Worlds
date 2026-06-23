@@ -6,14 +6,12 @@ import static com.pedropathing.ivy.groups.Groups.sequential;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.pedropathing.ftc.InvertedFTCCoordinates;
-import com.pedropathing.ftc.PoseConverter;
-import com.pedropathing.geometry.Pose;
 import com.pedropathing.ivy.CommandBuilder;
 import com.pedropathing.ivy.commands.Commands;
 import com.pedropathing.ivy.groups.Groups;
-import com.pedropathing.util.Timer;
 
+import com.pedropathing.math.Pose;
+import com.pedropathing.utils.Timer;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.Pose2D;
@@ -46,7 +44,7 @@ public class Close extends CommandOpMode {
     public void init() {
         robot = new Robot(hardwareMap, a);
         p = new ClosePaths(robot, a);
-        robot.follower.setStartingPose(p.start);
+        robot.follower.setPose(p.start);
         robot.follower.update();
 
         robot.shooter.setPower(0);
@@ -60,12 +58,12 @@ public class Close extends CommandOpMode {
         Logger.recordMetadata("Alliance", a.name());
         Logger.recordMetadata("OpMode", "Close");
 
-        telemetryM.addData("Pose", robot.follower.getPose());
+        telemetryM.addData("Pose", robot.follower.pose());
         telemetryM.update();
 
         schedule(
                 Commands.infinite(() -> {
-                    robot.turret.face(robot.getAimTarget(), robot.follower.getPose());
+                    robot.turret.face(robot.getAimTarget(), robot.follower.pose());
                     // ── PsiKit per-loop tick ──────────────────────────────────
                     Logger.periodicBeforeUser();
                     psiKit.logOncePerLoop(this);
@@ -78,69 +76,70 @@ public class Close extends CommandOpMode {
                     }
 
                     if (curr && !prev) {
-                        intakeTimer.resetTimer();
+                        intakeTimer.reset();
                     }
 
                     if (!intakeTime)
-                        intakeTime = intakeTimer.getElapsedTimeSeconds() >= .5;
+                        intakeTime = intakeTimer.s() >= .5;
 
-                    if (curr && intakeTime) {
-                        if (!robot.shooter.atTarget())
-                            robot.intake.light.orange();
-                        else
-                            robot.intake.light.green();
-                        full = true;
-                    } else {
-                        if (!robot.shooter.atTarget())
-                            robot.intake.light.violet();
-                        else
-                            robot.intake.light.blue();
-                        full = false;
-                    }
+//                    if (curr && intakeTime) {
+//                        if (!robot.shooter.atTarget())
+//                            robot.intake.light.orange();
+//                        else
+//                            robot.intake.light.green();
+//                        full = true;
+//                    } else {
+//                        if (!robot.shooter.atTarget())
+//                            robot.intake.light.violet();
+//                        else
+//                            robot.intake.light.blue();
+//                        full = false;
+//                    }
+                    // TODO LIGHT
 
                     prev = curr;
 
                     // ── Log outputs ───────────────────────────────────────────
-                    Pose pose = robot.follower.getPose();
-                    Pose2D pose2D = PoseConverter.poseToPose2D(pose.getAsCoordinateSystem(InvertedFTCCoordinates.INSTANCE), InvertedFTCCoordinates.INSTANCE);
-                    Pose2d pose2d = new Pose2d(pose2D.getX(DistanceUnit.METER), pose2D.getY(DistanceUnit.METER), new Rotation2d(pose2D.getHeading(AngleUnit.RADIANS)));
-                    Logger.recordOutput("Pose2d", pose2d);
-                    Logger.recordOutput("Pose/X",                pose.getX());
-                    Logger.recordOutput("Pose/Y",                pose.getY());
-                    Logger.recordOutput("Pose/Heading",          pose.getHeading());
-                    Logger.recordOutput("Shooter/Velocity",      robot.shooter.getVelocity());
-                    Logger.recordOutput("Shooter/AtTarget",      robot.shooter.atTarget());
-                    Logger.recordOutput("Turret/Yaw",            robot.turret.getYaw());
-                    Logger.recordOutput("Follower/TValue",       robot.follower.getCurrentTValue());
-                    Logger.recordOutput("Follower/TranslError",  robot.follower.getTranslationalError().toString());
-                    Logger.recordOutput("Follower/HeadingError", robot.follower.getHeadingError());
-                    Logger.recordOutput("Follower/DriveError",   robot.follower.getDriveError());
-                    Logger.recordOutput("Follower/Path", robot.follower.getCurrentPath().toString());
-                    Logger.recordOutput("Loop/Hz",               robot.getLoopTimeHz());
-                    Logger.recordOutput("Intake/Full",           full);
-                    Logger.recordOutput("Intake/Curr",           curr);
-                    Logger.recordOutput("Time/OpModeMs", opModeTimer.getElapsedTime());
+                    Pose pose = robot.follower.pose();
+//                    Pose2D pose2D = PoseConverter.poseToPose2D(pose.getAsCoordinateSystem(InvertedFTCCoordinates.INSTANCE), InvertedFTCCoordinates.INSTANCE);
+//                    Pose2d pose2d = new Pose2d(pose2D.getX(DistanceUnit.METER), pose2D.getY(DistanceUnit.METER), new Rotation2d(pose2D.getHeading(AngleUnit.RADIANS)));
+//                    Logger.recordOutput("Pose2d", pose2d);
+                    Logger.recordOutput("Pose/X", pose.x());
+                    Logger.recordOutput("Pose/Y", pose.y());
+                    Logger.recordOutput("Pose/Heading", pose.heading());
+                    Logger.recordOutput("Shooter/Velocity", robot.shooter.getVelocity());
+                    Logger.recordOutput("Shooter/AtTarget", robot.shooter.atTarget());
+                    Logger.recordOutput("Turret/Yaw", robot.turret.getYaw());
+//                    Logger.recordOutput("Follower/TValue",       robot.follower.getCurrentTValue());
+//                    Logger.recordOutput("Follower/TranslError",  robot.follower.getTranslationalError().toString());
+//                    Logger.recordOutput("Follower/HeadingError", robot.follower.getHeadingError());
+//                    Logger.recordOutput("Follower/DriveError",   robot.follower.getDriveError());
+//                    Logger.recordOutput("Follower/Path", robot.follower.getCurrentPath().toString());
+                    Logger.recordOutput("Loop/Hz", robot.getLoopTimeHz());
+                    Logger.recordOutput("Intake/Full", full);
+                    Logger.recordOutput("Intake/Curr", curr);
+                    Logger.recordOutput("Time/OpModeMs", opModeTimer.ms());
 
                     Logger.periodicAfterUser(0.0, 0.0);
                     // ─────────────────────────────────────────────────────────
 
                     telemetryM.addData("LoopTime Hz", robot.getLoopTimeHz());
                     telemetryM.addData("Pose", pose);
-                    telemetryM.addData("T Value", robot.follower.getCurrentTValue());
+//                    telemetryM.addData("T Value", robot.follower.getCurrentTValue());
                     telemetryM.addData("Target", robot.getShootTarget());
                     telemetryM.addData("Shooter Velocity", robot.shooter.getVelocity());
                     telemetryM.addData("turret angle", robot.turret.getYaw());
                     telemetryM.addData("full", full);
-                    telemetryM.addData("transl error", robot.follower.getTranslationalError());
-                    telemetryM.addData("heading error", robot.follower.getHeadingError());
-                    telemetryM.addData("drive error", robot.follower.getDriveError());
-                    telemetryM.addData("path", robot.follower.getCurrentPath());
+//                    telemetryM.addData("transl error", robot.follower.getTranslationalError());
+//                    telemetryM.addData("heading error", robot.follower.getHeadingError());
+//                    telemetryM.addData("drive error", robot.follower.getDriveError());
+//                    telemetryM.addData("path", robot.follower.getCurrentPath());
                     telemetryM.update();
                 }),
                 Groups.sequential(
                         p.preload()
                                 .with(
-                                        waitUntil(() -> opModeTimer.getElapsedTimeSeconds() > 1.95)
+                                        waitUntil(() -> opModeTimer.s() > 1.95)
                                                 .then(robot.shoot(p.score))
                                 ),
                         spike2(),
@@ -150,7 +149,7 @@ public class Close extends CommandOpMode {
                         gate(),
                         gate(),
                         conditional(
-                                () -> opModeTimer.getElapsedTimeSeconds() < 27.5,
+                                () -> opModeTimer.s() < 27.5,
                                 gate(),
                                 p.park()
                         )
@@ -160,12 +159,12 @@ public class Close extends CommandOpMode {
 
     public void start() {
         robot.shooter.on();
-        robot.shooter.forDistance(robot.getShootTarget().distanceFrom(p.score), p.score.getY() > 48);
+        robot.shooter.forDistance(robot.getShootTarget().distance(p.score), p.score.y() > 48);
         robot.intake.off();
         robot.transfer.off();
         robot.transfer.open();
         robot.turret.face(robot.getShootTarget(), p.score);
-        opModeTimer.resetTimer();
+        opModeTimer.reset();
     }
 
     private CommandBuilder spike2() {
@@ -177,14 +176,8 @@ public class Close extends CommandOpMode {
                                         .then(robot.transfer.closeCommand())
                         )
                         .raceWith(waitMs(3000.0)),
-                p.scoreSpike2()
-                        .with(
-                                waitMs(250)
-                                        .then(
-                                                waitUntil(() -> robot.follower.getCurrentTValue() > 0.95)
-                                                        .then(robot.shoot(p.score))
-                                        )
-                        )
+                p.scoreSpike2(),
+                robot.shoot(p.score)
         );
     }
 
@@ -199,14 +192,13 @@ public class Close extends CommandOpMode {
                         .raceWith(waitMs(2000.0)),
                 p.scoreSpike1()
                         .with(
-                                waitUntil(() -> robot.follower.getCurrentTValue() > 0.95)
-                                        .then(robot.shoot(p.score)),
                                 waitMs(500.0)
                                         .then(
-                                robot.intake.offCommand(),
-                                robot.transfer.offCommand()
+                                                robot.intake.offCommand(),
+                                                robot.transfer.offCommand()
                                         )
-                        )
+                        ),
+                robot.shoot(p.score)
         );
     }
 
@@ -234,14 +226,12 @@ public class Close extends CommandOpMode {
                                                 robot.transfer.offCommand()
                                         )
                         ),
-robot.intake.offCommand(),
-robot.transfer.offCommand(),
-robot.transfer.openCommand(),
+                robot.intake.offCommand(),
+                robot.transfer.offCommand(),
+                robot.transfer.openCommand(),
                 waitMs(150.0),
                 robot.intake(),
                 waitMs(100.0)
-
-//                robot.shoot(p.score)
         );
     }
 

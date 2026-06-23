@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.util;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.bylazar.configurables.annotations.Configurable;
-import com.pedropathing.math.MathFunctions;
+import com.pedropathing.utils.Utils;
 import com.qualcomm.robotcore.hardware.DcMotorController;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -396,7 +396,7 @@ public class CachedMotor implements DcMotorEx {
 
     @Override
     public void setPower(double power) {
-        power = MathFunctions.clamp(power, -1, 1);
+        power = Utils.clamp(power, -1, 1);
         if (Math.abs(this.power - power) < 0.01) return;
         this.power = power;
         motor.setPower(power);

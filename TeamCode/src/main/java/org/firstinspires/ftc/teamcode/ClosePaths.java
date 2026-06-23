@@ -57,7 +57,7 @@ public class ClosePaths {
 //                .setBrakingStrength(2)
 //                .build();
 //        return new FollowPath(this.f, path, .95);
-        Paths.line(start, score).linear(start.heading(), score.heading(), 0.5)
+        return new FollowPath(this.f, Paths.line(start, score).linear(start.heading(), score.heading()));
     }
 
     public CommandBuilder intakeSpike1() {

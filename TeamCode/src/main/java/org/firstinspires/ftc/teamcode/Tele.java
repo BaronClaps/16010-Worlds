@@ -51,7 +51,7 @@ public class Tele extends OpMode {
         robot.periodic();
 
 //        if (field)
-        robot.follower.manual(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x * .75);
+        robot.follower.manual(speed * -gamepad1.left_stick_y, speed * gamepad1.left_stick_x, speed * gamepad1.right_stick_x * .75);
 //        else
 //            robot.follower.setTeleOpDrive(speed * -gamepad1.left_stick_y, speed * -gamepad1.left_stick_x, speed * -gamepad1.right_stick_x * .75, true);
 

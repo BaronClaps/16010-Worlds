@@ -82,19 +82,19 @@ public class Close extends CommandOpMode {
                     if (!intakeTime)
                         intakeTime = intakeTimer.s() >= .5;
 
-//                    if (curr && intakeTime) {
+                    if (curr && intakeTime) {
 //                        if (!robot.shooter.atTarget())
 //                            robot.intake.light.orange();
 //                        else
 //                            robot.intake.light.green();
-//                        full = true;
-//                    } else {
+                        full = true;
+                    } else {
 //                        if (!robot.shooter.atTarget())
 //                            robot.intake.light.violet();
 //                        else
 //                            robot.intake.light.blue();
-//                        full = false;
-//                    }
+                        full = false;
+                    }
                     // TODO LIGHT
 
                     prev = curr;

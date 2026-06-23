@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.subsystem;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.pedropathing.math.Pose;
+import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -85,10 +85,10 @@ public class Shooter {
     }
 
     public void forPose(Pose current, Pose target, boolean close) {
-        double xDistance = Math.abs(target.x() - current.x());
+        double xDistance = Math.abs(target.getX() - current.getX());
 
         if (close)
-            setTarget(closeInterpolation.interpolate(xDistance, current.y()));
+            setTarget(closeInterpolation.interpolate(xDistance, current.getY()));
         else
             setTarget(2000); // make a far interpolation
     }

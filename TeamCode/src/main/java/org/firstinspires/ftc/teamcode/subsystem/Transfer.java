@@ -16,10 +16,13 @@ public class Transfer {
     private final CachedMotor transfer;
     private final Servo gate;
     public static double off = 0;
+    public static double idle = 0.5;
     public static double in = 0.85;
     public static double out = -1;
     public static double open = 0.37;
+    public static double transition = 0.35;
     public static double closed = 0.23;
+    private boolean opened = false;
 
     public Transfer(HardwareMap hardwareMap) {
         transfer = new CachedMotor(hardwareMap.get(DcMotorEx.class, "transfer"));
@@ -40,13 +43,18 @@ public class Transfer {
     public void off() {
         set(off);
     }
+    public void idle() {
+        set(idle);
+    }
 
     public void open() {
         gate.setPosition(open);
+        opened = true;
     }
 
     public void close() {
         gate.setPosition(closed);
+        opened = false;
     }
 
     public CommandBuilder offCommand() {
@@ -61,11 +69,19 @@ public class Transfer {
     public CommandBuilder outCommand() {
         return Commands.instant(this::out);
     }
+    public CommandBuilder idleCommand() {
+        return Commands.instant(this::idle);
+    }
     public CommandBuilder openCommand() {
         return Commands.instant(this::open);
     }
     public CommandBuilder closeCommand() {
         return Commands.instant(this::close);
+    }
+    public void transition() { gate.setPosition(transition); }
+
+    public boolean closed() {
+        return !opened;
     }
 
     public double getCurrent() {

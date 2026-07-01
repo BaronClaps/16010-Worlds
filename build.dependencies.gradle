@@ -18,11 +18,11 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:11.1.0'
     implementation 'org.firstinspires.ftc:Vision:11.1.0'
 
-    implementation('com.pedropathing:revhub:3.0.0.local.alpha41') {
+    implementation('com.pedropathing:revhub:3.0.0.local.alpha44') {
         exclude group: 'org.aspectj', module: 'aspectjtools'
     }
     implementation 'com.pedropathing:telemetry:1.0.0'
-    implementation 'com.pedropathing:ivy:1.0.0'
+    implementation 'com.pedropathing:ivy:1.0.0-local.alpha44'
 
     implementation "dev.frozenmilk.sinister:Sloth:0.2.4"
     implementation "dev.frozenmilk:Sinister:2.2.0"
